@@ -76,8 +76,9 @@ public class servotest extends OpMode
         // step (using the FTC Robot Controller app on the phone).
         left = hardwareMap.servo.get("leftServo");
         right = hardwareMap.servo.get("rightServo");
+        right.setDirection(Servo.Direction.REVERSE);
         left.setPosition(0);
-        right.setPosition(1);
+        right.setPosition(0);
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
         blue = hardwareMap.dcMotor.get("blueMotor");
@@ -128,11 +129,11 @@ public class servotest extends OpMode
          rightPower = -gamepad1.right_stick_y ;
         if(gamepad1.left_bumper==true){
             left.setPosition(0.6);
-            right.setPosition(0.4);
+            right.setPosition(0.6);
         }
         else{
             left.setPosition(0);
-            right.setPosition(1);
+            right.setPosition(0);
         }
         // Send calculated power to wheels
         blue.setPower(leftPower);
