@@ -63,7 +63,7 @@ public class servotest extends OpMode
     //private DcMotor leftDrive = null;
     //private DcMotor rightDrive = null;
     private Servo left, right;
-    private DcMotor blue, red;
+    //private DcMotor blue, red;
     /*
      * Code to run ONCE when the driver hits INIT
      */
@@ -81,10 +81,10 @@ public class servotest extends OpMode
         right.setPosition(0);
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
-        blue = hardwareMap.dcMotor.get("blueMotor");
-        red = hardwareMap.dcMotor.get("redMotor");
-        blue.setDirection(DcMotor.Direction.REVERSE);
-        red.setDirection(DcMotor.Direction.FORWARD);
+        //blue = hardwareMap.dcMotor.get("blueMotor");
+        //red = hardwareMap.dcMotor.get("redMotor");
+        //blue.setDirection(DcMotor.Direction.REVERSE);
+        //red.setDirection(DcMotor.Direction.FORWARD);
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
     }
@@ -110,8 +110,8 @@ public class servotest extends OpMode
     @Override
     public void loop() {
         // Setup a variable for each drive wheel to save power level for telemetry
-        double leftPower;
-        double rightPower;
+        //double leftPower;
+        //double rightPower;
 
         // Choose to drive using either Tank Mode, or POV Mode
         // Comment out the method that's not used.  The default below is POV.
@@ -125,8 +125,8 @@ public class servotest extends OpMode
 
         // Tank Mode uses one stick to control each wheel.
         // - This requires no math, but it is hard to drive forward slowly and keep straight.
-         leftPower  = -gamepad1.left_stick_y ;
-         rightPower = -gamepad1.right_stick_y ;
+         //leftPower  = -gamepad1.left_stick_y ;
+         //rightPower = -gamepad1.right_stick_y ;
         if(gamepad1.left_bumper==true){
             left.setPosition(0.6);
             right.setPosition(0.6);
@@ -136,8 +136,8 @@ public class servotest extends OpMode
             right.setPosition(0);
         }
         // Send calculated power to wheels
-        blue.setPower(leftPower);
-        red.setPower(rightPower);
+        //blue.setPower(leftPower);
+        //red.setPower(rightPower);
 
         // Show the elapsed game time and wheel power.
         //telemetry.addData("Status", "Run Time: " + runtime.toString());
