@@ -1,0 +1,90 @@
+[
+    {
+        "merged": "C:\\Users\\Goutham\\Desktop\\Goutham projects\\FTC\\ftc_app-master\\TeamCode\\build\\intermediates\\res\\merged\\debug\\raw\\chimeconnect.wav",
+        "source": "C:\\Users\\Goutham\\.android\\build-cache\\9887d0f44a5ff4e453a9a39e4ccdfb994c615f18\\output\\res\\raw\\chimeconnect.wav"
+    },
+    {
+        "merged": "C:\\Users\\Goutham\\Desktop\\GouthamProjects\\FTC\\ftc_app-master\\TeamCode\\build\\intermediates\\res\\merged\\debug\\raw\\simple_vertex_shader.glsl",
+        "source": "C:\\Users\\Goutham\\.android\\build-cache\\a6b21395ba82a39b9143a65e20d029020605e875\\output\\res\\raw\\simple_vertex_shader.glsl"
+    },
+    {
+        "merged": "C:\\Users\\Goutham\\Desktop\\GouthamProjects\\FTC\\ftc_app-master\\TeamCode\\build\\intermediates\\res\\merged\\debug\\raw\\chimedisconnect.wav",
+        "source": "C:\\Users\\Goutham\\.android\\build-cache\\ded365b81851554182e239462a06297ffd15b603\\output\\res\\raw\\chimedisconnect.wav"
+    },
+    {
+        "merged": "C:\\Users\\Goutham\\Desktop\\GouthamProjects\\FTC\\ftc_app-master\\TeamCode\\build\\intermediates\\res\\merged\\debug\\raw\\chimeconnect.wav",
+        "source": "C:\\Users\\Goutham\\.android\\build-cache\\ded365b81851554182e239462a06297ffd15b603\\output\\res\\raw\\chimeconnect.wav"
+    },
+    {
+        "merged": "C:\\Users\\Goutham\\Desktop\\Goutham projects\\FTC\\ftc_app-master\\TeamCode\\build\\intermediates\\res\\merged\\debug\\raw\\cube_mesh_vertex_shader.glsl",
+        "source": "C:\\Users\\Goutham\\.android\\build-cache\\5d4f7d0cf2d99ef4c2b5fa49187d7e811ff13a21\\output\\res\\raw\\cube_mesh_vertex_shader.glsl"
+    },
+    {
+        "merged": "C:\\Users\\Goutham\\Desktop\\Goutham projects\\FTC\\ftc_app-master\\TeamCode\\build\\intermediates\\res\\merged\\debug\\raw\\nxtstartupsound.wav",
+        "source": "C:\\Users\\Goutham\\.android\\build-cache\\9887d0f44a5ff4e453a9a39e4ccdfb994c615f18\\output\\res\\raw\\nxtstartupsound.wav"
+    },
+    {
+        "merged": "C:\\Users\\Goutham\\Desktop\\GouthamProjects\\FTC\\ftc_app-master\\TeamCode\\build\\intermediates\\res\\merged\\debug\\raw\\nxtstartupsound.wav",
+        "source": "C:\\Users\\Goutham\\.android\\build-cache\\ded365b81851554182e239462a06297ffd15b603\\output\\res\\raw\\nxtstartupsound.wav"
+    },
+    {
+        "merged": "C:\\Users\\Goutham\\Desktop\\GouthamProjects\\FTC\\ftc_app-master\\TeamCode\\build\\intermediates\\res\\merged\\debug\\raw\\cube_mesh_fragment_shader.glsl",
+        "source": "C:\\Users\\Goutham\\.android\\build-cache\\a6b21395ba82a39b9143a65e20d029020605e875\\output\\res\\raw\\cube_mesh_fragment_shader.glsl"
+    },
+    {
+        "merged": "C:\\Users\\Goutham\\Desktop\\Goutham projects\\FTC\\ftc_app-master\\TeamCode\\build\\intermediates\\res\\merged\\debug\\raw\\errormessage.wav",
+        "source": "C:\\Users\\Goutham\\.android\\build-cache\\9887d0f44a5ff4e453a9a39e4ccdfb994c615f18\\output\\res\\raw\\errormessage.wav"
+    },
+    {
+        "merged": "C:\\Users\\Goutham\\Desktop\\Goutham projects\\FTC\\ftc_app-master\\TeamCode\\build\\intermediates\\res\\merged\\debug\\raw\\chimedisconnect.wav",
+        "source": "C:\\Users\\Goutham\\.android\\build-cache\\9887d0f44a5ff4e453a9a39e4ccdfb994c615f18\\output\\res\\raw\\chimedisconnect.wav"
+    },
+    {
+        "merged": "C:\\Users\\Goutham\\Desktop\\Goutham projects\\FTC\\ftc_app-master\\TeamCode\\build\\intermediates\\res\\merged\\debug\\raw\\warningmessage.wav",
+        "source": "C:\\Users\\Goutham\\.android\\build-cache\\9887d0f44a5ff4e453a9a39e4ccdfb994c615f18\\output\\res\\raw\\warningmessage.wav"
+    },
+    {
+        "merged": "C:\\Users\\Goutham\\Desktop\\Goutham projects\\FTC\\ftc_app-master\\TeamCode\\build\\intermediates\\res\\merged\\debug\\raw\\cube_mesh_fragment_shader.glsl",
+        "source": "C:\\Users\\Goutham\\.android\\build-cache\\5d4f7d0cf2d99ef4c2b5fa49187d7e811ff13a21\\output\\res\\raw\\cube_mesh_fragment_shader.glsl"
+    },
+    {
+        "merged": "C:\\Users\\Goutham\\Desktop\\Goutham projects\\FTC\\ftc_app-master\\TeamCode\\build\\intermediates\\res\\merged\\debug\\raw\\texture_vertex_shader.glsl",
+        "source": "C:\\Users\\Goutham\\.android\\build-cache\\5d4f7d0cf2d99ef4c2b5fa49187d7e811ff13a21\\output\\res\\raw\\texture_vertex_shader.glsl"
+    },
+    {
+        "merged": "C:\\Users\\Goutham\\Desktop\\GouthamProjects\\FTC\\ftc_app-master\\TeamCode\\build\\intermediates\\res\\merged\\debug\\raw\\errormessage.wav",
+        "source": "C:\\Users\\Goutham\\.android\\build-cache\\ded365b81851554182e239462a06297ffd15b603\\output\\res\\raw\\errormessage.wav"
+    },
+    {
+        "merged": "C:\\Users\\Goutham\\Desktop\\GouthamProjects\\FTC\\ftc_app-master\\TeamCode\\build\\intermediates\\res\\merged\\debug\\raw\\texture_vertex_shader.glsl",
+        "source": "C:\\Users\\Goutham\\.android\\build-cache\\a6b21395ba82a39b9143a65e20d029020605e875\\output\\res\\raw\\texture_vertex_shader.glsl"
+    },
+    {
+        "merged": "C:\\Users\\Goutham\\Desktop\\GouthamProjects\\FTC\\ftc_app-master\\TeamCode\\build\\intermediates\\res\\merged\\debug\\raw\\warningmessage.wav",
+        "source": "C:\\Users\\Goutham\\.android\\build-cache\\ded365b81851554182e239462a06297ffd15b603\\output\\res\\raw\\warningmessage.wav"
+    },
+    {
+        "merged": "C:\\Users\\Goutham\\Desktop\\Goutham projects\\FTC\\ftc_app-master\\TeamCode\\build\\intermediates\\res\\merged\\debug\\raw\\simple_vertex_shader.glsl",
+        "source": "C:\\Users\\Goutham\\.android\\build-cache\\5d4f7d0cf2d99ef4c2b5fa49187d7e811ff13a21\\output\\res\\raw\\simple_vertex_shader.glsl"
+    },
+    {
+        "merged": "C:\\Users\\Goutham\\Desktop\\GouthamProjects\\FTC\\ftc_app-master\\TeamCode\\build\\intermediates\\res\\merged\\debug\\raw\\color_fragment_shader.glsl",
+        "source": "C:\\Users\\Goutham\\.android\\build-cache\\a6b21395ba82a39b9143a65e20d029020605e875\\output\\res\\raw\\color_fragment_shader.glsl"
+    },
+    {
+        "merged": "C:\\Users\\Goutham\\Desktop\\Goutham projects\\FTC\\ftc_app-master\\TeamCode\\build\\intermediates\\res\\merged\\debug\\raw\\texture_fragment_shader.glsl",
+        "source": "C:\\Users\\Goutham\\.android\\build-cache\\5d4f7d0cf2d99ef4c2b5fa49187d7e811ff13a21\\output\\res\\raw\\texture_fragment_shader.glsl"
+    },
+    {
+        "merged": "C:\\Users\\Goutham\\Desktop\\Goutham projects\\FTC\\ftc_app-master\\TeamCode\\build\\intermediates\\res\\merged\\debug\\raw\\color_fragment_shader.glsl",
+        "source": "C:\\Users\\Goutham\\.android\\build-cache\\5d4f7d0cf2d99ef4c2b5fa49187d7e811ff13a21\\output\\res\\raw\\color_fragment_shader.glsl"
+    },
+    {
+        "merged": "C:\\Users\\Goutham\\Desktop\\GouthamProjects\\FTC\\ftc_app-master\\TeamCode\\build\\intermediates\\res\\merged\\debug\\raw\\texture_fragment_shader.glsl",
+        "source": "C:\\Users\\Goutham\\.android\\build-cache\\a6b21395ba82a39b9143a65e20d029020605e875\\output\\res\\raw\\texture_fragment_shader.glsl"
+    },
+    {
+        "merged": "C:\\Users\\Goutham\\Desktop\\GouthamProjects\\FTC\\ftc_app-master\\TeamCode\\build\\intermediates\\res\\merged\\debug\\raw\\cube_mesh_vertex_shader.glsl",
+        "source": "C:\\Users\\Goutham\\.android\\build-cache\\a6b21395ba82a39b9143a65e20d029020605e875\\output\\res\\raw\\cube_mesh_vertex_shader.glsl"
+    }
+]
