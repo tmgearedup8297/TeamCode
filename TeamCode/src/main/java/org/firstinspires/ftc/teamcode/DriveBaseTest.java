@@ -63,7 +63,7 @@ public class DriveBaseTest extends OpMode
     private DcMotor leftBack = null;
     private DcMotor rightBack = null;
     private float x1, x2, y1, y2;
-    private float limit=100/128;
+    private float limit = 100.0/128.0;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -130,10 +130,13 @@ public class DriveBaseTest extends OpMode
             double MAX_SPEED = 1.0;
             holonomic(Speed, Turn, Strafe, MAX_SPEED );*/
 
-           leftFront.setPower((gamepad1.left_stick_y+gamepad1.right_stick_x-gamepad1.left_stick_x)*limit);
-           leftBack.setPower((gamepad1.left_stick_y+gamepad1.right_stick_x+gamepad1.left_stick_x)*limit);
-           rightFront.setPower((gamepad1.left_stick_y-gamepad1.right_stick_x-gamepad1.left_stick_x)*limit);
-           rightBack.setPower((gamepad1.left_stick_y-gamepad1.right_stick_x+gamepad1.left_stick_x)*limit);
+           leftFront.setPower((gamepad1.left_stick_x+gamepad1.right_stick_x-gamepad1.left_stick_y));
+           leftBack.setPower((gamepad1.left_stick_x+gamepad1.right_stick_x+gamepad1.left_stick_y));
+           rightFront.setPower((gamepad1.left_stick_x-gamepad1.right_sti
+
+
+                   k_x-gamepad1.left_stick_y));
+           rightBack.setPower((gamepad1.left_stick_x-gamepad1.right_stick_x+gamepad1.left_stick_y));
 
 
 
