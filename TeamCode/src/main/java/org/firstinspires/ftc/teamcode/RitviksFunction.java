@@ -52,7 +52,7 @@ import com.qualcomm.robotcore.util.Range;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="RitviksFunction", group="Linear Opmode")
+@TeleOp(name="RitviksFunction", group="Linear Opmode")
 //@Disabled
 public class RitviksFunction extends LinearOpMode {
 
@@ -60,7 +60,9 @@ public class RitviksFunction extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor upDown= null;
     private Servo glyphGrabber = null;
-
+    private boolean open=true;
+    private final double SERVO_POS_CLOSED = 0.62;
+    private final double SERVO_POS_OPEN = 0.32;
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
@@ -72,8 +74,11 @@ public class RitviksFunction extends LinearOpMode {
 
         upDown  = hardwareMap.get(DcMotor.class, "upDown");
         upDown.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        upDown.setDirection(DcMotor.Direction.REVERSE);
+       // upDown.setDirection(DcMotor.Direction.REVERSE);
         glyphGrabber = hardwareMap.servo.get("glyphGrabber");
+
+        //upDown.setTargetPosition(0);
+        //upDown.setPower(.25);
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
@@ -86,8 +91,26 @@ public class RitviksFunction extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
-            upDown.setTargetPosition(1140);
-            sleep(1000);
+            upDown.setTargetPosition(100);
+            upDown.setPower(.25);
+
+
+            if(gamepad1.a && open==false){
+                open=true;
+                glyphGrabber.setPosition(SERVO_POS_OPEN);
+            }
+            else if(gamepad1.a && open==true){
+                open=false;
+                glyphGrabber.setPosition(SERVO_POS_CLOSED);
+            }
+
+            telemetry.addData("Encoder Value: ", upDown.getCurrentPosition());
+            telemetry.update();
+
+
+            //upDown.setTargetPosition(500);
+            //upDown.setPower(.25);
+            /*sleep(1000);
             upDown.setPower(0.25);
             glyphGrabber.setPosition(0.3);
             upDown.setTargetPosition(570);
@@ -96,7 +119,7 @@ public class RitviksFunction extends LinearOpMode {
             glyphGrabber.setPosition(0.6);
             upDown.setTargetPosition(285);
             sleep(1000);
-            upDown.setPower(0.25);
+            upDown.setPower(0.25);*/
         }
     }
 }
