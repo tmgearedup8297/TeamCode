@@ -68,7 +68,7 @@ public class JewelTool extends OpMode
     public void init() {
         telemetry.addData("Status", "Initialized");
         jewelTool = hardwareMap.servo.get("jewelTool");
-      //  jewelColor = hardwareMap.colorsensor.get("jewelColor");
+        jewelColor = hardwareMap.colorSensor.get("jewelColor");
         telemetry.addData("Status", "Initialized");
     }
 

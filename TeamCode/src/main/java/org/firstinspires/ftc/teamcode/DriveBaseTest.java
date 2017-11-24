@@ -44,7 +44,7 @@ import static com.qualcomm.robotcore.util.Range.scale;
  * The names of OpModes appear on the menu of the FTC Driver Station.
  * When an selection is made from the menu, the corresponding OpMode
  * class is instantiated on the Robot Controller and executed.
- *
+ *e
  * This particular OpMode just executes a basic Tank Drive Teleop for a two wheeled robot
  * It includes all the skeletal structure that all iterative OpModes contain.
  *
@@ -63,7 +63,7 @@ public class DriveBaseTest extends OpMode
     private DcMotor leftBack = null;
     private DcMotor rightBack = null;
     private float x1, x2, y1, y2;
-    private float limit = 100.0/128.0;
+    
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -130,14 +130,10 @@ public class DriveBaseTest extends OpMode
             double MAX_SPEED = 1.0;
             holonomic(Speed, Turn, Strafe, MAX_SPEED );*/
 
-           leftFront.setPower((gamepad1.left_stick_x+gamepad1.right_stick_x-gamepad1.left_stick_y));
-           leftBack.setPower((gamepad1.left_stick_x+gamepad1.right_stick_x+gamepad1.left_stick_y));
-           rightFront.setPower((gamepad1.left_stick_x-gamepad1.right_sti
-
-
-                   k_x-gamepad1.left_stick_y));
-           rightBack.setPower((gamepad1.left_stick_x-gamepad1.right_stick_x+gamepad1.left_stick_y));
-
+        leftFront.setPower((gamepad1.left_stick_x+gamepad1.right_stick_x+gamepad1.left_stick_y));
+        leftBack.setPower((gamepad1.left_stick_x+gamepad1.right_stick_x-gamepad1.left_stick_y));
+        rightFront.setPower((gamepad1.left_stick_x-gamepad1.right_stick_x+gamepad1.left_stick_y));
+        rightBack.setPower((gamepad1.left_stick_x-gamepad1.right_stick_x-gamepad1.left_stick_y));
 
 
 
