@@ -91,8 +91,7 @@ public class RitviksFunction extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
-            upDown.setTargetPosition(100);
-            upDown.setPower(.25);
+            upDown.setPower(gamepad1.left_stick_y);
 
 
             if(gamepad1.a && open==false){
@@ -104,8 +103,7 @@ public class RitviksFunction extends LinearOpMode {
                 glyphGrabber.setPosition(SERVO_POS_CLOSED);
             }
 
-            telemetry.addData("Encoder Value: ", upDown.getCurrentPosition());
-            telemetry.update();
+
 
 
             //upDown.setTargetPosition(500);

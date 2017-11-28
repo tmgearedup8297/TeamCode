@@ -130,10 +130,10 @@ public class DriveBaseTest extends OpMode
             double MAX_SPEED = 1.0;
             holonomic(Speed, Turn, Strafe, MAX_SPEED );*/
 
-        leftFront.setPower((gamepad1.left_stick_x+gamepad1.right_stick_x+gamepad1.left_stick_y));
-        leftBack.setPower((gamepad1.left_stick_x+gamepad1.right_stick_x-gamepad1.left_stick_y));
-        rightFront.setPower((gamepad1.left_stick_x-gamepad1.right_stick_x+gamepad1.left_stick_y));
-        rightBack.setPower((gamepad1.left_stick_x-gamepad1.right_stick_x-gamepad1.left_stick_y));
+        leftFront.setPower((gamepad1.left_stick_y+gamepad1.left_stick_x-gamepad1.right_stick_x));
+        leftBack.setPower((gamepad1.left_stick_y-gamepad1.left_stick_x-gamepad1.right_stick_x));
+        rightFront.setPower((gamepad1.left_stick_y-gamepad1.left_stick_x+gamepad1.right_stick_x));
+        rightBack.setPower((gamepad1.left_stick_y+gamepad1.left_stick_x+gamepad1.right_stick_x));
 
 
 
