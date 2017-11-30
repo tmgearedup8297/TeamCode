@@ -6,8 +6,8 @@ import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
-public abstract class AutonomousRelicRecovery extends MasterDeviceClass {
-    //TODO: find out what these variables mean
+public abstract class AutonomousRelicRecovery {
+ /*   //TODO: find out what these variables mean
     static final double LEFT_FAST_STRAFE_MULTIPLIER = 1.07;
 
     static final double RIGHT_FAST_STRAFE_MULTIPLIER = 1.05;
@@ -390,5 +390,5 @@ public abstract class AutonomousRelicRecovery extends MasterDeviceClass {
     public void pickUpJewelTool(){
         jewelTool.setPosition(0);
     }
-
+*/
 }

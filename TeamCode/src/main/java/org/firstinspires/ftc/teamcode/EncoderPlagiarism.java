@@ -33,6 +33,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
@@ -67,19 +68,26 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class EncoderPlagiarism extends LinearOpMode {
 
     /* Declare OpMode members. */
+
+    private ElapsedTime runtime = new ElapsedTime();
+
+    static final double COUNTS_PER_MOTOR_REV = 2240;    // eg: TETRIX Motor Encoder
+    static final double DRIVE_GEAR_REDUCTION = 2.0;     // This is < 1.0 if geared UP
+    static final double WHEEL_DIAMETER_INCHES = 4.0;     // For figuring circumference
+    static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
+            (WHEEL_DIAMETER_INCHES * 3.1415);
+    static final double DRIVE_SPEED = 0.002;
+    static final double TURN_SPEED = 0.5;
+
     private DcMotor leftFront = null;
     private DcMotor rightFront = null;
     private DcMotor leftBack = null;
     private DcMotor rightBack = null;
-    private ElapsedTime     runtime = new ElapsedTime();
 
-    static final double     COUNTS_PER_MOTOR_REV    = 2240 ;    // eg: TETRIX Motor Encoder
-    static final double     DRIVE_GEAR_REDUCTION    = 2.0 ;     // This is < 1.0 if geared UP
-    static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
-    static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
-            (WHEEL_DIAMETER_INCHES * 3.1415);
-    static final double     DRIVE_SPEED             = 0.6;
-    static final double     TURN_SPEED              = 0.5;
+    private int leftFrontZeroPos = 0;
+    private int leftBackZeroPos = 0;
+    private int rightFrontZeroPos = 0;
+    private int rightBackZeroPos = 0;
 
     @Override
     public void runOpMode() {
@@ -88,24 +96,29 @@ public class EncoderPlagiarism extends LinearOpMode {
          * Initialize the drive system variables.
          * The init() method of the hardware class does all the work here
          */
-        leftFront  = hardwareMap.get(DcMotor.class, "leftFront");
+
+
+        leftFront = hardwareMap.get(DcMotor.class, "leftFront");
         rightFront = hardwareMap.get(DcMotor.class, "rightFront");
-        leftBack  = hardwareMap.get(DcMotor.class, "leftBack");
+        leftBack = hardwareMap.get(DcMotor.class, "leftBack");
         rightBack = hardwareMap.get(DcMotor.class, "rightBack");
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
         leftFront.setDirection(DcMotor.Direction.REVERSE);
         leftBack.setDirection(DcMotor.Direction.REVERSE);
 
+        rightFront.setDirection(DcMotor.Direction.FORWARD);
+        rightBack.setDirection(DcMotor.Direction.FORWARD);
+
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Status", "Resetting Encoders");    //
         telemetry.update();
 
-        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        /*leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);*/
 
         leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -113,7 +126,7 @@ public class EncoderPlagiarism extends LinearOpMode {
         rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Send telemetry message to indicate successful Encoder reset
-        telemetry.addData("Path0",  "Starting at %7d :%7d",
+        telemetry.addData("Path0", "Starting at %7d :%7d :%7d :%7d",
                 leftFront.getCurrentPosition(),
                 leftBack.getCurrentPosition(),
                 rightFront.getCurrentPosition(),
@@ -123,15 +136,16 @@ public class EncoderPlagiarism extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
+
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        encoderDrive(DRIVE_SPEED,  36,  36, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
-
+        encoderDrive(DRIVE_SPEED, 12, 12, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
+        //encoderDrive(DRIVE_SPEED,  12,  12, 5.0);
 
         //robot.leftClaw.setPosition(1.0);            // S4: Stop and close the claw.
         //robot.rightClaw.setPosition(0.0);
-        sleep(1000);     // pause for servos to move
-
+        //sleep(1000);     // pause for servos to move
+        telemetry.addData("The code...", "is run");
         telemetry.addData("Path", "Complete");
         telemetry.update();
     }
@@ -144,42 +158,40 @@ public class EncoderPlagiarism extends LinearOpMode {
      *  2) Move runs out of time
      *  3) Driver stops the opmode running.
      */
-    public void encoderDrive(double speed,
-                             double leftInches, double rightInches,
-                             double timeoutS) {
-
-        int lfTarget, lbTarget, rfTarget, rbTarget;
+    public void encoderDrive(double speed, double leftInches, double rightInches, double timeoutS) {
 
 
         // Ensure that the opmode is still active
         if (opModeIsActive()) {
 
             // Determine new target position, and pass to motor controller
-            lfTarget = leftFront.getCurrentPosition()+(int)(leftInches * COUNTS_PER_INCH);
-            lbTarget = leftBack.getCurrentPosition()+(int)(leftInches * COUNTS_PER_INCH);
+            leftFrontZeroPos = leftFront.getCurrentPosition();
+            leftBackZeroPos = leftBack.getCurrentPosition();
 
-            rfTarget= rightFront.getCurrentPosition()+(int)(rightInches * COUNTS_PER_INCH);
-            rbTarget = rightBack.getCurrentPosition()+(int)(rightInches * COUNTS_PER_INCH);
-
-            leftFront.setTargetPosition(lfTarget);
-            leftBack.setTargetPosition(lbTarget);
-            rightFront.setTargetPosition(rfTarget);
-            rightBack.setTargetPosition(rbTarget);
-
+            rightFrontZeroPos = rightFront.getCurrentPosition();
+            rightBackZeroPos = rightBack.getCurrentPosition();
 
 
             // Turn On RUN_TO_POSITION
-            leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             leftBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
             rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             rightBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
+
+           /* leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+            rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);*/
             // reset the timeout time and start motion.
             runtime.reset();
-            leftFront.setPower(Math.abs(speed));
-            leftBack.setPower(Math.abs(speed));
-            rightFront.setPower(Math.abs(speed));
-            rightBack.setPower(Math.abs(speed));
+            leftBack.setPower(.02);
+            leftFront.setPower(.02);
+
+            rightFront.setPower(.02);
+            rightBack.setPower(.02);
 
             // keep looping while we are still active, and there is time left, and both motors are running.
             // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
@@ -187,29 +199,36 @@ public class EncoderPlagiarism extends LinearOpMode {
             // always end the motion as soon as possible.
             // However, if you require that BOTH motors have finished their moves before the robot continues
             // onto the next step, use (isBusy() || isBusy()) in the loop test.
-            while (opModeIsActive() &&
-                    (runtime.seconds() < timeoutS) &&
-                    (leftBack.isBusy() && rightBack.isBusy())) {
+            while (opModeIsActive() && leftFront.getCurrentPosition() >= leftFrontZeroPos - 2240 ||
+                    leftBack.getCurrentPosition() >= -leftBackZeroPos - 2240 ||
+                    rightFront.getCurrentPosition() <= rightFrontZeroPos + 2240 ||
+                    rightBack.getCurrentPosition() <= rightBackZeroPos + 2240) {
 
                 // Display it for the driver.
-                telemetry.addData("Left back: ", leftBack.getCurrentPosition());
-                telemetry.addData("Right back: ", rightBack.getCurrentPosition());
+                telemetry.addData("Left  Back  :", leftBack.getCurrentPosition());
+                telemetry.addData("Left  Front :", leftFront.getCurrentPosition());
+                telemetry.addData("Right Back  :", rightBack.getCurrentPosition());
+                telemetry.addData("Right Front :", rightFront.getCurrentPosition());
+
                 telemetry.update();
             }
 
             // Stop all motion;
-            leftFront.setPower(0);
             leftBack.setPower(0);
+            leftFront.setPower(0);
+
             rightFront.setPower(0);
             rightBack.setPower(0);
 
             // Turn off RUN_TO_POSITION
+            /*leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
             rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);;
+            rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);*/
 
             //  sleep(250);   // optional pause after each move
+            //}
         }
     }
 }
