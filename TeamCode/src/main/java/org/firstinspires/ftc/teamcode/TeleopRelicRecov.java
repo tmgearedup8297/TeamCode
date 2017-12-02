@@ -37,7 +37,10 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
+
+import static android.os.SystemClock.sleep;
 import static com.qualcomm.robotcore.util.Range.scale;
+
 
 /**
  * This file contains an example of an iterative (Non-Linear) "OpMode".
@@ -86,6 +89,9 @@ public class TeleopRelicRecov extends OpMode
     private boolean activatorOpen = false;
     private boolean GRABBER_OPEN=true;
     private boolean direction = false;
+    private int actuatorCount=0;
+
+
     /*
      * Code to run ONCE when the driver hits INIT
      */
@@ -121,12 +127,7 @@ public class TeleopRelicRecov extends OpMode
         glyphLeftBack.setDirection(Servo.Direction.REVERSE);
         glyphLeftFront.setDirection(Servo.Direction.REVERSE);
 
-        //glyphRightFront.setPosition(.7);
-        //glyphLeftFront.setPosition(.7);
-        glyphRightBack.setPosition(.7);
-        glyphLeftBack.setPosition(.815);
-        //actuatorFront.setPosition(.7);
-        actuatorBack.setPosition(.7);
+
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
@@ -144,7 +145,14 @@ public class TeleopRelicRecov extends OpMode
      */
     @Override
     public void start() {
+
         runtime.reset();
+        //glyphRightFront.setPosition(.7);
+        //glyphLeftFront.setPosition(.7);
+        glyphRightBack.setPosition(.7);
+        glyphLeftBack.setPosition(.815);
+        //actuatorFront.setPosition(.7);
+        actuatorBack.setPosition(.7);
     }
 
     /*
@@ -152,6 +160,7 @@ public class TeleopRelicRecov extends OpMode
      */
     @Override
     public void loop() {
+            runtime.reset();
 
         /*if(gamepad2.y && direction==true){
             direction=false;
@@ -162,25 +171,30 @@ public class TeleopRelicRecov extends OpMode
 
         //if(direction==true){
 
-            if(actuatorBack.getPosition()>=.3){
+            if(actuatorBack.getPosition()>=.1){
                 glyphRightBack.setPosition(.7);
                 glyphLeftBack.setPosition(.815);
+
             }
             if(gamepad2.x){
                 actuatorBack.setPosition(0);
+                sleep(500);
+                actuatorBack.setPosition(.7);
+                actuatorCount++;
             }
+        sleep(100);
 
-            if(actuatorBack.getPosition()<.3) {
+            if(actuatorCount>0) {
 
 
                 upDownBack.setPower(gamepad2.left_stick_y);
-
                 if (gamepad2.a) {
                     GRABBER_OPEN = true;
 
                 } else if (gamepad2.b) {
                     GRABBER_OPEN = false;
                 }
+
                 if (GRABBER_OPEN == true) {
                     glyphLeftBack.setPosition(.68);
                     glyphRightBack.setPosition(.515);
@@ -227,14 +241,16 @@ public class TeleopRelicRecov extends OpMode
 
         }*/
 
+        float leftY=gamepad1.left_stick_y;
+        float leftX=gamepad1.left_stick_x;
+        float rightX= (float)(gamepad1.right_stick_x * .75);
 
 
 
-
-        leftFront.setPower((gamepad1.left_stick_y-gamepad1.left_stick_x-gamepad1.right_stick_x));
-        leftBack.setPower((gamepad1.left_stick_y+gamepad1.left_stick_x-gamepad1.right_stick_x));
-        rightFront.setPower((gamepad1.left_stick_y-gamepad1.left_stick_x+gamepad1.right_stick_x));
-        rightBack.setPower((gamepad1.left_stick_y+gamepad1.left_stick_x+gamepad1.right_stick_x));
+        leftFront.setPower((leftY-leftX-rightX));
+        leftBack.setPower(leftY+leftX-rightX);
+        rightFront.setPower((leftY-leftX+rightX));
+        rightBack.setPower((leftY+leftX+rightX));
 
         if(direction==true){
             telemetry.addData("Direction", "backwards");
