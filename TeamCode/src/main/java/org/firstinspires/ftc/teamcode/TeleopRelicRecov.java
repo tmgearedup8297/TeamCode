@@ -59,47 +59,74 @@ public class TeleopRelicRecov extends OpMode
 {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    /*private DcMotor leftFront = null;
+    private DcMotor leftFront = null;
     private DcMotor rightFront = null;
     private DcMotor leftBack = null;
-    private DcMotor rightBack = null;*/
-    private DcMotor upDown= null;
-    private Servo glyphRight = null;
-    //private Servo glyphLeft = null;
+    private DcMotor rightBack = null;
+    private DcMotor upDownFront= null;
+    private DcMotor upDownBack = null;
+    private Servo glyphRightFront = null;
+    private Servo glyphLeftFront = null;
+    private Servo glyphRightBack = null;
+    private Servo glyphLeftBack = null;
+    private Servo actuatorFront = null;
+    private Servo actuatorBack = null;
+
+
     private float x1, x2, y1, y2;
 
-    int bottomPos=0;
-    int middleBottomPos=0;
-    int middleTopPos=0;
-    int topPos=0;
+    //private final double SERVO_POS_CLOSED = .6;
+    //private final double SERVO_POS_OPEN = .4;
 
-    static boolean GRABBER_OPEN=true;
+    /*static final double FRONT_SERVO_EXTENDED=.75;
+    static final double FRONT_SERVO_RETRACTED=.45;
+    static final double BACK_SERVO_EXTENDED=.75;
+    static final double BACK_SERVO_RETRACTED=.45;*/
+
+    private boolean activatorOpen = false;
+    private boolean GRABBER_OPEN=true;
+    private boolean direction = false;
     /*
      * Code to run ONCE when the driver hits INIT
      */
     @Override
     public void init() {
         telemetry.addData("Status", "Initialized");
-        upDown  = hardwareMap.get(DcMotor.class, "upDown");
+        upDownFront  = hardwareMap.get(DcMotor.class, "liftFront");
+        upDownBack = hardwareMap.get(DcMotor.class, "liftBack");
+        upDownBack.setDirection(DcMotor.Direction.REVERSE);
+        glyphLeftFront = hardwareMap.servo.get("glyphLeftFront");
+        glyphRightFront = hardwareMap.servo.get("glyphRightFront");
+        glyphLeftBack = hardwareMap.servo.get("glyphLeftBack");
+        glyphRightBack = hardwareMap.servo.get("glyphRightBack");
 
-        // upDown.setDirection(DcMotor.Direction.REVERSE);
-        //glyphLeft = hardwareMap.servo.get("glyphLeft");
-        glyphRight = hardwareMap.servo.get("glyphRight");
         //glyphLeft.setDirection(Servo.Direction.REVERSE);
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
-        /*leftFront  = hardwareMap.get(DcMotor.class, "leftFront");
+        leftFront  = hardwareMap.get(DcMotor.class, "leftFront");
         rightFront = hardwareMap.get(DcMotor.class, "rightFront");
         leftBack  = hardwareMap.get(DcMotor.class, "leftBack");
         rightBack = hardwareMap.get(DcMotor.class, "rightBack");
+
+        actuatorBack = hardwareMap.get(Servo.class, "actuatorBack");
+        actuatorFront = hardwareMap.get(Servo.class, "actuatorFront");
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
         leftFront.setDirection(DcMotor.Direction.FORWARD);
         leftBack.setDirection(DcMotor.Direction.FORWARD);
         rightFront.setDirection(DcMotor.Direction.REVERSE);
-        rightBack.setDirection(DcMotor.Direction.REVERSE);*/
+        rightBack.setDirection(DcMotor.Direction.REVERSE);
 
+        glyphLeftBack.setDirection(Servo.Direction.REVERSE);
+        glyphLeftFront.setDirection(Servo.Direction.REVERSE);
+
+        /*glyphRightFront.setPosition(.6);
+        glyphLeftFront.setPosition(.4);
+        glyphRightBack.setPosition(.6);
+        glyphLeftBack.setPosition(.4);
+        actuatorFront.setPosition(.7);
+        actuatorBack.setPosition(.7);*/
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
@@ -126,31 +153,83 @@ public class TeleopRelicRecov extends OpMode
     @Override
     public void loop() {
 
-        upDown.setPower(gamepad1.left_stick_y);
-
-        if(gamepad1.a && GRABBER_OPEN==false){
-            GRABBER_OPEN=true;
-
+        if(gamepad2.y && direction==true){
+            direction=false;
         }
-        else if(gamepad1.a && GRABBER_OPEN==true){
-            GRABBER_OPEN=false;
-        }
-        if(GRABBER_OPEN==true){
-          //  glyphLeft.setPosition(.3);
-            glyphRight.setPosition(.4);
-        }
-        if(GRABBER_OPEN==false){
-            //glyphLeft.setPosition(.6);
-            glyphRight.setPosition(.3);
+        else if(gamepad2.y && direction==false){
+            direction=true;
         }
 
+        if(direction==true){
+            upDownFront.setPower(gamepad2.left_stick_y);
 
-        /*leftFront.setPower((gamepad1.left_stick_y+gamepad1.left_stick_x-gamepad1.right_stick_x));
-        leftBack.setPower((gamepad1.left_stick_y-gamepad1.left_stick_x-gamepad1.right_stick_x));
+            /*if(gamepad1.a && GRABBER_OPEN==false){
+                GRABBER_OPEN=true;
+
+            }
+            else if(gamepad1.a && GRABBER_OPEN==true){
+                GRABBER_OPEN=false;
+            }
+            if(GRABBER_OPEN==true){
+                glyphLeftFront.setPosition(.3);
+                glyphRightFront.setPosition(.4);
+            }
+            if(GRABBER_OPEN==false){
+                glyphLeftFront.setPosition(.6);
+                glyphRightFront.setPosition(.3);
+            }*/
+        }
+
+        else if(direction==false){
+            upDownBack.setPower(gamepad2.left_stick_y);
+
+            /*if(gamepad1.a && GRABBER_OPEN==false){
+                GRABBER_OPEN=true;
+
+            }
+            else if(gamepad1.a && GRABBER_OPEN==true){
+                GRABBER_OPEN=false;
+            }
+            if(GRABBER_OPEN==true){
+                glyphLeftBack.setPosition(.3);
+                glyphRightBack.setPosition(.4);
+            }
+            if(GRABBER_OPEN==false){
+                glyphLeftBack.setPosition(.6);
+                glyphRightBack.setPosition(.3);
+            }*/
+        }
+
+
+        if(gamepad2.b && activatorOpen==true){
+
+            actuatorBack.setPosition(0);
+            actuatorBack.setPosition(0);
+
+        }
+        else if(gamepad2.b && activatorOpen==false){
+
+            actuatorBack.setPosition(.7);
+            actuatorBack.setPosition(.7);
+
+        }
+
+
+
+
+
+        leftFront.setPower((gamepad1.left_stick_y-gamepad1.left_stick_x-gamepad1.right_stick_x));
+        leftBack.setPower((gamepad1.left_stick_y+gamepad1.left_stick_x-gamepad1.right_stick_x));
         rightFront.setPower((gamepad1.left_stick_y-gamepad1.left_stick_x+gamepad1.right_stick_x));
-        rightBack.setPower((gamepad1.left_stick_y+gamepad1.left_stick_x+gamepad1.right_stick_x));*/
+        rightBack.setPower((gamepad1.left_stick_y+gamepad1.left_stick_x+gamepad1.right_stick_x));
 
-        telemetry.addData("Motor Pos", upDown.getCurrentPosition());
+        if(direction==true){
+            telemetry.addData("Direction", "backwards");
+        }
+        else{
+            telemetry.addData("Direction", "forwards");
+        }
+
         telemetry.update();
     }
 

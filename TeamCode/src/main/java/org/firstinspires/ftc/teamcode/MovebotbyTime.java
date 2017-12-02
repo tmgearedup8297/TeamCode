@@ -1,15 +1,17 @@
+package org.firstinspires.ftc.teamcode;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 /**
  * Created by 770742 on 11/26/2017.
  */
 @Autonomous(name = "MovebotbyTime", group = "Autonomous")
-public class MovebotbyTime extends MasterDeviceClass {
+public class MovebotbyTime  {
     static final double power=0.25;
     static final int time=1500;
-    @Override
+
     public void runOpMode() throws InterruptedException {
-    initializeHardware();
+   /* initializeHardware();
         waitForStart();
         motorLeftBack.setPower(power);
         motorRightFront.setPower(power);
@@ -20,7 +22,7 @@ public class MovebotbyTime extends MasterDeviceClass {
         motorRightFront.setPower(0);
         motorLeftFront.setPower(0);
         motorRightFront.setPower(0);
-        exitOpMode();
+        exitOpMode();*/
     }
 }
 //You'll have to adjust the power variable to account for all 4 wheels

@@ -212,13 +212,15 @@ public class EncoderPlagiarism extends LinearOpMode {
 
                 telemetry.update();
             }
-
             // Stop all motion;
             leftBack.setPower(0);
             leftFront.setPower(0);
-
             rightFront.setPower(0);
             rightBack.setPower(0);
+
+
+
+
 
             // Turn off RUN_TO_POSITION
             /*leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
