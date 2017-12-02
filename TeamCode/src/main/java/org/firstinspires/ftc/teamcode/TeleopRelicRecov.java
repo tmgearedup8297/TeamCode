@@ -126,7 +126,7 @@ public class TeleopRelicRecov extends OpMode
         glyphRightBack.setPosition(.7);
         glyphLeftBack.setPosition(.815);
         //actuatorFront.setPosition(.7);
-        //actuatorBack.setPosition(.7);
+        actuatorBack.setPosition(.7);
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
@@ -161,22 +161,35 @@ public class TeleopRelicRecov extends OpMode
         }*/
 
         //if(direction==true){
-            upDownFront.setPower(gamepad2.left_stick_y);
 
-            if(gamepad2.a && GRABBER_OPEN==false){
-                GRABBER_OPEN=true;
+            if(actuatorBack.getPosition()>=.3){
+                glyphRightBack.setPosition(.7);
+                glyphLeftBack.setPosition(.815);
+            }
+            if(gamepad2.x){
+                actuatorBack.setPosition(0);
+            }
 
-            }
-            else if(gamepad2.a && GRABBER_OPEN==true){
-                GRABBER_OPEN=false;
-            }
-            if(GRABBER_OPEN==true){
-                glyphLeftFront.setPosition(.3);
-                glyphRightFront.setPosition(.7);
-            }
-            if(GRABBER_OPEN==false){
-                glyphLeftFront.setPosition(.6);
-                glyphRightFront.setPosition(.3);
+            if(actuatorBack.getPosition()<.3) {
+
+
+                upDownBack.setPower(gamepad2.left_stick_y);
+
+                if (gamepad2.a) {
+                    GRABBER_OPEN = true;
+
+                } else if (gamepad2.b) {
+                    GRABBER_OPEN = false;
+                }
+                if (GRABBER_OPEN == true) {
+                    glyphLeftBack.setPosition(.68);
+                    glyphRightBack.setPosition(.515);
+                    //.68 and .815
+                }
+                if (GRABBER_OPEN == false) {
+                    glyphLeftBack.setPosition(.9);
+                    glyphRightBack.setPosition(.9);
+                }
             }
         //}
 
