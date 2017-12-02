@@ -94,7 +94,7 @@ public class TeleopRelicRecov extends OpMode
         telemetry.addData("Status", "Initialized");
         upDownFront  = hardwareMap.get(DcMotor.class, "liftFront");
         upDownBack = hardwareMap.get(DcMotor.class, "liftBack");
-        upDownBack.setDirection(DcMotor.Direction.REVERSE);
+
         glyphLeftFront = hardwareMap.servo.get("glyphLeftFront");
         glyphRightFront = hardwareMap.servo.get("glyphRightFront");
         glyphLeftBack = hardwareMap.servo.get("glyphLeftBack");
@@ -121,8 +121,8 @@ public class TeleopRelicRecov extends OpMode
         glyphLeftBack.setDirection(Servo.Direction.REVERSE);
         glyphLeftFront.setDirection(Servo.Direction.REVERSE);
 
-        /*glyphRightFront.setPosition(.6);
-        glyphLeftFront.setPosition(.4);
+        glyphRightFront.setPosition(.6);
+        /*glyphLeftFront.setPosition(.4);
         glyphRightBack.setPosition(.6);
         glyphLeftBack.setPosition(.4);
         actuatorFront.setPosition(.7);
