@@ -160,7 +160,7 @@ public class TeleopRelicRecov extends OpMode
      */
     @Override
     public void loop() {
-            runtime.reset();
+
 
         /*if(gamepad2.y && direction==true){
             direction=false;
@@ -171,23 +171,43 @@ public class TeleopRelicRecov extends OpMode
 
         //if(direction==true){
 
-            if(actuatorBack.getPosition()>=.1){
-                glyphRightBack.setPosition(.7);
-                glyphLeftBack.setPosition(.815);
+        if(actuatorBack.getPosition()>=.1){
+            glyphRightBack.setPosition(.7);
+            glyphLeftBack.setPosition(.815);
 
+        }
+        if(gamepad2.x){
+            actuatorBack.setPosition(0);
+        }
+        if(gamepad2.y){
+            actuatorBack.setPosition(.7);
+        }
+
+        upDownBack.setPower(gamepad2.left_stick_y);
+        if(actuatorBack.getPosition()<.1) {
+
+            if (gamepad2.a) {
+                GRABBER_OPEN = true;
+
+            } else if (gamepad2.b) {
+                GRABBER_OPEN = false;
             }
-            if(gamepad2.x){
-                actuatorBack.setPosition(0);
-                sleep(500);
-                actuatorBack.setPosition(.7);
-                actuatorCount++;
+
+            if (GRABBER_OPEN == true) {
+                glyphLeftBack.setPosition(.68);
+                glyphRightBack.setPosition(.515);
+                //.68 and .815
             }
-        sleep(100);
+            if (GRABBER_OPEN == false) {
+                glyphLeftBack.setPosition(.9);
+                glyphRightBack.setPosition(.9);
+            }
+        }
+        //}
 
-            if(actuatorCount>0) {
+        /*else if(direction==false){
+            upDownBack.setPower(gamepad2.left_stick_y);
 
-
-                upDownBack.setPower(gamepad2.left_stick_y);
                 if (gamepad2.a) {
                     GRABBER_OPEN = true;
 
@@ -195,40 +215,18 @@ public class TeleopRelicRecov extends OpMode
                     GRABBER_OPEN = false;
                 }
 
-                if (GRABBER_OPEN == true) {
-                    glyphLeftBack.setPosition(.68);
-                    glyphRightBack.setPosition(.515);
-                    //.68 and .815
-                }
-                if (GRABBER_OPEN == false) {
-                    glyphLeftBack.setPosition(.9);
-                    glyphRightBack.setPosition(.9);
-                }
-            }
-        //}
-
-        /*else if(direction==false){
-            upDownBack.setPower(gamepad2.left_stick_y);
-
-            if(gamepad2.a && GRABBER_OPEN==false){
-                GRABBER_OPEN=true;
-
-            }
-            else if(gamepad2.a && GRABBER_OPEN==true){
-                GRABBER_OPEN=false;
-            }
             if(GRABBER_OPEN==true){
-                glyphLeftBack.setPosition(.3);
-                glyphRightBack.setPosition(.7);
+                glyphLeftBack.setPosition(.68);
+                glyphRightBack.setPosition(.515);
             }
             if(GRABBER_OPEN==false){
-                glyphLeftBack.setPosition(.6);
-                glyphRightBack.setPosition(.3);
+                glyphLeftBack.setPosition(.9);
+                glyphRightBack.setPosition(.);
             }
-        }
+        }*/
 
 
-        if(gamepad2.b && activatorOpen==true){
+        /*if(gamepad2.b && activatorOpen==true){
 
             actuatorBack.setPosition(0);
             actuatorBack.setPosition(0);
@@ -241,8 +239,8 @@ public class TeleopRelicRecov extends OpMode
 
         }*/
 
-        float leftY=gamepad1.left_stick_y;
-        float leftX=gamepad1.left_stick_x;
+        float leftY=(float)(gamepad1.left_stick_y *.75);
+        float leftX=(float)(gamepad1.left_stick_x * .75);
         float rightX= (float)(gamepad1.right_stick_x * .75);
 
 
