@@ -106,18 +106,6 @@ public class RitviksFunction extends LinearOpMode {
 
 
 
-            //upDown.setTargetPosition(500);
-            //upDown.setPower(.25);
-            /*sleep(1000);
-            upDown.setPower(0.25);
-            glyphGrabber.setPosition(0.3);
-            upDown.setTargetPosition(570);
-            sleep(1000);
-            upDown.setPower(0.25);
-            glyphGrabber.setPosition(0.6);
-            upDown.setTargetPosition(285);
-            sleep(1000);
-            upDown.setPower(0.25);*/
         }
     }
 }

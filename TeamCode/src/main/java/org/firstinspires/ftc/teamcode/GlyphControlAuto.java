@@ -52,32 +52,25 @@ public class GlyphControlAuto extends LinearOpMode {
         telemetry.update();
 
 
-        /*leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        /**/
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);*/
-
+        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         // Send telemetry message to indicate successful Encoder reset
 
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        leftFront.setPower(.25);
-        leftBack.setPower(.25);
-        rightFront.setPower(.25);
-        rightBack.setPower(.25);
-
-        while(opModeIsActive()){
-            telemetry.addData("Left front pos: ", leftFront.getCurrentPosition());
-            telemetry.addData("Left back pos: ", leftBack.getCurrentPosition());
-            telemetry.addData("Right front pos: ", leftFront.getCurrentPosition());
-            telemetry.addData("Right back pos: ", leftFront.getCurrentPosition());
-            telemetry.update();
-
-        }
+       while(opModeIsActive()){
+           leftFront.setPower(0.01);
+           leftBack.setPower(0.01);
+          rightFront.setPower(0.01);
+           rightBack.setPower(0.01);
 
 
+       }
 
         telemetry.addData("The code...", "is run");
         telemetry.addData("Path", "Complete");

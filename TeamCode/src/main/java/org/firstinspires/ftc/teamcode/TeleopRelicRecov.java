@@ -36,7 +36,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
-
+import com.qualcomm.robotcore.hardware.ColorSensor; //
 
 import static android.os.SystemClock.sleep;
 import static com.qualcomm.robotcore.util.Range.scale;
@@ -48,7 +48,7 @@ import static com.qualcomm.robotcore.util.Range.scale;
  * The names of OpModes appear on the menu of the FTC Driver Station.
  * When an selection is made from the menu, the corresponding OpMode
  * class is instantiated on the Robot Controller and executed.
- *e
+ *
  * This particular OpMode just executes a basic Tank Drive Teleop for a two wheeled robot
  * It includes all the skeletal structure that all iterative OpModes contain.
  *
@@ -162,15 +162,6 @@ public class TeleopRelicRecov extends OpMode
     public void loop() {
 
 
-        /*if(gamepad2.y && direction==true){
-            direction=false;
-        }
-        else if(gamepad2.y && direction==false){
-            direction=true;
-        }*/
-
-        //if(direction==true){
-
         if(actuatorBack.getPosition()>=.1){
             glyphRightBack.setPosition(.7);
             glyphLeftBack.setPosition(.815);
@@ -264,8 +255,6 @@ public class TeleopRelicRecov extends OpMode
 
         telemetry.update();
     }
-
-
 
     /*
      * Code to run ONCE after the driver hits STOP
