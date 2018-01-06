@@ -31,13 +31,10 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
 
 /**
@@ -53,9 +50,9 @@ import com.qualcomm.robotcore.util.Range;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Red1", group="Linear Opmode")
+@Autonomous(name="Red1GlyphTest", group="Linear Opmode")
 //@Disabled
-public class Red1 extends LinearOpMode {
+public class Red1Glyph extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
@@ -65,6 +62,7 @@ public class Red1 extends LinearOpMode {
     private DcMotor rightFront = null;
     private DcMotor leftBack = null;
     private DcMotor rightBack = null;
+    private DcMotor liftBack = null;
 
     private final int TICKS_PER_INCH=36;
 
@@ -74,6 +72,9 @@ public class Red1 extends LinearOpMode {
     private int[] targetClicks = {0, 0, 0, 0};
 
     private Servo shoulder, elbow;
+    private Servo glyphRightBack = null;
+    private Servo glyphLeftBack = null;
+    private Servo actuatorBack = null;
     private ColorSensor jewelSensor;
     private double spos = 0.0;
     private double epos = 0.9;
@@ -86,12 +87,20 @@ public class Red1 extends LinearOpMode {
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
         shoulder = hardwareMap.servo.get("shoulder");
-        elbow = hardwareMap.servo.get("elbow");
         jewelSensor = hardwareMap.colorSensor.get("jewelSensor");
+        elbow = hardwareMap.servo.get("elbow");
         leftFront = hardwareMap.get(DcMotor.class, "leftFront");
         rightFront = hardwareMap.get(DcMotor.class, "rightFront");
+
+        //Glyph stuff
         leftBack = hardwareMap.get(DcMotor.class, "leftBack");
         rightBack = hardwareMap.get(DcMotor.class, "rightBack");
+        liftBack = hardwareMap.get(DcMotor.class, "liftBack");
+        actuatorBack = hardwareMap.get(Servo.class, "actuatorBack");
+        glyphLeftBack = hardwareMap.servo.get("glyphLeftBack");
+        glyphRightBack = hardwareMap.servo.get("glyphRightBack");
+        glyphLeftBack.setDirection(Servo.Direction.REVERSE);
+        glyphRightBack.setDirection(Servo.Direction.FORWARD);
 
         leftFront.setDirection(DcMotor.Direction.REVERSE);
         leftBack.setDirection(DcMotor.Direction.REVERSE);
@@ -138,8 +147,6 @@ public class Red1 extends LinearOpMode {
         telemetry.update();
         if(jewelSensor.red()==0 && jewelSensor.blue()==0) {
             telemetry.addData("Can't Read", "");
-            elbow.setPosition(.9);
-            sleep(1000);
         }
         else if(jewelSensor.red()<jewelSensor.blue()){
             shoulder.setPosition(.6);
@@ -164,7 +171,20 @@ public class Red1 extends LinearOpMode {
 
 
             shoulder.setPosition(0);
-            sleep(1000);
+
+        //Glyph stuff
+        actuatorBack.setPosition(.7);
+        sleep(250);
+        actuatorBack.setPosition(.2);
+        glyphLeftBack.setPosition(.925);
+        glyphRightBack.setPosition(1);
+        sleep(250);
+        glyphLeftBack.setPosition(.68);
+        glyphRightBack.setPosition(.515);
+        sleep(250);
+        liftBack.setPower(15);
+        sleep(1000);
+        liftBack.setPower(0);
 
         moveDistBack(36, 36, 36, 36);
         brake();
@@ -174,6 +194,15 @@ public class Red1 extends LinearOpMode {
         sleep(500);
         moveDistForward(6,6,6,6);
         brake();
+        sleep(500);
+
+        //Glyph stuff
+        glyphLeftBack.setPosition(.925);
+        glyphRightBack.setPosition(1);
+        sleep(500);
+        moveDistBack(1,1,1,1);
+        liftBack.setPower(15);
+        sleep(3000);
         //}
 
 

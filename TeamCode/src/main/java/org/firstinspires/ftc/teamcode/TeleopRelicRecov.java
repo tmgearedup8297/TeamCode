@@ -168,7 +168,7 @@ public class TeleopRelicRecov extends OpMode
 
         shoulder.setPosition(0);
         elbow.setPosition(.9);
-h.
+
         if(gamepad2.x){
             actuatorBack.setPosition(0.2);
         }

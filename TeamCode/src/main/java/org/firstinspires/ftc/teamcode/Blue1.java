@@ -111,6 +111,8 @@ public class Blue1 extends LinearOpMode {
         telemetry.update();
         if(jewelSensor.red()==0 && jewelSensor.blue()==0) {
             telemetry.addData("Can't Read", "");
+            elbow.setPosition(.9);
+            sleep(1000);
         }
         else if(jewelSensor.red()>jewelSensor.blue()){
             shoulder.setPosition(.6);

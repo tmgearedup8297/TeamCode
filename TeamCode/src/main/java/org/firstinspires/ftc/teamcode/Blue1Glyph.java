@@ -4,13 +4,10 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
 
 /**
@@ -26,10 +23,11 @@ import com.qualcomm.robotcore.util.Range;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Red2", group="Linear Opmode")
+@Autonomous(name="Blue1GlyphTest", group="Linear Opmode")
 //@Disabled
-public class Red2 extends LinearOpMode {
+public class Blue1Glyph extends LinearOpMode {
 
+    // Declare OpMode members.
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -38,6 +36,7 @@ public class Red2 extends LinearOpMode {
     private DcMotor rightFront = null;
     private DcMotor leftBack = null;
     private DcMotor rightBack = null;
+    private DcMotor liftBack = null;
 
     private final int TICKS_PER_INCH=36;
 
@@ -47,6 +46,9 @@ public class Red2 extends LinearOpMode {
     private int[] targetClicks = {0, 0, 0, 0};
 
     private Servo shoulder, elbow;
+    private Servo glyphRightBack = null;
+    private Servo glyphLeftBack = null;
+    private Servo actuatorBack = null;
     private ColorSensor jewelSensor;
     private double spos = 0.0;
     private double epos = 0.9;
@@ -59,12 +61,20 @@ public class Red2 extends LinearOpMode {
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
         shoulder = hardwareMap.servo.get("shoulder");
-        elbow = hardwareMap.servo.get("elbow");
         jewelSensor = hardwareMap.colorSensor.get("jewelSensor");
+        elbow = hardwareMap.servo.get("elbow");
         leftFront = hardwareMap.get(DcMotor.class, "leftFront");
         rightFront = hardwareMap.get(DcMotor.class, "rightFront");
+
+        //Glyph stuff
         leftBack = hardwareMap.get(DcMotor.class, "leftBack");
         rightBack = hardwareMap.get(DcMotor.class, "rightBack");
+        liftBack = hardwareMap.get(DcMotor.class, "liftBack");
+        actuatorBack = hardwareMap.get(Servo.class, "actuatorBack");
+        glyphLeftBack = hardwareMap.servo.get("glyphLeftBack");
+        glyphRightBack = hardwareMap.servo.get("glyphRightBack");
+        glyphLeftBack.setDirection(Servo.Direction.REVERSE);
+        glyphRightBack.setDirection(Servo.Direction.FORWARD);
 
         leftFront.setDirection(DcMotor.Direction.REVERSE);
         leftBack.setDirection(DcMotor.Direction.REVERSE);
@@ -114,7 +124,7 @@ public class Red2 extends LinearOpMode {
             elbow.setPosition(.9);
             sleep(1000);
         }
-        else if(jewelSensor.red()<jewelSensor.blue()){
+        else if(jewelSensor.red()>jewelSensor.blue()){
             shoulder.setPosition(.6);
 
             sleep(1000);
@@ -138,18 +148,14 @@ public class Red2 extends LinearOpMode {
         shoulder.setPosition(0);
         sleep(1000);
 
-        moveDistBack(15, 15, 15, 15);
+        moveDistForward(36, 36, 36, 36);
         brake();
         sleep(500);
-        turnLeft(45);
+        turnLeft(90);
         brake();
         sleep(500);
-        moveDistBack(6, 6,6,6);
+        moveDistBack(6,6,6,6);
         brake();
-        sleep(500);
-        turnRight(45);
-        brake();
-        //moveDistBack(4,4,4,4);
         //}
 
 
@@ -157,6 +163,55 @@ public class Red2 extends LinearOpMode {
 
     }
     public void turnRight(double degrees){
+        double dist = 12*Math.PI *(2*degrees/360);
+        double leftFrontTargetDist = -dist;
+        double leftBackTargetDist = -dist;
+        double rightFrontTargetDist = dist;
+        double rightBackTargetDist = dist;
+
+        targetDist[0] = leftFrontTargetDist;
+        targetDist[1] = leftBackTargetDist;
+        targetDist[2] = rightFrontTargetDist;
+        targetDist[3] = rightBackTargetDist;
+
+        zeroPos[0] = leftFront.getCurrentPosition();
+        zeroPos[1] = leftBack.getCurrentPosition();
+        zeroPos[2] = rightFront.getCurrentPosition();
+        zeroPos[3] = rightBack.getCurrentPosition();
+
+        targetClicks[0] = (int)(targetDist[0] * TICKS_PER_INCH);
+        targetClicks[1] = (int)((int)(targetDist[1] * TICKS_PER_INCH));
+        targetClicks[2] = (int)((int)(targetDist[2] * TICKS_PER_INCH));
+        targetClicks[3]= (int)((int)(targetDist[3] * TICKS_PER_INCH));
+
+        leftFront.setPower(-.1);
+        leftBack.setPower(-.1);
+        rightFront.setPower(.1);
+        rightBack.setPower(.1);
+
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
+
+
+        while(opModeIsActive() && leftFront.getCurrentPosition()<zeroPos[0]-targetClicks[0] &&
+                leftBack.getCurrentPosition()<zeroPos[1]-targetClicks[1] &&
+                rightFront.getCurrentPosition()<zeroPos[2]+targetClicks[2] &&
+                rightBack.getCurrentPosition()<zeroPos[3]+targetClicks[3]){
+
+            telemetry.addData("Left front pos: ", leftFront.getCurrentPosition());
+            telemetry.addData("Left back pos: ", leftBack.getCurrentPosition());
+            telemetry.addData("Right front pos: ", leftFront.getCurrentPosition());
+            telemetry.addData("Right back pos: ", leftFront.getCurrentPosition());
+            telemetry.update();
+
+        }
+
+    }
+    public void turnLeft(double degrees){
         double dist = 12*Math.PI *(2*degrees/360);
         double leftFrontTargetDist = dist;
         double leftBackTargetDist = dist;
@@ -195,55 +250,6 @@ public class Red2 extends LinearOpMode {
                 leftBack.getCurrentPosition()<zeroPos[1]+targetClicks[1] &&
                 rightFront.getCurrentPosition()<zeroPos[2]-targetClicks[2] &&
                 rightBack.getCurrentPosition()<zeroPos[3]-targetClicks[3]){
-
-            telemetry.addData("Left front pos: ", leftFront.getCurrentPosition());
-            telemetry.addData("Left back pos: ", leftBack.getCurrentPosition());
-            telemetry.addData("Right front pos: ", leftFront.getCurrentPosition());
-            telemetry.addData("Right back pos: ", leftFront.getCurrentPosition());
-            telemetry.update();
-
-        }
-
-    }
-    public void turnLeft(double degrees){
-        double dist = 12*Math.PI *(2*degrees/360);
-        double leftFrontTargetDist = -dist;
-        double leftBackTargetDist = -dist;
-        double rightFrontTargetDist = +dist;
-        double rightBackTargetDist = +dist;
-
-        targetDist[0] = leftFrontTargetDist;
-        targetDist[1] = leftBackTargetDist;
-        targetDist[2] = rightFrontTargetDist;
-        targetDist[3] = rightBackTargetDist;
-
-        zeroPos[0] = leftFront.getCurrentPosition();
-        zeroPos[1] = leftBack.getCurrentPosition();
-        zeroPos[2] = rightFront.getCurrentPosition();
-        zeroPos[3] = rightBack.getCurrentPosition();
-
-        targetClicks[0] = (int)(targetDist[0] * TICKS_PER_INCH);
-        targetClicks[1] = (int)((int)(targetDist[1] * TICKS_PER_INCH));
-        targetClicks[2] = (int)((int)(targetDist[2] * TICKS_PER_INCH));
-        targetClicks[3]= (int)((int)(targetDist[3] * TICKS_PER_INCH));
-
-        leftFront.setPower(-.1);
-        leftBack.setPower(-.1);
-        rightFront.setPower(.1);
-        rightBack.setPower(.1);
-
-        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-
-
-
-        while(opModeIsActive() && leftFront.getCurrentPosition()<zeroPos[0]-targetClicks[0] &&
-                leftBack.getCurrentPosition()<zeroPos[1]-targetClicks[1] &&
-                rightFront.getCurrentPosition()<zeroPos[2]+targetClicks[2] &&
-                rightBack.getCurrentPosition()<zeroPos[3]+targetClicks[3]){
 
             telemetry.addData("Left front pos: ", leftFront.getCurrentPosition());
             telemetry.addData("Left back pos: ", leftBack.getCurrentPosition());
@@ -442,4 +448,3 @@ public class Red2 extends LinearOpMode {
         rightBack.setPower(0);
     }
 }
-
