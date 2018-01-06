@@ -136,11 +136,15 @@ public class Red1 extends LinearOpMode {
         telemetry.addData("Blue val:", jewelSensor.blue());
         telemetry.addData("Red val:", jewelSensor.red());
         telemetry.update();
-        if(jewelSensor.red()>jewelSensor.blue()){
+        if(jewelSensor.red()==0 && jewelSensor.blue()==0) {
+            telemetry.addData("Can't Read", "");
+        }
+        else if(jewelSensor.red()<jewelSensor.blue()){
             shoulder.setPosition(.6);
 
             sleep(1000);
             telemetry.addData("Shoulder: ", shoulder.getPosition());
+
             telemetry.update();
             elbow.setPosition(.9);
             sleep(1000);

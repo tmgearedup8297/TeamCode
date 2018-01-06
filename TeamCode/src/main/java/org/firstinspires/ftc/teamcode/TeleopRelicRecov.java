@@ -90,13 +90,18 @@ public class TeleopRelicRecov extends OpMode
     private boolean GRABBER_OPEN=true;
     private boolean direction = false;
     private int actuatorCount=0;
-
+    private Servo shoulder, elbow;
+    private ColorSensor jewelSensor;
 
     /*
      * Code to run ONCE when the driver hits INIT
      */
     @Override
     public void init() {
+        shoulder = hardwareMap.servo.get("shoulder");
+        elbow = hardwareMap.servo.get("elbow");
+        jewelSensor = hardwareMap.colorSensor.get("jewelSensor");
+
         telemetry.addData("Status", "Initialized");
         upDownFront  = hardwareMap.get(DcMotor.class, "liftFront");
         upDownBack = hardwareMap.get(DcMotor.class, "liftBack");
@@ -161,40 +166,29 @@ public class TeleopRelicRecov extends OpMode
     @Override
     public void loop() {
 
-
-        if(actuatorBack.getPosition()>=.1){
-            glyphRightBack.setPosition(.7);
-            glyphLeftBack.setPosition(.815);
-
-        }
+        shoulder.setPosition(0);
+        elbow.setPosition(.9);
+h.
         if(gamepad2.x){
-            actuatorBack.setPosition(0);
+            actuatorBack.setPosition(0.2);
         }
         if(gamepad2.y){
             actuatorBack.setPosition(.7);
         }
 
         upDownBack.setPower(gamepad2.left_stick_y);
-        if(actuatorBack.getPosition()<.1) {
+
 
             if (gamepad2.a) {
-                GRABBER_OPEN = true;
-
-            } else if (gamepad2.b) {
-                GRABBER_OPEN = false;
-            }
-
-            if (GRABBER_OPEN == true) {
                 glyphLeftBack.setPosition(.68);
                 glyphRightBack.setPosition(.515);
                 //.68 and .815
             }
-            if (GRABBER_OPEN == false) {
-                glyphLeftBack.setPosition(.9);
-                glyphRightBack.setPosition(.9);
+            if (gamepad2.b) {
+                glyphLeftBack.setPosition(.925);
+                glyphRightBack.setPosition(1);
             }
-        }
-        //}
+
 
         /*else if(direction==false){
             upDownBack.setPower(gamepad2.left_stick_y);
