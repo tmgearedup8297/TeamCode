@@ -73,10 +73,14 @@ public class Red1 extends LinearOpMode {
     private double[] targetDist = {24, 24, 24, 24};
     private int[] targetClicks = {0, 0, 0, 0};
 
-    private Servo shoulder, elbow;
+
     private ColorSensor jewelSensor;
     private double spos = 0.0;
     private double epos = 0.9;
+    private Servo shoulder, elbow;
+    private Servo glyphRightBack = null;
+    private Servo glyphLeftBack = null;
+    private Servo actuatorBack = null;
 
     @Override
     public void runOpMode() {
@@ -103,6 +107,11 @@ public class Red1 extends LinearOpMode {
         telemetry.addData("Status", "Resetting Encoders");    //
         telemetry.update();
 
+        actuatorBack = hardwareMap.get(Servo.class, "actuatorBack");
+        glyphLeftBack = hardwareMap.servo.get("glyphLeftBack");
+        glyphRightBack = hardwareMap.servo.get("glyphRightBack");
+        glyphLeftBack.setDirection(Servo.Direction.REVERSE);
+        glyphRightBack.setDirection(Servo.Direction.FORWARD);
 
         /**/
         leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -122,7 +131,8 @@ public class Red1 extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
 
         runtime.reset();
-
+            glyphRightBack.setPosition(.7);
+            glyphLeftBack.setPosition(.815);
 
               shoulder.setPosition(.42);
               sleep(1000);
@@ -161,18 +171,16 @@ public class Red1 extends LinearOpMode {
         }
 
 
-
-
             shoulder.setPosition(0);
             sleep(1000);
 
         moveDistBack(36, 36, 36, 36);
         brake();
         sleep(500);
-        turnRight(90);
+        turnLeft(90);
         brake();
         sleep(500);
-        moveDistForward(6,6,6,6);
+        moveDistBack(6,6,6,6);
         brake();
         //}
 
@@ -180,27 +188,28 @@ public class Red1 extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
 
     }
+
     public void turnRight(double degrees){
         double dist = 12*Math.PI *(2*degrees/360);
-        double leftFrontTargetDist = -dist;
-        double leftBackTargetDist = -dist;
-        double rightFrontTargetDist = dist;
-        double rightBackTargetDist = dist;
-        
-        targetDist[0] = leftFrontTargetDist;
-        targetDist[1] = leftBackTargetDist;
-        targetDist[2] = rightFrontTargetDist;
-        targetDist[3] = rightBackTargetDist;
+    double leftFrontTargetDist = -dist;
+    double leftBackTargetDist = -dist;
+    double rightFrontTargetDist = dist;
+    double rightBackTargetDist = dist;
 
-        zeroPos[0] = leftFront.getCurrentPosition();
-        zeroPos[1] = leftBack.getCurrentPosition();
-        zeroPos[2] = rightFront.getCurrentPosition();
-        zeroPos[3] = rightBack.getCurrentPosition();
+    targetDist[0] = leftFrontTargetDist;
+    targetDist[1] = leftBackTargetDist;
+    targetDist[2] = rightFrontTargetDist;
+    targetDist[3] = rightBackTargetDist;
 
-        targetClicks[0] = (int)(targetDist[0] * TICKS_PER_INCH);
-        targetClicks[1] = (int)((int)(targetDist[1] * TICKS_PER_INCH));
-        targetClicks[2] = (int)((int)(targetDist[2] * TICKS_PER_INCH));
-        targetClicks[3]= (int)((int)(targetDist[3] * TICKS_PER_INCH));
+    zeroPos[0] = leftFront.getCurrentPosition();
+    zeroPos[1] = leftBack.getCurrentPosition();
+    zeroPos[2] = rightFront.getCurrentPosition();
+    zeroPos[3] = rightBack.getCurrentPosition();
+
+    targetClicks[0] = (int)(targetDist[0] * TICKS_PER_INCH);
+    targetClicks[1] = (int)((int)(targetDist[1] * TICKS_PER_INCH));
+    targetClicks[2] = (int)((int)(targetDist[2] * TICKS_PER_INCH));
+    targetClicks[3]= (int)((int)(targetDist[3] * TICKS_PER_INCH));
 
         leftFront.setPower(-.1);
         leftBack.setPower(-.1);
@@ -216,19 +225,19 @@ public class Red1 extends LinearOpMode {
 
 
         while(opModeIsActive() && leftFront.getCurrentPosition()<zeroPos[0]-targetClicks[0] &&
-                leftBack.getCurrentPosition()<zeroPos[1]-targetClicks[1] &&
-                rightFront.getCurrentPosition()<zeroPos[2]+targetClicks[2] &&
-                rightBack.getCurrentPosition()<zeroPos[3]+targetClicks[3]){
+            leftBack.getCurrentPosition()<zeroPos[1]-targetClicks[1] &&
+            rightFront.getCurrentPosition()<zeroPos[2]+targetClicks[2] &&
+            rightBack.getCurrentPosition()<zeroPos[3]+targetClicks[3]){
 
-            telemetry.addData("Left front pos: ", leftFront.getCurrentPosition());
-            telemetry.addData("Left back pos: ", leftBack.getCurrentPosition());
-            telemetry.addData("Right front pos: ", leftFront.getCurrentPosition());
-            telemetry.addData("Right back pos: ", leftFront.getCurrentPosition());
-            telemetry.update();
-
-        }
+        telemetry.addData("Left front pos: ", leftFront.getCurrentPosition());
+        telemetry.addData("Left back pos: ", leftBack.getCurrentPosition());
+        telemetry.addData("Right front pos: ", leftFront.getCurrentPosition());
+        telemetry.addData("Right back pos: ", leftFront.getCurrentPosition());
+        telemetry.update();
 
     }
+
+}
     public void turnLeft(double degrees){
         double dist = 12*Math.PI *(2*degrees/360);
         double leftFrontTargetDist = dist;

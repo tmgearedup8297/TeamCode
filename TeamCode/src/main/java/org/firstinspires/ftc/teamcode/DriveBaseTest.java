@@ -106,16 +106,50 @@ public class DriveBaseTest extends OpMode
     @Override
     public void loop() {
         // Setup a variable for each drive wheel to save power level for telemetry
-        float leftY=(float)(gamepad1.left_stick_y *.75);
-        float leftX=(float)(gamepad1.left_stick_x * .75);
-        float rightX= (float)(gamepad1.right_stick_x * .75);
+            if(gamepad1.a){
+                leftFront.setPower(.2);
+                leftBack.setPower(.2);
+                rightFront.setPower(.2);
+                rightBack.setPower(.2);
+            }
+        else if(gamepad1.b){
+            leftFront.setPower(.1);
+            leftBack.setPower(.1);
+            rightFront.setPower(.1);
+            rightBack.setPower(.1);
+        }
+       else if(gamepad1.x){
+            leftFront.setPower(.05);
+            leftBack.setPower(.05);
+            rightFront.setPower(.05);
+            rightBack.setPower(.05);
+        }
+       else if(gamepad1.y){
+            leftFront.setPower(.04);
+            leftBack.setPower(.04);
+            rightFront.setPower(.04);
+            rightBack.setPower(.04);
+        }
+        else if(gamepad1.right_bumper){
+            leftFront.setPower(.03);
+            leftBack.setPower(.03);
+            rightFront.setPower(.03);
+            rightBack.setPower(.03);
+        }
+        else if(gamepad1.left_bumper){
+            leftFront.setPower(.02);
+            leftBack.setPower(.02);
+            rightFront.setPower(.02);
+            rightBack.setPower(.02);
+        }
+        else if(gamepad1.dpad_up){
+                leftFront.setPower(.01);
+                leftBack.setPower(.01);
+                rightFront.setPower(.01);
+                rightBack.setPower(.01);
+            }
 
 
-
-        leftFront.setPower((leftY-leftX-rightX));
-        leftBack.setPower(leftY+leftX-rightX);
-        rightFront.setPower((leftY-leftX+rightX));
-        rightBack.setPower((leftY+leftX+rightX));
     }
 
     /*

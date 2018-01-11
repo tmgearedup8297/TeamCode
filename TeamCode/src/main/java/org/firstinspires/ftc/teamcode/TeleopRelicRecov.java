@@ -93,11 +93,18 @@ public class TeleopRelicRecov extends OpMode
     private Servo shoulder, elbow;
     private ColorSensor jewelSensor;
 
+
+    private boolean rbLastPass = false;
+    private boolean slowTurn = true;
+    private double turnPercent = 1.0;
+
+
     /*
      * Code to run ONCE when the driver hits INIT
      */
     @Override
     public void init() {
+
         shoulder = hardwareMap.servo.get("shoulder");
         elbow = hardwareMap.servo.get("elbow");
         jewelSensor = hardwareMap.colorSensor.get("jewelSensor");
@@ -154,8 +161,8 @@ public class TeleopRelicRecov extends OpMode
         runtime.reset();
         //glyphRightFront.setPosition(.7);
         //glyphLeftFront.setPosition(.7);
-        glyphRightBack.setPosition(.7);
-        glyphLeftBack.setPosition(.815);
+        glyphRightBack.setPosition(.71);
+        glyphLeftBack.setPosition(.825);
         //actuatorFront.setPosition(.7);
         actuatorBack.setPosition(.7);
     }
@@ -166,8 +173,9 @@ public class TeleopRelicRecov extends OpMode
     @Override
     public void loop() {
 
-        shoulder.setPosition(0);
         elbow.setPosition(.9);
+        shoulder.setPosition(0);
+
 
         if(gamepad2.x){
             actuatorBack.setPosition(0.2);
@@ -180,8 +188,8 @@ public class TeleopRelicRecov extends OpMode
 
 
             if (gamepad2.a) {
-                glyphLeftBack.setPosition(.68);
-                glyphRightBack.setPosition(.515);
+                glyphRightBack.setPosition(.68);
+                glyphLeftBack.setPosition(.795);
                 //.68 and .815
             }
             if (gamepad2.b) {
@@ -190,43 +198,32 @@ public class TeleopRelicRecov extends OpMode
             }
 
 
-        /*else if(direction==false){
-            upDownBack.setPower(gamepad2.left_stick_y);
 
-                if (gamepad2.a) {
-                    GRABBER_OPEN = true;
-
-                } else if (gamepad2.b) {
-                    GRABBER_OPEN = false;
-                }
-
-            if(GRABBER_OPEN==true){
-                glyphLeftBack.setPosition(.68);
-                glyphRightBack.setPosition(.515);
+        boolean rbPressed = gamepad1.right_bumper;
+        if(rbPressed && !rbLastPass)
+        {
+            slowTurn = !slowTurn;
+            if(slowTurn){
+                turnPercent = 0.5;
             }
-            if(GRABBER_OPEN==false){
-                glyphLeftBack.setPosition(.9);
-                glyphRightBack.setPosition(.);
+            else {
+                turnPercent = 1.0;
             }
-        }*/
-
-
-        /*if(gamepad2.b && activatorOpen==true){
-
-            actuatorBack.setPosition(0);
-            actuatorBack.setPosition(0);
-
         }
-        else if(gamepad2.b && activatorOpen==false){
+        rbLastPass = rbPressed;
 
-            actuatorBack.setPosition(.7);
-            actuatorBack.setPosition(.7);
 
-        }*/
 
-        float leftY=(float)(gamepad1.left_stick_y *.75);
-        float leftX=(float)(gamepad1.left_stick_x * .75);
-        float rightX= (float)(gamepad1.right_stick_x * .75);
+
+
+        float leftYScale = (float)((.75)*(Math.pow(gamepad1.left_stick_y,2)));
+        float leftXScale = (float)((.75)*(Math.pow(gamepad1.left_stick_x,2)));
+        float rightXScale = (float)((.75)*(Math.pow(gamepad1.right_stick_x,2)));
+
+
+        float leftY=(float)(gamepad1.left_stick_y *leftYScale);
+        float leftX=(float)(gamepad1.left_stick_x * leftXScale);
+        float rightX= (float)(gamepad1.right_stick_x * rightXScale);
 
 
 

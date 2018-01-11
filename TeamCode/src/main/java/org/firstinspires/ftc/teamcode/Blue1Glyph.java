@@ -151,14 +151,22 @@ public class Blue1Glyph extends LinearOpMode {
         moveDistForward(36, 36, 36, 36);
         brake();
         sleep(500);
-        turnLeft(90);
+        turnRight(90);
         brake();
         sleep(500);
-        moveDistBack(6,6,6,6);
+        moveDistForward(6,6,6,6);
         brake();
+        sleep(500);
         //}
 
+        //Glyph stuff
+        glyphLeftBack.setPosition(.925);
+        glyphRightBack.setPosition(1);
+        sleep(500);
+        liftBack.setPower(15);
+        sleep(500);
 
+        moveDistBack(1,1,1,1);
         // run until the end of the match (driver presses STOP)
 
     }

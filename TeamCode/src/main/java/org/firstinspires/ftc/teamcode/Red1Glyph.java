@@ -83,130 +83,196 @@ public class Red1Glyph extends LinearOpMode {
     public void runOpMode() {
 
 
-        // Initialize the hardware variables. Note that the strings used here as parameters
-        // to 'get' must correspond to the names assigned during the robot configuration
-        // step (using the FTC Robot Controller app on the phone).
-        shoulder = hardwareMap.servo.get("shoulder");
-        jewelSensor = hardwareMap.colorSensor.get("jewelSensor");
-        elbow = hardwareMap.servo.get("elbow");
-        leftFront = hardwareMap.get(DcMotor.class, "leftFront");
-        rightFront = hardwareMap.get(DcMotor.class, "rightFront");
+            // Initialize the hardware variables. Note that the strings used here as parameters
+            // to 'get' must correspond to the names assigned during the robot configuration
+            // step (using the FTC Robot Controller app on the phone).
+            shoulder = hardwareMap.servo.get("shoulder");
+            jewelSensor = hardwareMap.colorSensor.get("jewelSensor");
+            elbow = hardwareMap.servo.get("elbow");
+            leftFront = hardwareMap.get(DcMotor.class, "leftFront");
+            rightFront = hardwareMap.get(DcMotor.class, "rightFront");
 
-        //Glyph stuff
-        leftBack = hardwareMap.get(DcMotor.class, "leftBack");
-        rightBack = hardwareMap.get(DcMotor.class, "rightBack");
-        liftBack = hardwareMap.get(DcMotor.class, "liftBack");
-        actuatorBack = hardwareMap.get(Servo.class, "actuatorBack");
-        glyphLeftBack = hardwareMap.servo.get("glyphLeftBack");
-        glyphRightBack = hardwareMap.servo.get("glyphRightBack");
-        glyphLeftBack.setDirection(Servo.Direction.REVERSE);
-        glyphRightBack.setDirection(Servo.Direction.FORWARD);
+            //Glyph stuff
+            leftBack = hardwareMap.get(DcMotor.class, "leftBack");
+            rightBack = hardwareMap.get(DcMotor.class, "rightBack");
+            liftBack = hardwareMap.get(DcMotor.class, "liftBack");
+            actuatorBack = hardwareMap.get(Servo.class, "actuatorBack");
+            glyphLeftBack = hardwareMap.servo.get("glyphLeftBack");
+            glyphRightBack = hardwareMap.servo.get("glyphRightBack");
+            glyphLeftBack.setDirection(Servo.Direction.REVERSE);
+            glyphRightBack.setDirection(Servo.Direction.FORWARD);
 
-        leftFront.setDirection(DcMotor.Direction.REVERSE);
-        leftBack.setDirection(DcMotor.Direction.REVERSE);
-        rightFront.setDirection(DcMotor.Direction.FORWARD);
-        rightBack.setDirection(DcMotor.Direction.FORWARD);
-
-
-        // Send telemetry message to signify robot waiting;
-        telemetry.addData("Status", "Resetting Encoders");    //
-        telemetry.update();
+            leftFront.setDirection(DcMotor.Direction.REVERSE);
+            leftBack.setDirection(DcMotor.Direction.REVERSE);
+            rightFront.setDirection(DcMotor.Direction.FORWARD);
+            rightBack.setDirection(DcMotor.Direction.FORWARD);
 
 
-        /**/
-        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        elbow.setPosition(.9);
-        telemetry.addData("Status", "Initialized");
-        telemetry.update();
-        //shoulder.setPosition(spos);
-       // elbow.setPosition(epos);
-
-        waitForStart();
-
-
-        // Wait for the game to start (driver presses PLAY)
-
-        runtime.reset();
-
-
-              shoulder.setPosition(.42);
-              sleep(1000);
-
-            elbow.setPosition(.37);
-            sleep(1000);
-
-
-
-        sleep(1500);
-        telemetry.addData("Blue val:", jewelSensor.blue());
-        telemetry.addData("Red val:", jewelSensor.red());
-        telemetry.update();
-        if(jewelSensor.red()==0 && jewelSensor.blue()==0) {
-            telemetry.addData("Can't Read", "");
-        }
-        else if(jewelSensor.red()<jewelSensor.blue()){
-            shoulder.setPosition(.6);
-
-            sleep(1000);
-            telemetry.addData("Shoulder: ", shoulder.getPosition());
-
+            // Send telemetry message to signify robot waiting;
+            telemetry.addData("Status", "Resetting Encoders");    //
             telemetry.update();
+
+
+            /**/
+            leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
             elbow.setPosition(.9);
+            telemetry.addData("Status", "Initialized");
+            telemetry.update();
+            //shoulder.setPosition(spos);
+            // elbow.setPosition(epos);
+
+            waitForStart();
+
+
+            // Wait for the game to start (driver presses PLAY)
+
+            runtime.reset();
+
+
+                shoulder.setPosition(.42);
+                  sleep(1000);
+
+                elbow.setPosition(.37);
+                sleep(1000);
+
+
+
+            sleep(1500);
+            telemetry.addData("Blue val:", jewelSensor.blue());
+            telemetry.addData("Red val:", jewelSensor.red());
+            telemetry.update();
+            if(jewelSensor.red()==0 && jewelSensor.blue()==0) {
+                telemetry.addData("Can't Read", "");
+                elbow.setPosition(.9);
+                sleep(1000);
+            }
+            else if(jewelSensor.red()<jewelSensor.blue()){
+                shoulder.setPosition(.6);
+
+                sleep(1000);
+                telemetry.addData("Shoulder: ", shoulder.getPosition());
+
+                telemetry.update();
+                elbow.setPosition(.9);
+                sleep(1000);
+                //}
+            }
+            else{
+                shoulder.setPosition(.25);
+                sleep(1000);
+                elbow.setPosition(.9);
+                sleep(1000);
+
+            }
+
+
+
+
+                shoulder.setPosition(0);
+
+
+            moveDistBack(36, 36, 36, 36);
+            brake();
+            sleep(500);
+            moveDistForward(4, 4, 4, 4);
+            brake();
+            sleep(500);
+            turnLeft(180);
+            brake();
+            sleep(500);
+
+            telemetry.addData("Init for grabber", "");
+            glyphRightBack.setPosition(.71);
+            glyphLeftBack.setPosition(.825);
+            telemetry.update();
+
+            telemetry.addData("Spamming actuator", "");
+            actuatorBack.setPosition(.7);
+            sleep(100);
+            actuatorBack.setPosition(.2);
+            sleep(100);
+            actuatorBack.setPosition(.7);
+            sleep(100);
+            actuatorBack.setPosition(.2);
+            telemetry.update();
+
             sleep(1000);
+            telemetry.addData("Widening flipped out grabber", "");
+            glyphRightBack.setPosition(.58);
+            glyphLeftBack.setPosition(.695);
+            telemetry.update();
+
+            telemetry.addData("Moving forward to get glyph in grabber", "");
+            moveDistForward(4, 4, 4, 4);
+            brake();
+            sleep(750);
+            telemetry.update();
+            //Glyph stuff
+
+            telemetry.addData("Closing grabber on glyph", "");
+            glyphLeftBack.setPosition(.925);
+            glyphRightBack.setPosition(1);
+            telemetry.update();
+
+            sleep(1000);
+
+            telemetry.addData("Making lift work at quarter speed for 1 sec", "");
+            liftBack.setPower(.35);
+            sleep(1500);
+            liftBack.setPower(0);
+            telemetry.update();
+
+            telemetry.addData("Move back 4 in", "");
+            moveDistBack(4, 4, 4, 4);
+            brake();
+            telemetry.update();
+
+            sleep(500);
+
+            telemetry.addData("Turn towards cryptobox", "");
+            turnLeft(60);
+            brake();
+            telemetry.update();
+
+            sleep(500);
+
+            telemetry.addData("Push the glyph into cryptobox","");
+            moveDistForward(7,7,7,7);
+            brake();
+            sleep(500);
+
+            liftBack.setPower(-.35);
+            sleep(800);
+            liftBack.setPower(0);
+
+            telemetry.addData("Letting go of the block","");
+            glyphRightBack.setPosition(.68);
+            glyphLeftBack.setPosition(.795);
+            telemetry.update();
+
+            telemetry.addData("Moving away from the block","");
+            moveDistBack(2,2,2,2);
+            brake();
+            sleep(500);
+            telemetry.update();
+
+            liftBack.setPower(.5);
+            sleep(2000);
+            liftBack.setPower(0);
+            sleep(500);
+            moveDistForward(6,6,6,6);
+            brake();
+            sleep(500);
+            moveDistBack(2,2,2,2);
+            brake();
             //}
-        }
-        else{
-            shoulder.setPosition(.25);
-            sleep(1000);
-            elbow.setPosition(.9);
-            sleep(1000);
-
-        }
 
 
-
-
-            shoulder.setPosition(0);
-
-        //Glyph stuff
-        actuatorBack.setPosition(.7);
-        sleep(250);
-        actuatorBack.setPosition(.2);
-        glyphLeftBack.setPosition(.925);
-        glyphRightBack.setPosition(1);
-        sleep(250);
-        glyphLeftBack.setPosition(.68);
-        glyphRightBack.setPosition(.515);
-        sleep(250);
-        liftBack.setPower(15);
-        sleep(1000);
-        liftBack.setPower(0);
-
-        moveDistBack(36, 36, 36, 36);
-        brake();
-        sleep(500);
-        turnRight(90);
-        brake();
-        sleep(500);
-        moveDistForward(6,6,6,6);
-        brake();
-        sleep(500);
-
-        //Glyph stuff
-        glyphLeftBack.setPosition(.925);
-        glyphRightBack.setPosition(1);
-        sleep(500);
-        moveDistBack(1,1,1,1);
-        liftBack.setPower(15);
-        sleep(3000);
-        //}
-
-
-        // run until the end of the match (driver presses STOP)
+            // run until the end of the match (driver presses STOP)
 
     }
     public void turnRight(double degrees){
