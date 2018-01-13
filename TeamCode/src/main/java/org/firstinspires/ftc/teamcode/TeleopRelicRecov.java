@@ -38,6 +38,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.hardware.ColorSensor; //
 
+import static android.R.attr.x;
+import static android.R.attr.y;
 import static android.os.SystemClock.sleep;
 import static com.qualcomm.robotcore.util.Range.scale;
 
@@ -199,7 +201,7 @@ public class TeleopRelicRecov extends OpMode
 
 
 
-        boolean rbPressed = gamepad1.right_bumper;
+        /*boolean rbPressed = gamepad1.right_bumper;
         if(rbPressed && !rbLastPass)
         {
             slowTurn = !slowTurn;
@@ -210,20 +212,21 @@ public class TeleopRelicRecov extends OpMode
                 turnPercent = 1.0;
             }
         }
-        rbLastPass = rbPressed;
+        rbLastPass = rbPressed;*/
 
 
 
+        float leftY= getWheelPower(gamepad1.left_stick_y);
+        float leftX= getWheelPower(gamepad1.left_stick_x);
+        float rightX= getWheelPower(gamepad1.right_stick_x);
 
+        telemetry.addData("LeftXRaw", gamepad1.left_stick_x);
+        telemetry.addData("LeftYRaw", gamepad1.left_stick_y);
+        telemetry.addData("RightXRaw",gamepad1.right_stick_x);
+        telemetry.addData("LeftX", leftX);
+        telemetry.addData("LeftY", leftY);
+        telemetry.addData("RightX", rightX);
 
-        float leftYScale = (float)((.75)*(Math.pow(gamepad1.left_stick_y,2)));
-        float leftXScale = (float)((.75)*(Math.pow(gamepad1.left_stick_x,2)));
-        float rightXScale = (float)((.75)*(Math.pow(gamepad1.right_stick_x,2)));
-
-
-        float leftY=(float)(gamepad1.left_stick_y *leftYScale);
-        float leftX=(float)(gamepad1.left_stick_x * leftXScale);
-        float rightX= (float)(gamepad1.right_stick_x * rightXScale);
 
 
 
@@ -232,26 +235,48 @@ public class TeleopRelicRecov extends OpMode
         rightFront.setPower((leftY-leftX+rightX));
         rightBack.setPower((leftY+leftX+rightX));
 
-        if(direction==true){
-            telemetry.addData("Direction", "backwards");
-        }
-        else{
-            telemetry.addData("Direction", "forwards");
-        }
-        telemetry.addData("LeftBack", glyphLeftBack.getPosition());
-        telemetry.addData("LeftFront", glyphLeftFront.getPosition());
-        telemetry.addData("RightBack", glyphRightBack.getPosition());
-        telemetry.addData("RightFront", glyphRightBack.getPosition());
+
+
+
 
 
         telemetry.update();
     }
 
-    /*
-     * Code to run ONCE after the driver hits STOP
-     */
+
     @Override
     public void stop() {
+    }
+
+    public static float getWheelPower(float in){
+
+        if(in<0){// if in is negative
+            in*=100;
+            if(in>=-2){
+                in = (float)((in*0.0315)/100);
+            }
+            else if(in<-2 && in>=-39.537){
+                in = (float)((0.021*(Math.pow(in-2, 2))+0.063)/100);
+            }
+            else{
+                in = (float)((0.75*in)/100);
+            }
+            return in;
+        }
+        else{//if in is positive
+            in*=100;
+            if(in<=2){
+                in = (float)((in*0.0315)/100);
+            }
+            else if(in>2 && in<=39.537){
+                in = (float)((0.021*(Math.pow(in-2, 2))+0.063)/1000);
+            }
+            else{
+                in = (float)((0.75*in)/100);
+            }
+            return in;
+        }
+
     }
 
 }
