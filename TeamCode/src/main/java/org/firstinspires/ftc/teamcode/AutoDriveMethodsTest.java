@@ -1,9 +1,9 @@
 
-
 package org.firstinspires.ftc.teamcode;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import org.firstinspires.ftc.teamcode.Teleop.moveDirection;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -23,6 +23,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
+import java.io.InterruptedIOException;
 import java.util.Locale;
 
 /**
@@ -64,7 +65,7 @@ public class AutoDriveMethodsTest extends LinearOpMode {
     // State used for updating telemetry
     Orientation angles;
     Acceleration gravity;
-
+    private float initAngle;
 
 
     //----------------------------------------------------------------------------------------------
@@ -72,8 +73,6 @@ public class AutoDriveMethodsTest extends LinearOpMode {
     //----------------------------------------------------------------------------------------------
 
     @Override public void runOpMode() {
-
-
 
         leftFront = hardwareMap.get(DcMotor.class, "leftFront");
         rightFront = hardwareMap.get(DcMotor.class, "rightFront");
@@ -89,8 +88,6 @@ public class AutoDriveMethodsTest extends LinearOpMode {
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Status", "Resetting Encoders");    //
         telemetry.update();
-
-
         /**/
         leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -120,8 +117,13 @@ public class AutoDriveMethodsTest extends LinearOpMode {
         imu.initialize(parameters);
 
         // Set up our telemetry dashboard
-        composeTelemetry();
+        //composeTelemetry();
 
+
+        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+        initAngle = angles.firstAngle;
+        float deltaAngle = 0;
         waitForStart();
 
         imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
@@ -132,7 +134,14 @@ public class AutoDriveMethodsTest extends LinearOpMode {
 
         runtime.reset();
 
+
         strafeDistRight(50, 50, 50, 50);
+        deltaAngle=angles.firstAngle-initAngle;
+        try{
+            spinTurnUsingDOF(deltaAngle, moveDirection.LEFT);
+        }catch(InterruptedException e){
+            e.printStackTrace();
+        }
         strafeDistLeft(50, 50, 50, 50);
         //}
 
@@ -140,22 +149,24 @@ public class AutoDriveMethodsTest extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
 
     }
-    public void spinTurnUsingDOF(float degrees, double power, String direction) throws InterruptedException {
+    public int formatDOFValue(int headingDof) {
 
+        //Reverse the values found from the adafruit 9DOF sensor
+        return -headingDof;
+    }
+    public void spinTurnUsingDOF(float degrees, moveDirection direction) throws InterruptedException {
 
-        Orientation initialOrientation = imu.getAngularOrientation();
-        float angle_0 = initialOrientation.firstAngle;
+        Orientation current_orientation;
 
 
 
         // get the first value when you enter the method
-
-
+        current_orientation = imu.getAngularOrientation();
+        int realOrientation = (int) (current_orientation.firstAngle - initAngle);
 
         // LEFT turn values always have to come in with -ve DEGREES
-        if (direction.equalsIgnoreCase("right")) {
-            degrees=angle_0+degrees;
-            while ((imu.getAngularOrientation().firstAngle < degrees) && opModeIsActive()) {
+        if (direction == moveDirection.RIGHT) {
+            while ((formatDOFValue(realOrientation) < degrees) && opModeIsActive()) {
 
                 leftBack.setPower(.1);
                 leftFront.setPower(.1);
@@ -164,32 +175,34 @@ public class AutoDriveMethodsTest extends LinearOpMode {
 
                 // refresh the  value inside the while loop
 
-
+                current_orientation = imu.getAngularOrientation();
+                realOrientation = (int) (current_orientation.firstAngle - initAngle);
 
             }
             brake();
-            //telemetry.addData("DOF gyro value WHILE RIGHT", realOrientation);
+            telemetry.addData("DOF gyro value WHILE RIGHT", realOrientation);
             telemetry.update();
 
             // RIGHT turn values always have to come in with +ve DEGREES
 
 
-        } else if (direction.equalsIgnoreCase("left")) {
+        } else if (direction == moveDirection.LEFT) {
 
-            while ((imu.getAngularOrientation().firstAngle > degrees) && opModeIsActive()) {
-                leftBack.setPower(-0.1);
-                leftFront.setPower(-0.1);
-                rightFront.setPower(0.1);
-                rightBack.setPower(0.1);
+            while ((formatDOFValue(realOrientation) > degrees) && opModeIsActive()) {
+                leftBack.setPower(-.1);
+                leftFront.setPower(-.1);
+                rightFront.setPower(.1);
+                rightBack.setPower(.1);
 
                 // refresh the  value inside the while loop
 
-
+                current_orientation = imu.getAngularOrientation();
+                realOrientation = (int) (current_orientation.firstAngle - initAngle);
 
             }
             brake();
 
-            //telemetry.addData("DOF gyro value WHILE LEFT", realOrientation);
+            telemetry.addData("DOF gyro value WHILE LEFT", realOrientation);
             telemetry.update();
         }
 
@@ -197,8 +210,23 @@ public class AutoDriveMethodsTest extends LinearOpMode {
         brake();
 
     }
-    public void strafeDistRight(int leftFrontTargetDist, int leftBackTargetDist, int rightFrontTargetDist, int rightBackTargetDist) {
+    public void correction(float targetAngle){
+        Orientation current = imu.getAngularOrientation();
+        
+        leftFront.setPower(-.1);
+        leftBack.setPower(-.1);
+        rightFront.setPower(.1);
+        rightBack.setPower(.1);
+        while(angles.firstAngle<targetAngle){
+            telemetry.addData("Current angle", angles.firstAngle);
+            telemetry.addData("Target", targetAngle);
+            telemetry.update();
+        }
+        brake();
+    }
 
+
+    public void strafeDistRight(int leftFrontTargetDist, int leftBackTargetDist, int rightFrontTargetDist, int rightBackTargetDist) {
 
         targetDist[0] = leftFrontTargetDist;
         targetDist[1] = leftBackTargetDist;
@@ -212,16 +240,16 @@ public class AutoDriveMethodsTest extends LinearOpMode {
 
         targetClicks[0] = (int) (targetDist[0] * TICKS_PER_INCH);
         targetClicks[1] = (int) (targetDist[1] * TICKS_PER_INCH);
-        ;
-        targetClicks[2] = (int) (targetDist[2] * TICKS_PER_INCH);
-        ;
-        targetClicks[3] = (int) (targetDist[3] * TICKS_PER_INCH);
-        ;
 
-        leftFront.setPower(-.14);
+        targetClicks[2] = (int) (targetDist[2] * TICKS_PER_INCH);
+
+        targetClicks[3] = (int) (targetDist[3] * TICKS_PER_INCH);
+
+
+        leftFront.setPower(-.1);
         leftBack.setPower(.1);
         rightFront.setPower(-.1);
-        rightBack.setPower(.14);
+        rightBack.setPower(.1);
 
         leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -232,12 +260,12 @@ public class AutoDriveMethodsTest extends LinearOpMode {
         while (opModeIsActive() && leftFront.getCurrentPosition() > zeroPos[0] - targetClicks[0] &&
                 rightBack.getCurrentPosition() < zeroPos[3] + targetClicks[3]) {
 
-                telemetry.update();
+
         }
 
 
     }
-    void composeTelemetry() {
+    /*void composeTelemetry() {
 
         // At the beginning of each telemetry update, grab a bunch of data
         // from the IMU that we will then display in separate lines.
@@ -306,7 +334,7 @@ public class AutoDriveMethodsTest extends LinearOpMode {
 
     String formatDegrees(double degrees){
         return String.format(Locale.getDefault(), "%.1f", AngleUnit.DEGREES.normalize(degrees));
-    }
+    }*/
     public void strafeDistLeft(int leftFrontTargetDist, int leftBackTargetDist, int rightFrontTargetDist, int rightBackTargetDist){
 
         targetDist[0] = leftFrontTargetDist;
