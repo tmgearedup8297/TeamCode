@@ -175,15 +175,15 @@ public class TeleopRelicRecov extends OpMode
     @Override
     public void loop() {
 
-        elbow.setPosition(.9);
-        shoulder.setPosition(0);
+        elbow.setPosition(.1);
+        shoulder.setPosition(1);
 
 
         if(gamepad2.x){
             actuatorBack.setPosition(0.2);
         }
         if(gamepad2.y){
-            actuatorBack.setPosition(.7);
+            actuatorBack.setPosition(0);
         }
 
         upDownBack.setPower(gamepad2.left_stick_y);
@@ -256,7 +256,7 @@ public class TeleopRelicRecov extends OpMode
                 in = (float)((in*0.0315)/100);
             }
             else if(in<-2 && in>=-39.537){
-                in = (float)((0.021*(Math.pow(in-2, 2))+0.063)/100);
+                in = (float)((0.021*(Math.pow(in-2, 2))+0.063)/-100);
             }
             else{
                 in = (float)((0.75*in)/100);
