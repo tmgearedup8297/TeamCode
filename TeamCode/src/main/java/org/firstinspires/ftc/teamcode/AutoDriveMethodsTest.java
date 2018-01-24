@@ -146,18 +146,11 @@ public class AutoDriveMethodsTest extends LinearOpMode {
 
     }
     public int formatDOFValue(int headingDof) {
-
-        //Reverse the values found from the adafruit 9DOF sensor
         return -headingDof;
     }
     public void spinTurnUsingDOF(float degrees, moveDirection direction) throws InterruptedException {
 
-        Orientation current_orientation;
-
-
-
-        // get the first value when you enter the method
-        current_orientation = imu.getAngularOrientation();
+        Orientation current_orientation = imu.getAngularOrientation();
         int realOrientation = (int) (current_orientation.firstAngle - initAngle);
 
         // LEFT turn values always have to come in with -ve DEGREES
@@ -233,34 +226,50 @@ public class AutoDriveMethodsTest extends LinearOpMode {
 
     public void strafeDistRight(int leftFrontTargetDist, int leftBackTargetDist, int rightFrontTargetDist, int rightBackTargetDist) {
 
-        targetDist[0] = leftFrontTargetDist;
+        targetDist[0] = leftFrontTargetDist; //getting target distances
         targetDist[1] = leftBackTargetDist;
         targetDist[2] = rightFrontTargetDist;
         targetDist[3] = rightBackTargetDist;
 
-        zeroPos[0] = leftFront.getCurrentPosition();
-        zeroPos[1] = leftBack.getCurrentPosition();
-        zeroPos[2] = rightFront.getCurrentPosition();
+        zeroPos[0] = leftFront.getCurrentPosition();//getting current positions of the motors
+        zeroPos[1] = leftBack.getCurrentPosition();//not gonna reset the motors, treating current
+        zeroPos[2] = rightFront.getCurrentPosition();//positions as 0
         zeroPos[3] = rightBack.getCurrentPosition();
 
-        targetClicks[0] = (int) (targetDist[0] * TICKS_PER_INCH);
+        targetClicks[0] = (int) (targetDist[0] * TICKS_PER_INCH);//converting the inches they have to move into encoder ticks
         targetClicks[1] = (int) (targetDist[1] * TICKS_PER_INCH);
-
         targetClicks[2] = (int) (targetDist[2] * TICKS_PER_INCH);
-
         targetClicks[3] = (int) (targetDist[3] * TICKS_PER_INCH);
 
 
-        leftFront.setPower(-.1);
+        leftFront.setPower(-.1);//setting power to wheels; robot starts moving
         leftBack.setPower(.14);
         rightFront.setPower(-.14);
         rightBack.setPower(.1);
 
-        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);//setting mode to run using encoder
+        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);//might be useless code, saw it used in someone else's so its here
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);//gonna check it out later
         rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        int oldEnc =100;
+
+        float initAngle=angles.firstAngle;//find the heading of the robot before moving, trying to preserve this value throughout the motion
+        float deltaAngle=0;//the angle that we deviate
+        int correctionCompensation=0;//This variable makes up for the motors motion during correction. Because leftFront will be used in
+                                        // correction, its encoder vals will be messed up, making the while loop end early, so we
+                                        //add enc vals to its current position so it'll end at the right time
+        while (opModeIsActive() && leftFront.getCurrentPosition()+correctionCompensation>zeroPos[0]-targetClicks[0]) {
+            deltaAngle=angles.firstAngle-initAngle;
+            if(deltaAngle>5){
+                try {
+                    spinTurnUsingDOF(-deltaAngle, moveDirection.LEFT);
+                    correctionCompensation+=12*Math.PI *(2*deltaAngle/360);
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }
+        brake();
+        /*int oldEnc =100;
         int totalXChange=0;
         while (opModeIsActive() && totalXChange<=leftFrontTargetDist) {
 
@@ -272,7 +281,7 @@ public class AutoDriveMethodsTest extends LinearOpMode {
                 oldEnc=currentEnc;
             }
 
-        }
+        }*/
 
 
     }
