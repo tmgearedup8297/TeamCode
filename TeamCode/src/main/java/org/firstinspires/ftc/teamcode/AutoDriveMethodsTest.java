@@ -307,29 +307,32 @@ public class AutoDriveMethodsTest extends LinearOpMode {
         targetClicks[3]= (int)(targetDist[3] * TICKS_PER_INCH);;
 
         leftFront.setPower(.1);
-        leftBack.setPower(-.18);
+        leftBack.setPower(-.14);
         rightFront.setPower(.1);
-        rightBack.setPower(-.18);
+        rightBack.setPower(-.14);
 
-        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);//setting mode to run using encoder
+        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);//might be useless code, saw it used in someone else's so its here
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);//gonna check it out later
         rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-
-
-
-        while(opModeIsActive() && leftFront.getCurrentPosition()<zeroPos[0]+targetClicks[0] &&
-                                    rightBack.getCurrentPosition()>zeroPos[3]-targetClicks[3]){
-
-
-            telemetry.addData("Left front pos: ", leftFront.getCurrentPosition());
-            telemetry.addData("Left back pos: ", leftBack.getCurrentPosition());
-            telemetry.addData("Right front pos: ", leftFront.getCurrentPosition());
-            telemetry.addData("Right back pos: ", leftFront.getCurrentPosition());
-            telemetry.update();
-
+        float initAngle=angles.firstAngle;//find the heading of the robot before moving, trying to preserve this value throughout the motion
+        float deltaAngle=0;//the angle that we deviate
+        int correctionCompensation=0;//This variable makes up for the motors motion during correction. Because leftFront will be used in
+        // correction, its encoder vals will be messed up, making the while loop end early, so we
+        //add enc vals to its current position so it'll end at the right time
+        while (opModeIsActive() && leftFront.getCurrentPosition()-correctionCompensation<zeroPos[0]+targetClicks[0]) {
+            deltaAngle=angles.firstAngle-initAngle;
+            if(deltaAngle>5){
+                try {
+                    spinTurnUsingDOF(deltaAngle, moveDirection.RIGHT;
+                    correctionCompensation+=12*Math.PI *(2*deltaAngle/360);
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+            }
         }
+        brake();
 
     }
 
