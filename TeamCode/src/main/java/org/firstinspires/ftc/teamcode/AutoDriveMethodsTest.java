@@ -158,8 +158,8 @@ public class AutoDriveMethodsTest extends LinearOpMode {
             while ((formatDOFValue(realOrientation) < degrees) && opModeIsActive()) {
 
                 leftBack.setPower(.1);
-                leftFront.setPower(.1);
-                rightFront.setPower(-.1);
+                leftFront.setPower(.14);
+                rightFront.setPower(-.14);
                 rightBack.setPower(-.1);
 
                 // refresh the  value inside the while loop
@@ -179,8 +179,8 @@ public class AutoDriveMethodsTest extends LinearOpMode {
 
             while ((formatDOFValue(realOrientation) > degrees) && opModeIsActive()) {
                 leftBack.setPower(-.1);
-                leftFront.setPower(-.1);
-                rightFront.setPower(.1);
+                leftFront.setPower(-.14);
+                rightFront.setPower(.14);
                 rightBack.setPower(.1);
 
                 // refresh the  value inside the while loop
@@ -259,10 +259,14 @@ public class AutoDriveMethodsTest extends LinearOpMode {
                                         //add enc vals to its current position so it'll end at the right time
         while (opModeIsActive() && leftFront.getCurrentPosition()+correctionCompensation>zeroPos[0]-targetClicks[0]) {
             deltaAngle=angles.firstAngle-initAngle;
-            if(deltaAngle>5){
+            telemetry.addData("DeltaAngle:", " "+deltaAngle);
+            telemetry.addData("CurrentAngle:", angles.firstAngle);
+           //telemetry.addData("");
+            if(deltaAngle>19){ //arbitrary
                 try {
-                    spinTurnUsingDOF(-deltaAngle, moveDirection.LEFT);
+                    spinTurnUsingDOF(-deltaAngle, moveDirection.RIGHT);
                     correctionCompensation+=12*Math.PI *(2*deltaAngle/360);
+                    telemetry.addData("Correction Compensation", ""+correctionCompensation);
                 }catch(Exception e){
                     e.printStackTrace();
                 }
@@ -325,7 +329,7 @@ public class AutoDriveMethodsTest extends LinearOpMode {
             deltaAngle=angles.firstAngle-initAngle;
             if(deltaAngle>5){
                 try {
-                    spinTurnUsingDOF(deltaAngle, moveDirection.RIGHT;
+                    spinTurnUsingDOF(deltaAngle, moveDirection.RIGHT);
                     correctionCompensation+=12*Math.PI *(2*deltaAngle/360);
                 }catch(Exception e){
                     e.printStackTrace();
