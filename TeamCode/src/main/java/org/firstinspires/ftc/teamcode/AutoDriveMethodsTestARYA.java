@@ -21,21 +21,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 import java.util.Locale;
 
-/**
- * This file contains an minimal example of a Linear "OpMode". An OpMode is a 'program' that runs in either
- * the autonomous or the teleop period of an FTC match. The names of OpModes appear on the menu
- * of the FTC Driver Station. When an selection is made from the menu, the corresponding OpMode
- * class is instantiated on the Robot Controller and executed.
- *
- * This particular OpMode just executes a basic Tank Drive Teleop for a two wheeled robot
- * It includes all the skeletal structure that all linear OpModes contain.
- *
- * Use Android Studios to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
- */
+
 
 @Autonomous(name="Auto Drive methods test", group="Linear Opmode")
-//@Disabled
 public class AutoDriveMethodsTestARYA extends LinearOpMode {
 
     // Declare OpMode members.
@@ -54,22 +42,20 @@ public class AutoDriveMethodsTestARYA extends LinearOpMode {
     private double[] targetDist = {24, 24, 24, 24};
     private int[] targetClicks = {0, 0, 0, 0};
 
-    // The IMU sensor object
     BNO055IMU imu;
 
     // State used for updating telemetry
-    private Orientation angles;
-    private Acceleration gravity;
-
+    Orientation angles;
+    Acceleration gravity;
+    private float initAngle;
 
 
     //----------------------------------------------------------------------------------------------
     // Main logic
     //----------------------------------------------------------------------------------------------
 
-    @Override public void runOpMode() {
-
-
+    @Override
+    public void runOpMode() {
 
         leftFront = hardwareMap.get(DcMotor.class, "leftFront");
         rightFront = hardwareMap.get(DcMotor.class, "rightFront");
@@ -81,10 +67,10 @@ public class AutoDriveMethodsTestARYA extends LinearOpMode {
         rightFront.setDirection(DcMotor.Direction.FORWARD);
         rightBack.setDirection(DcMotor.Direction.FORWARD);
 
+
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Status", "Resetting Encoders");    //
         telemetry.update();
-
         /**/
         leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -100,11 +86,11 @@ public class AutoDriveMethodsTestARYA extends LinearOpMode {
         // algorithm here just reports accelerations to the logcat log; it doesn't actually
         // provide positional information.
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
-        parameters.loggingEnabled      = true;
-        parameters.loggingTag          = "IMU";
+        parameters.loggingEnabled = true;
+        parameters.loggingTag = "IMU";
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
 
         // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
@@ -116,11 +102,14 @@ public class AutoDriveMethodsTestARYA extends LinearOpMode {
         // Set up our telemetry dashboard
         //composeTelemetry();
 
+
+        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+        initAngle = angles.firstAngle;
+        float deltaAngle = 0;
         waitForStart();
 
         imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
-
-        // Loop and update the dashboard
 
         // Wait for the game to start (driver presses PLAY)
 
@@ -134,19 +123,10 @@ public class AutoDriveMethodsTestARYA extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
 
     }
-    public void spinTurnUsingDOF(float degrees, double power, String direction) throws InterruptedException {
-
-
+    public void spinTurnUsingDOF(float degrees, String direction) throws InterruptedException {
         Orientation initialOrientation = imu.getAngularOrientation();
         float angle_0 = initialOrientation.firstAngle;
 
-
-
-        // get the first value when you enter the method
-
-
-
-        // LEFT turn values always have to come in with -ve DEGREES
         if (direction.equalsIgnoreCase("right")) {
             degrees=angle_0+degrees;
             while ((imu.getAngularOrientation().firstAngle < degrees) && opModeIsActive()) {
@@ -156,18 +136,10 @@ public class AutoDriveMethodsTestARYA extends LinearOpMode {
                 rightFront.setPower(-.1);
                 rightBack.setPower(-.1);
 
-                // refresh the  value inside the while loop
-
-
-
-            }
+             }
             brake();
             //telemetry.addData("DOF gyro value WHILE RIGHT", realOrientation);
             telemetry.update();
-
-            // RIGHT turn values always have to come in with +ve DEGREES
-
-
         } else if (direction.equalsIgnoreCase("left")) {
 
             while ((imu.getAngularOrientation().firstAngle > degrees) && opModeIsActive()) {
@@ -175,23 +147,15 @@ public class AutoDriveMethodsTestARYA extends LinearOpMode {
                 leftFront.setPower(-0.1);
                 rightFront.setPower(0.1);
                 rightBack.setPower(0.1);
-
-                // refresh the  value inside the while loop
-
-
             }
             brake();
-
-            //telemetry.addData("DOF gyro value WHILE LEFT", realOrientation);
             telemetry.update();
         }
-
-        //Stop the motors once both if statements are completed.
         brake();
 
     }
     public void strafeDistRight(int leftFrontTargetDist, int leftBackTargetDist, int rightFrontTargetDist, int rightBackTargetDist) {
-
+        initAngle = angles.firstAngle;
 
         targetDist[0] = leftFrontTargetDist;
         targetDist[1] = leftBackTargetDist;
@@ -208,10 +172,10 @@ public class AutoDriveMethodsTestARYA extends LinearOpMode {
         targetClicks[2] = (int) (targetDist[2] * TICKS_PER_INCH);
         targetClicks[3] = (int) (targetDist[3] * TICKS_PER_INCH);
 
-        leftFront.setPower(-.14);
-        leftBack.setPower(.1);
-        rightFront.setPower(-.1);
-        rightBack.setPower(.14);
+        leftFront.setPower(.14);
+        leftBack.setPower(-.1);
+        rightFront.setPower(.1);
+        rightBack.setPower(-.14);
 
         leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -219,15 +183,28 @@ public class AutoDriveMethodsTestARYA extends LinearOpMode {
         rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
-        while (opModeIsActive() && leftFront.getCurrentPosition() > zeroPos[0] - targetClicks[0] &&
-                rightBack.getCurrentPosition() < zeroPos[3] + targetClicks[3]) {
+        while (opModeIsActive() && leftFront.getCurrentPosition() < zeroPos[0] + targetClicks[0] &&
+                rightBack.getCurrentPosition() > zeroPos[3] - targetClicks[3]) {
 
             telemetry.update();
+        }
+        brake();
+
+        float deltaAngle=initAngle-angles.firstAngle;
+        try{
+            spinTurnUsingDOF(-deltaAngle, "left");
+            telemetry.addData("InitAngle", initAngle);
+            telemetry.addData("Delta angle", deltaAngle);
+            telemetry.addData("Current angle", angles.firstAngle);
+            telemetry.update();
+        }catch(Exception e){
+            e.printStackTrace();
         }
 
 
     }
     public void strafeDistLeft(int leftFrontTargetDist, int leftBackTargetDist, int rightFrontTargetDist, int rightBackTargetDist){
+        initAngle = angles.firstAngle;
 
         targetDist[0] = leftFrontTargetDist;
         targetDist[1] = leftBackTargetDist;
@@ -244,22 +221,32 @@ public class AutoDriveMethodsTestARYA extends LinearOpMode {
         targetClicks[2] = (int)(targetDist[2] * TICKS_PER_INCH);;
         targetClicks[3]= (int)(targetDist[3] * TICKS_PER_INCH);;
 
-        leftFront.setPower(.1);
-        leftBack.setPower(-.14);
-        rightFront.setPower(.1);
-        rightBack.setPower(-.14);
+        leftFront.setPower(-.14);
+        leftBack.setPower(.1);
+        rightFront.setPower(-.14);
+        rightBack.setPower(.12);
 
         leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        while (opModeIsActive() && leftFront.getCurrentPosition() < zeroPos[0] + targetClicks[0] &&
-                rightBack.getCurrentPosition() > zeroPos[3] - targetClicks[3]) {
+        while (opModeIsActive() && leftFront.getCurrentPosition() > zeroPos[0] - targetClicks[0] &&
+                rightBack.getCurrentPosition() < zeroPos[3] + targetClicks[3]) {
 
             telemetry.update();
         }
 
+        float deltaAngle=initAngle-angles.firstAngle;
+        try{
+            spinTurnUsingDOF(deltaAngle, "right");
+            telemetry.addData("InitAngle", initAngle);
+            telemetry.addData("Delta angle", deltaAngle);
+            telemetry.addData("Current angle", angles.firstAngle);
+            telemetry.update();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
     public void turnRight(double degrees){
         double dist = 12*Math.PI *(2*degrees/360);
