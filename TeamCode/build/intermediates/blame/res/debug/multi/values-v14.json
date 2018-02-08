@@ -1,31 +1,5 @@
 [
     {
-        "outputFile": "C:\\Users\\Goutham\\Desktop\\Goutham projects\\FTC\\ftc_app-master\\TeamCode\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-v14\\values-v14.xml",
-        "map": [
-            {
-                "to": {
-                    "startLine": 2,
-                    "startColumn": 4,
-                    "startOffset": 55,
-                    "endLine": 4,
-                    "endColumn": 12,
-                    "endOffset": 201
-                },
-                "from": {
-                    "file": "C:\\Users\\Goutham\\.android\\build-cache\\5d4f7d0cf2d99ef4c2b5fa49187d7e811ff13a21\\output\\res\\values-v14\\values-v14.xml",
-                    "position": {
-                        "startLine": 2,
-                        "startColumn": 4,
-                        "startOffset": 55,
-                        "endLine": 4,
-                        "endColumn": 12,
-                        "endOffset": 201
-                    }
-                }
-            }
-        ]
-    },
-    {
         "outputFile": "C:\\Users\\Goutham\\Desktop\\GouthamProjects\\FTC\\ftc_app-master\\TeamCode\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-v14\\values-v14.xml",
         "map": [
             {

@@ -172,10 +172,11 @@ public class AutoDriveMethodsTestARYA extends LinearOpMode {
         targetClicks[2] = (int) (targetDist[2] * TICKS_PER_INCH);
         targetClicks[3] = (int) (targetDist[3] * TICKS_PER_INCH);
 
-        leftFront.setPower(.14);
+        //THIS IS GOOD CODDDDDDDDDeeee
+        /*leftFront.setPower(.14);
         leftBack.setPower(-.1);
         rightFront.setPower(.1);
-        rightBack.setPower(-.14);
+        rightBack.setPower(-.14);*/
 
         leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -221,10 +222,16 @@ public class AutoDriveMethodsTestARYA extends LinearOpMode {
         targetClicks[2] = (int)(targetDist[2] * TICKS_PER_INCH);;
         targetClicks[3]= (int)(targetDist[3] * TICKS_PER_INCH);;
 
-        leftFront.setPower(-.14);
+        //THIS IS GOOD CODEEEEEEEEEEEEEEEE
+        /*leftFront.setPower(-.14);
         leftBack.setPower(.1);
         rightFront.setPower(-.14);
-        rightBack.setPower(.12);
+        rightBack.setPower(.12);*/
+
+        leftFront.setPower(-.1);
+        leftBack.setPower(.1);
+        rightFront.setPower(-.1);
+        rightBack.setPower(.1);
 
         leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

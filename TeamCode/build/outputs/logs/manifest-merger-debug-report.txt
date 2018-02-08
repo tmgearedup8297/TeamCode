@@ -22,8 +22,11 @@ MERGED from [:RobotCore-release:] C:\Users\Goutham\.android\build-cache\a6b21395
 MERGED from [:FtcCommon-release:] C:\Users\Goutham\.android\build-cache\ded365b81851554182e239462a06297ffd15b603\output\AndroidManifest.xml:22:5-222:19
 MERGED from [:Analytics-release:] C:\Users\Goutham\.android\build-cache\f7fed7225b7facd15303daf4ce817659c41a5ff6\output\AndroidManifest.xml:19:5-24:19
 MERGED from [:navx_ftc-release:] C:\Users\Goutham\.android\build-cache\e40d0f6e6d0b29a0983bd89a8cab3b8db5aa25ef\output\AndroidManifest.xml:11:5-14:19
+MERGED from [ftc_app-master:DogeCV:unspecified] C:\Users\Goutham\Desktop\GouthamProjects\FTC\ftc_app-master\DogeCV\build\intermediates\bundles\default\AndroidManifest.xml:11:5-15:19
 	android:label
 		ADDED from [ftc_app-master:FtcRobotController:unspecified] C:\Users\Goutham\Desktop\GouthamProjects\FTC\ftc_app-master\FtcRobotController\build\intermediates\bundles\default\AndroidManifest.xml:17:9-41
+	android:supportsRtl
+		ADDED from [ftc_app-master:DogeCV:unspecified] C:\Users\Goutham\Desktop\GouthamProjects\FTC\ftc_app-master\DogeCV\build\intermediates\bundles\default\AndroidManifest.xml:14:9-35
 	android:exported
 		ADDED from [:Analytics-release:] C:\Users\Goutham\.android\build-cache\f7fed7225b7facd15303daf4ce817659c41a5ff6\output\AndroidManifest.xml:21:9-32
 	android:allowBackup
@@ -47,6 +50,8 @@ MERGED from [:FtcCommon-release:] C:\Users\Goutham\.android\build-cache\ded365b8
 MERGED from [:Analytics-release:] C:\Users\Goutham\.android\build-cache\f7fed7225b7facd15303daf4ce817659c41a5ff6\output\AndroidManifest.xml:5:5-7:41
 MERGED from [:WirelessP2p-release:] C:\Users\Goutham\.android\build-cache\63dcdc607f31e88e82990ab5ea5cf6cd16803f88\output\AndroidManifest.xml:5:5-7:41
 MERGED from [:navx_ftc-release:] C:\Users\Goutham\.android\build-cache\e40d0f6e6d0b29a0983bd89a8cab3b8db5aa25ef\output\AndroidManifest.xml:7:5-9:41
+MERGED from [ftc_app-master:DogeCV:unspecified] C:\Users\Goutham\Desktop\GouthamProjects\FTC\ftc_app-master\DogeCV\build\intermediates\bundles\default\AndroidManifest.xml:7:5-9:41
+MERGED from [ftc_app-master:openCVLibrary320:unspecified] C:\Users\Goutham\Desktop\GouthamProjects\FTC\ftc_app-master\openCVLibrary320\build\intermediates\bundles\default\AndroidManifest.xml:7:5-9:41
 	android:targetSdkVersion
 		INJECTED from C:\Users\Goutham\Desktop\GouthamProjects\FTC\ftc_app-master\TeamCode\src\main\AndroidManifest.xml
 		INJECTED from C:\Users\Goutham\Desktop\GouthamProjects\FTC\ftc_app-master\TeamCode\src\main\AndroidManifest.xml
