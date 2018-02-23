@@ -1,7 +1,7 @@
-package org.firstinspires.ftc.teamcode.Autonomous;
+package org.firstinspires.ftc.teamcode;
 
 import com.disnodeteam.dogecv.CameraViewDisplay;
-import com.disnodeteam.dogecv.detectors.CryptoboxDetector;
+import com.disnodeteam.dogecv.detectors.CryptoboxDetectorInchOutput;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -14,31 +14,30 @@ import java.util.List;
  * Where you can upload your test code to be tested
  */
 
-//@Autonomous(name = "Autonomous Test")
-public class AutonomousTest extends LinearOpMode {
+@Autonomous(name="DogeCV Red Cryptobox Detector Playground reddit", group="DogeCV")
+
+public class RedditCryptoboxMethodTest extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
 
-    private Robot robot = new Robot();
 
     @Override
     public void runOpMode() throws InterruptedException {
-        robot.init(hardwareMap);
 
-        CryptoboxDetector detector = new CryptoboxDetector();
-        detector.init(hardwareMap.appContext, CameraViewDisplay.getInstance());
+        CryptoboxDetectorInchOutput detector = new CryptoboxDetectorInchOutput();
+        detector.init(hardwareMap.appContext, CameraViewDisplay.getInstance(), 0);
         detector.downScaleFactor = 0.4;
-        detector.setColor("Blue");
+        detector.setColor("Red");
 
         waitForStart();
 
         detector.enable();
-
+        detector.rotateMat = false;
         runtime.reset();
 
         List<Double> distances = new ArrayList<>();
 
-        while (opModeIsActive() && runtime.seconds() < 5) {
+        while (opModeIsActive() && runtime.seconds() < 5) { //set how long to get values
             if (detector.getDistanceToMove() > -7.5 && detector.getDistanceToMove() < 7.5) {
                 distances.add(detector.getDistanceToMove());
             }
@@ -48,12 +47,14 @@ public class AutonomousTest extends LinearOpMode {
 
         double sum = 0;
 
-        for (double distance: distances) {
+        for (double distance : distances) {
             sum += distance;
         }
 
         double distanceToMove = sum / distances.size();
-
+        telemetry.addData("Avg Distance to Move: ", distanceToMove);
+        telemetry.update();
+        /*
         if (distanceToMove < 7.5 && distanceToMove > -7.5) {
             if (distanceToMove < 0) {
                 robot.forwardByDistance(-distanceToMove);
@@ -72,12 +73,9 @@ public class AutonomousTest extends LinearOpMode {
                 robot.ledStrip(Robot.LED.Red);
             }
         }
-
+        */
         telemetry.update();
 
         detector.disable();
-
-        sleep(5000);
     }
 }
-

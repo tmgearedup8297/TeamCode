@@ -45,7 +45,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
-@Autonomous(name="Vuforia Code With Teleop", group ="Concept")
+@Autonomous(name="Vuforia Code With TeleopPlayground", group ="Concept")
 
 public class VuforiaCodeWithTeleop extends LinearOpMode {
 

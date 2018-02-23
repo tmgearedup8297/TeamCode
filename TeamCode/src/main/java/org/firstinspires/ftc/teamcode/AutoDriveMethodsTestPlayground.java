@@ -2,28 +2,21 @@
 
 package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-        import org.firstinspires.ftc.teamcode.Teleop.moveDirection;
+
         import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
         import com.qualcomm.robotcore.hardware.DcMotor;
         import com.qualcomm.robotcore.util.ElapsedTime;
 
         import com.qualcomm.hardware.bosch.BNO055IMU;
         import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
-        import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-        import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-        import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-        import org.firstinspires.ftc.robotcore.external.Func;
-        import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
+import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
         import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
         import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
         import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
         import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
         import org.firstinspires.ftc.robotcore.external.navigation.Position;
         import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
-
-        import java.io.InterruptedIOException;
-        import java.util.Locale;
 
 
 @Autonomous(name="Auto Drive methods test playground", group="Linear Opmode")
@@ -128,7 +121,7 @@ public class AutoDriveMethodsTestPlayground extends LinearOpMode {
             float currentAngle=angles.firstAngle;
             if(angles.firstAngle>2){
                 try {
-                    spinTurnUsingDOF(currentAngle, moveDirection.RIGHT);
+                   // spinTurnUsingDOF(currentAngle, moveDirection.RIGHT);
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -136,7 +129,7 @@ public class AutoDriveMethodsTestPlayground extends LinearOpMode {
             }
             else if(angles.firstAngle<-2){
                 try {
-                    spinTurnUsingDOF(-currentAngle, moveDirection.LEFT);
+                    //spinTurnUsingDOF(-currentAngle, moveDirection.LEFT);
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -156,7 +149,7 @@ public class AutoDriveMethodsTestPlayground extends LinearOpMode {
         return -headingDof;
     }
 
-    public void spinTurnUsingDOF(float degrees, moveDirection direction) throws InterruptedException {
+    /*public void spinTurnUsingDOF(float degrees, moveDirection direction) throws InterruptedException {
 
         Orientation current_orientation = imu.getAngularOrientation();
         int realOrientation = (int) (current_orientation.firstAngle - initAngle);
@@ -206,17 +199,18 @@ public class AutoDriveMethodsTestPlayground extends LinearOpMode {
         //Stop the motors once both if statements are completed.
         brake();
 
-    }
+    }*/
 
     public void correction(float initAngle, int yCorr, int xCorr) {
         float deltaAngle = angles.firstAngle - initAngle;  //Fixes the angle discrepancy
         try {
             if (deltaAngle < 0) {
-                spinTurnUsingDOF(deltaAngle, moveDirection.LEFT);
+                //spinTurnUsingDOF(deltaAngle, moveDirection.LEFT);
+
             } else {
-                spinTurnUsingDOF(deltaAngle, moveDirection.RIGHT);
+                //spinTurnUsingDOF(deltaAngle, moveDirection.RIGHT);
             }
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -276,7 +270,7 @@ public class AutoDriveMethodsTestPlayground extends LinearOpMode {
             deltaAngle = angles.firstAngle - initAngle;
             if (deltaAngle > 2) {
                 try {
-                    spinTurnUsingDOF(-90, moveDirection.LEFT);
+                    //spinTurnUsingDOF(-90, moveDirection.LEFT);
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -289,7 +283,7 @@ public class AutoDriveMethodsTestPlayground extends LinearOpMode {
                 }*/
             } else if (deltaAngle < -2) {
                 try {
-                    spinTurnUsingDOF(90, moveDirection.RIGHT);
+                    //spinTurnUsingDOF(90, moveDirection.RIGHT);
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -353,7 +347,7 @@ public class AutoDriveMethodsTestPlayground extends LinearOpMode {
             deltaAngle=angles.firstAngle-initAngle;
             if(deltaAngle>5){
                 try {
-                   spinTurnUsingDOF(deltaAngle, moveDirection.RIGHT);
+                   //spinTurnUsingDOF(deltaAngle, moveDirection.RIGHT);
                    correctionCompensation+=12*Math.PI *(2*deltaAngle/360);
                 }catch(Exception e) {
                     e.printStackTrace();

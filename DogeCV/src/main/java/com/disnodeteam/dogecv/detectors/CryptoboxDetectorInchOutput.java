@@ -17,8 +17,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class CryptoboxDetector extends OpenCVPipeline {
+public class CryptoboxDetectorInchOutput extends OpenCVPipeline {
 
+    public boolean                rotateMat          = false;
     public double downScaleFactor = 0.6;
 
     private Scalar lower = new Scalar(90, 135, 25);
@@ -42,14 +43,19 @@ public class CryptoboxDetector extends OpenCVPipeline {
         rgba.copyTo(workingMat);
 
         Imgproc.resize(workingMat, workingMat, newSize);
+        if(rotateMat) {
+            Mat tempBefore = workingMat.t();
+            Core.flip(tempBefore, workingMat, 1); //mRgba.t() is the transpose
+            tempBefore.release();
+        }
 
-        Mat tempBefore = workingMat.t();
-
-        Core.transpose(tempBefore, workingMat);
+        //PUT IN THE NEW ROTATEMAT IF STATEMENT
+        //UNCOMMENT TO GET BACK WEIRD TURNED IMAGE WHEN
+        //PHONE IS SIDEWAYS
+        /*Core.transpose(tempBefore, workingMat);
         Core.flip(workingMat, workingMat, 1);
         Core.flip(workingMat, workingMat, 0);
-
-        tempBefore.release();
+        tempBefore.release();*/
 
         List<MatOfPoint> contours = new ArrayList<>();
         List<Rect> columns = new ArrayList<>();
@@ -125,14 +131,17 @@ public class CryptoboxDetector extends OpenCVPipeline {
         Imgproc.line(workingMat, new Point(0, workingMat.size().height / 2),
                 new Point(workingMat.size().width, workingMat.size().height / 2), new Scalar(0, 255, 0), 1);
 
-
-        Mat tempAfter = workingMat.t();
+        //PUT IN THE NEW ROTATEMAT IF STATEMENT
+        //UNCOMMENT TO GET BACK WEIRD TURNED IMAGE WHEN
+        //PHONE IS SIDEWAYS
+        /*Mat tempAfter = workingMat.t();
 
         Core.flip(tempAfter, workingMat, 0);
 
         tempAfter.release();
 
-        Imgproc.resize(workingMat, workingMat, initSize);
+        Imgproc.resize(workingMat, workingMat, initSize);*/
+
 
         return workingMat;
     }
@@ -151,3 +160,4 @@ public class CryptoboxDetector extends OpenCVPipeline {
         return distanceToMove;
     }
 }
+

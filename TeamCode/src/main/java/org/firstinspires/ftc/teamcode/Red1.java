@@ -31,13 +31,10 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
 
 /**
@@ -46,7 +43,7 @@ import com.qualcomm.robotcore.util.Range;
  * of the FTC Driver Station. When an selection is made from the menu, the corresponding OpMode
  * class is instantiated on the Robot Controller and executed.
  *
- * This particular OpMode just executes a basic Tank Drive Teleop for a two wheeled robot
+ * This particular OpMode just executes a basic Tank Drive TeleopPlayground for a two wheeled robot
  * It includes all the skeletal structure that all linear OpModes contain.
  *
  * Use Android Studios to Copy this Class, and Paste it into your team's code folder with a new name.
@@ -61,10 +58,51 @@ public class Red1 extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
 
+
+    private Servo glyphLeftDown = null;
+    private Servo glyphRightDown = null;
+    private Servo glyphLeftUp = null;
+    private Servo glyphRightUp= null;
+    private Servo shoulderRight = null;
+    private Servo shoulderLeft = null;
+    private Servo elbowRight = null;
+    private Servo elbowLeft = null;
+    private Servo autoGlyphLeft = null;
+    private Servo autoGlyphRight = null;
+    private Servo activator = null;
     private DcMotor leftFront = null;
     private DcMotor rightFront = null;
     private DcMotor leftBack = null;
     private DcMotor rightBack = null;
+    private DcMotor lift = null;
+
+    static final double LEFT_SHOULDER_IN = 0.12;
+    static final double LEFT_SHOULDER_OUT = 0.57;
+    static final double RIGHT_SHOULDER_IN = 0.175;
+    static final double RIGHT_SHOULDER_OUT = 0.65;
+    static final double LEFT_ELBOW_OUT = 0.35;
+    static final double LEFT_ELBOW_IN = 0.84;
+    static final double RIGHT_ELBOW_OUT = 0.45;
+    static final double RIGHT_ELBOW_IN = 0.94;
+    static final double LEFT_AUTOGLYPH_IN = 0.0;
+    static final double LEFT_AUTOGLYPH_OUT = 1.0;
+    static final double RIGHT_AUTOGLYPH_IN = 0.0;
+    static final double RIGHT_AUTOGLYPH_OUT = 1.0;
+    static final double ACTIVATOR_IN = 0.0;
+    static final double ACTIVATOR_OUT = 0.65;
+
+    static final double LEFT_GRABBER_UP_CLOSE = 0.3;
+    static final double LEFT_GRABBER_DOWN_CLOSE = 0.25; //good
+    static final double RIGHT_GRABBER_UP_OPEN = 0.45;
+    static final double RIGHT_GRABBER_DOWN_OPEN = 0.45;
+
+    static final double LEFT_GRABBER_UP_OPEN = 0.75;    //good
+    static final double LEFT_GRABBER_DOWN_OPEN = 0.5;
+    static final double RIGHT_GRABBER_UP_CLOSE = 0.75;  //good
+    static final double RIGHT_GRABBER_DOWN_CLOSE = 0.7;
+
+    private ColorSensor jewelSensorRight;
+    private ColorSensor jewelSensorLeft;
 
     private final int TICKS_PER_INCH=36;
 
@@ -74,56 +112,54 @@ public class Red1 extends LinearOpMode {
     private int[] targetClicks = {0, 0, 0, 0};
 
 
-    private ColorSensor jewelSensor;
-    private double spos = 0.0;
-    private double epos = 0.9;
-    private Servo shoulder, elbow;
-    private Servo glyphRightBack = null;
-    private Servo glyphLeftBack = null;
-    private Servo actuatorBack = null;
 
     @Override
     public void runOpMode() {
 
 
-        // Initialize the hardware variables. Note that the strings used here as parameters
-        // to 'get' must correspond to the names assigned during the robot configuration
-        // step (using the FTC Robot Controller app on the phone).
-        shoulder = hardwareMap.servo.get("shoulder");
-        elbow = hardwareMap.servo.get("elbow");
-        jewelSensor = hardwareMap.colorSensor.get("jewelSensor");
-        leftFront = hardwareMap.get(DcMotor.class, "leftFront");
+
+        leftFront  = hardwareMap.get(DcMotor.class, "leftFront");
         rightFront = hardwareMap.get(DcMotor.class, "rightFront");
-        leftBack = hardwareMap.get(DcMotor.class, "leftBack");
+        leftBack  = hardwareMap.get(DcMotor.class, "leftBack");
         rightBack = hardwareMap.get(DcMotor.class, "rightBack");
+        lift = hardwareMap.get(DcMotor.class, "lift");
 
-        leftFront.setDirection(DcMotor.Direction.REVERSE);
-        leftBack.setDirection(DcMotor.Direction.REVERSE);
-        rightFront.setDirection(DcMotor.Direction.FORWARD);
-        rightBack.setDirection(DcMotor.Direction.FORWARD);
+        leftFront.setDirection(DcMotor.Direction.FORWARD);
+        leftBack.setDirection(DcMotor.Direction.FORWARD);
+        lift.setDirection(DcMotor.Direction.FORWARD);
+        rightFront.setDirection(DcMotor.Direction.REVERSE);
+        rightBack.setDirection(DcMotor.Direction.REVERSE);
 
+        glyphLeftDown = hardwareMap.servo.get("glyphLeftDown");
+        glyphRightDown = hardwareMap.servo.get("glyphRightDown");
+        glyphLeftUp = hardwareMap.servo.get("glyphLeftUp");
+        glyphRightUp = hardwareMap.servo.get("glyphRightUp");
 
-        // Send telemetry message to signify robot waiting;
-        telemetry.addData("Status", "Resetting Encoders");    //
-        telemetry.update();
+        shoulderLeft = hardwareMap.servo.get("shoulderLeft");
+        shoulderRight = hardwareMap.servo.get("shoulderRight");
+        elbowLeft = hardwareMap.servo.get("elbowLeft");
+        elbowRight = hardwareMap.servo.get("elbowRight");
+        jewelSensorLeft = hardwareMap.colorSensor.get("jewelSensorLeft");
+        jewelSensorRight = hardwareMap.colorSensor.get("jewelSensorRight");
+        autoGlyphLeft = hardwareMap.servo.get("autoGlyphLeft");
+        autoGlyphRight = hardwareMap.servo.get("autoGlyphRight");
 
-        actuatorBack = hardwareMap.get(Servo.class, "actuatorBack");
-        glyphLeftBack = hardwareMap.servo.get("glyphLeftBack");
-        glyphRightBack = hardwareMap.servo.get("glyphRightBack");
-        glyphLeftBack.setDirection(Servo.Direction.REVERSE);
-        glyphRightBack.setDirection(Servo.Direction.FORWARD);
-
-        /**/
-        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        elbow.setPosition(.9);
         telemetry.addData("Status", "Initialized");
-        telemetry.update();
-        //shoulder.setPosition(spos);
-       // elbow.setPosition(epos);
+
+
+        elbowLeft.setDirection((Servo.Direction.REVERSE));
+        shoulderLeft.setDirection(Servo.Direction.REVERSE);
+
+
+
+        activator = hardwareMap.get(Servo.class, "activator");
+
+        autoGlyphLeft = hardwareMap.get(Servo.class, "autoGlyphLeft");
+        autoGlyphRight = hardwareMap.get(Servo.class, "autoGlyphRight");
+        autoGlyphLeft.setDirection(Servo.Direction.REVERSE);
+
+        autoGlyphRight.setPosition(RIGHT_AUTOGLYPH_OUT);
+        telemetry.addData("Status", "Initialized");
 
         waitForStart();
 
@@ -131,56 +167,74 @@ public class Red1 extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
 
         runtime.reset();
-            glyphRightBack.setPosition(.7);
-            glyphLeftBack.setPosition(.815);
+           // glyphRightBack.setPosition(.7);
+            //glyphLeftBack.setPosition(.815);
 
-              shoulder.setPosition(.42);
+              shoulderRight.setPosition(RIGHT_SHOULDER_OUT);
               sleep(1000);
-
-            elbow.setPosition(.37);
-            sleep(1000);
-
+            elbowRight.setPosition(RIGHT_ELBOW_OUT);
+            sleep(2000);
 
 
-        sleep(1500);
-        telemetry.addData("Blue val:", jewelSensor.blue());
-        telemetry.addData("Red val:", jewelSensor.red());
+
+
+
+
+
+        telemetry.addData("Blue val:", jewelSensorRight.blue());
+        telemetry.addData("Red val:", jewelSensorRight.red());
         telemetry.update();
-        if(jewelSensor.red()==0 && jewelSensor.blue()==0) {
+
+
+        if(jewelSensorRight.red()==0 && jewelSensorRight.blue()==0) {
             telemetry.addData("Can't Read", "");
-            elbow.setPosition(.9);
+
+            elbowRight.setPosition(RIGHT_ELBOW_IN);
             sleep(1000);
         }
-        else if(jewelSensor.red()<jewelSensor.blue()){
-            shoulder.setPosition(.6);
+        else if(jewelSensorRight.red()<jewelSensorRight.blue()){
+            shoulderRight.setPosition(RIGHT_SHOULDER_OUT+.2);
 
             sleep(1000);
-            telemetry.addData("Shoulder: ", shoulder.getPosition());
-
+            telemetry.addData("Shoulder: ", shoulderRight.getPosition());
+            shoulderRight.setPosition(RIGHT_SHOULDER_OUT);
+            sleep(1000);
             telemetry.update();
-            elbow.setPosition(.9);
+            elbowRight.setPosition(RIGHT_ELBOW_IN);
             sleep(1000);
             //}
         }
         else{
-            shoulder.setPosition(.25);
+            shoulderRight.setPosition(RIGHT_SHOULDER_OUT-.2);
             sleep(1000);
-            elbow.setPosition(.9);
+            shoulderRight.setPosition(RIGHT_SHOULDER_OUT);
+            sleep(1000);
+            elbowRight.setPosition(RIGHT_ELBOW_IN);
             sleep(1000);
 
         }
+        shoulderRight.setPosition(RIGHT_SHOULDER_IN);
 
 
-            shoulder.setPosition(0);
-            sleep(1000);
-
-        moveDistBack(36, 36, 36, 36);
+        moveDistBack(30, 30, 30, 30);
         brake();
         sleep(500);
-        turnLeft(90);
+        turnRight(45);
+        brake();
+        sleep(1000);
+        autoGlyphRight.setPosition(RIGHT_AUTOGLYPH_IN);
+        sleep(1000);
+        moveDistForward(4,4,4,4);
         brake();
         sleep(500);
-        moveDistBack(6,6,6,6);
+        turnLeft(45);
+        brake();
+        sleep(500);
+
+        strafeDistLeft(10,10,10,10);
+        brake();
+        sleep(500);
+        strafeDistRight(4,4,4,4);
         brake();
         //}
 
@@ -189,7 +243,287 @@ public class Red1 extends LinearOpMode {
 
     }
 
+    public void strafeDistRight(double leftFrontTargetDist, double leftBackTargetDist, double rightFrontTargetDist, double rightBackTargetDist) {
+
+
+        targetDist[0] = leftFrontTargetDist;
+        targetDist[1] = leftBackTargetDist;
+        targetDist[2] = rightFrontTargetDist;
+        targetDist[3] = rightBackTargetDist;
+
+        zeroPos[0] = leftFront.getCurrentPosition();
+        zeroPos[1] = leftBack.getCurrentPosition();
+        zeroPos[2] = rightFront.getCurrentPosition();
+        zeroPos[3] = rightBack.getCurrentPosition();
+
+        targetClicks[0] = (int) (targetDist[0] * TICKS_PER_INCH);
+        targetClicks[1] = (int) (targetDist[1] * TICKS_PER_INCH);
+        targetClicks[2] = (int) (targetDist[2] * TICKS_PER_INCH);
+        targetClicks[3] = (int) (targetDist[3] * TICKS_PER_INCH);
+
+        //THIS IS GOOD CODDDDDDDDDeeee
+        /*leftFront.setPower(.14);
+        leftBack.setPower(-.1);
+        rightFront.setPower(.1);
+        rightBack.setPower(-.14);*/
+
+        leftFront.setPower(.1);
+        leftBack.setPower(-.1);
+        rightFront.setPower(-.1);
+        rightBack.setPower(.1);
+
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
+        while (opModeIsActive() && leftFront.getCurrentPosition() < zeroPos[0] + targetClicks[0] &&
+                rightBack.getCurrentPosition() < zeroPos[3] + targetClicks[3]) {
+
+            telemetry.update();
+        }
+        brake();
+
+
+
+    }
+    public void strafeDistLeft(double leftFrontTargetDist, double leftBackTargetDist, double rightFrontTargetDist, double rightBackTargetDist){
+
+
+        targetDist[0] = leftFrontTargetDist;
+        targetDist[1] = leftBackTargetDist;
+        targetDist[2] = rightFrontTargetDist;
+        targetDist[3] = rightBackTargetDist;
+
+        zeroPos[0] = leftFront.getCurrentPosition();
+        zeroPos[1] = leftBack.getCurrentPosition();
+        zeroPos[2] = rightFront.getCurrentPosition();
+        zeroPos[3] = rightBack.getCurrentPosition();
+
+        targetClicks[0] = (int)(targetDist[0] * TICKS_PER_INCH);
+        targetClicks[1] = (int)(targetDist[1] * TICKS_PER_INCH);;
+        targetClicks[2] = (int)(targetDist[2] * TICKS_PER_INCH);;
+        targetClicks[3]= (int)(targetDist[3] * TICKS_PER_INCH);;
+
+        //THIS IS GOOD CODEEEEEEEEEEEEEEEE
+        /*leftFront.setPower(-.14);
+        leftBack.setPower(.1);
+        rightFront.setPower(-.14);
+        rightBack.setPower(.12);*/
+
+        leftFront.setPower(-.1);
+        leftBack.setPower(.1);
+        rightFront.setPower(.1);
+        rightBack.setPower(-.1);
+
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        while (opModeIsActive() && leftFront.getCurrentPosition() > zeroPos[0] - targetClicks[0] &&
+                rightBack.getCurrentPosition() > zeroPos[3] - targetClicks[3]) {
+
+            telemetry.update();
+        }
+
+
+    }
     public void turnRight(double degrees){
+        double dist = 12.5*Math.PI *(degrees/360);
+        double leftFrontTargetDist = dist;
+        double leftBackTargetDist = dist;
+        double rightFrontTargetDist = dist;
+        double rightBackTargetDist = dist;
+
+        targetDist[0] = leftFrontTargetDist;
+        targetDist[1] = leftBackTargetDist;
+        targetDist[2] = rightFrontTargetDist;
+        targetDist[3] = rightBackTargetDist;
+
+        zeroPos[0] = leftFront.getCurrentPosition();
+        zeroPos[1] = leftBack.getCurrentPosition();
+        zeroPos[2] = rightFront.getCurrentPosition();
+        zeroPos[3] = rightBack.getCurrentPosition();
+
+        targetClicks[0] = (int)(targetDist[0] * TICKS_PER_INCH);
+        targetClicks[1] = (int)((int)(targetDist[1] * TICKS_PER_INCH));
+        targetClicks[2] = (int)((int)(targetDist[2] * TICKS_PER_INCH));
+        targetClicks[3]= (int)((int)(targetDist[3] * TICKS_PER_INCH));
+
+        leftFront.setPower(-.1);
+        leftBack.setPower(-.1);
+        rightFront.setPower(.1);
+        rightBack.setPower(.1);
+
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
+
+
+        while(opModeIsActive() && leftFront.getCurrentPosition()>zeroPos[0]-targetClicks[0] &&
+                leftBack.getCurrentPosition()>zeroPos[1]-targetClicks[1] &&
+                rightFront.getCurrentPosition()<zeroPos[2]+targetClicks[2] &&
+                rightBack.getCurrentPosition()<zeroPos[3]+targetClicks[3]){
+
+            telemetry.addData("Left front pos: ", leftFront.getCurrentPosition());
+            telemetry.addData("Left back pos: ", leftBack.getCurrentPosition());
+            telemetry.addData("Right front pos: ", leftFront.getCurrentPosition());
+            telemetry.addData("Right back pos: ", leftFront.getCurrentPosition());
+            telemetry.update();
+
+        }
+
+    }
+    public void turnLeft(double degrees){
+        double dist = 12.5*Math.PI *(degrees/360);
+        double leftFrontTargetDist = dist;
+        double leftBackTargetDist = dist;
+        double rightFrontTargetDist = dist;
+        double rightBackTargetDist = dist;
+
+        targetDist[0] = leftFrontTargetDist;
+        targetDist[1] = leftBackTargetDist;
+        targetDist[2] = rightFrontTargetDist;
+        targetDist[3] = rightBackTargetDist;
+
+        zeroPos[0] = leftFront.getCurrentPosition();
+        zeroPos[1] = leftBack.getCurrentPosition();
+        zeroPos[2] = rightFront.getCurrentPosition();
+        zeroPos[3] = rightBack.getCurrentPosition();
+
+        targetClicks[0] = (int)(targetDist[0] * TICKS_PER_INCH);
+        targetClicks[1] = (int)((int)(targetDist[1] * TICKS_PER_INCH));
+        targetClicks[2] = (int)((int)(targetDist[2] * TICKS_PER_INCH));
+        targetClicks[3]= (int)((int)(targetDist[3] * TICKS_PER_INCH));
+
+        leftFront.setPower(.1);
+        leftBack.setPower(.1);
+        rightFront.setPower(-.1);
+        rightBack.setPower(-.1);
+
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
+
+
+        while(opModeIsActive() && leftFront.getCurrentPosition()<zeroPos[0]+targetClicks[0]){
+
+            telemetry.addData("Left front pos: ", leftFront.getCurrentPosition());
+            telemetry.addData("Left back pos: ", leftBack.getCurrentPosition());
+            telemetry.addData("Right front pos: ", leftFront.getCurrentPosition());
+            telemetry.addData("Right back pos: ", leftFront.getCurrentPosition());
+            telemetry.update();
+
+        }
+
+    }
+    public void moveDistBack(double leftFrontTargetDist, double leftBackTargetDist, double rightFrontTargetDist, double rightBackTargetDist){
+
+        targetDist[0] = leftFrontTargetDist;
+        targetDist[1] = leftBackTargetDist;
+        targetDist[2] = rightFrontTargetDist;
+        targetDist[3] = rightBackTargetDist;
+
+        zeroPos[0] = leftFront.getCurrentPosition();
+        zeroPos[1] = leftBack.getCurrentPosition();
+        zeroPos[2] = rightFront.getCurrentPosition();
+        zeroPos[3] = rightBack.getCurrentPosition();
+
+        targetClicks[0] = (int)(targetDist[0] * TICKS_PER_INCH);
+        targetClicks[1] = (int)(targetDist[1] * TICKS_PER_INCH);;
+        targetClicks[2] = (int)(targetDist[2] * TICKS_PER_INCH);;
+        targetClicks[3]= (int)(targetDist[3] * TICKS_PER_INCH);;
+
+        leftFront.setPower(-.1);
+        leftBack.setPower(-.1);
+        rightFront.setPower(-.1);
+        rightBack.setPower(-.1);
+
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
+
+
+        while(opModeIsActive() && leftFront.getCurrentPosition()>zeroPos[0]-targetClicks[0] &&
+                leftBack.getCurrentPosition()>zeroPos[1]-targetClicks[1] &&
+                rightFront.getCurrentPosition()>zeroPos[2]-targetClicks[2] &&
+                rightBack.getCurrentPosition()>zeroPos[3]-targetClicks[3]){
+
+            telemetry.addData("Left front pos: ", leftFront.getCurrentPosition());
+            telemetry.addData("Left back pos: ", leftBack.getCurrentPosition());
+            telemetry.addData("Right front pos: ", leftFront.getCurrentPosition());
+            telemetry.addData("Right back pos: ", leftFront.getCurrentPosition());
+            telemetry.update();
+
+        }
+
+    }
+    public void moveDistForward(double leftFrontTargetDist, double leftBackTargetDist, double rightFrontTargetDist, double rightBackTargetDist){
+
+        targetDist[0] = leftFrontTargetDist;
+        targetDist[1] = leftBackTargetDist;
+        targetDist[2] = rightFrontTargetDist;
+        targetDist[3] = rightBackTargetDist;
+
+        zeroPos[0] = leftFront.getCurrentPosition();
+        zeroPos[1] = leftBack.getCurrentPosition();
+        zeroPos[2] = rightFront.getCurrentPosition();
+        zeroPos[3] = rightBack.getCurrentPosition();
+
+        targetClicks[0] = (int)(targetDist[0] * TICKS_PER_INCH);
+        targetClicks[1] = (int)(targetDist[1] * TICKS_PER_INCH);;
+        targetClicks[2] = (int)(targetDist[2] * TICKS_PER_INCH);;
+        targetClicks[3]= (int)(targetDist[3] * TICKS_PER_INCH);;
+
+        leftFront.setPower(.1);
+        leftBack.setPower(.1);
+        rightFront.setPower(.1);
+        rightBack.setPower(.1);
+
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
+
+
+        while(opModeIsActive() && leftFront.getCurrentPosition()<zeroPos[0]+targetClicks[0] &&
+                leftBack.getCurrentPosition()<zeroPos[1]+targetClicks[1] &&
+                rightFront.getCurrentPosition()<zeroPos[2]+targetClicks[2] &&
+                rightBack.getCurrentPosition()<zeroPos[3]+targetClicks[3]){
+
+            telemetry.addData("Left front pos: ", leftFront.getCurrentPosition());
+            telemetry.addData("Left back pos: ", leftBack.getCurrentPosition());
+            telemetry.addData("Right front pos: ", leftFront.getCurrentPosition());
+            telemetry.addData("Right back pos: ", leftFront.getCurrentPosition());
+            telemetry.update();
+
+        }
+
+    }
+    public void brake(){
+        leftFront.setPower(0.01);
+        leftBack.setPower(-0.01);
+        rightFront.setPower(0.01);
+        rightBack.setPower(-0.01);
+        leftFront.setPower(0);
+        leftBack.setPower(0);
+        rightFront.setPower(0);
+        rightBack.setPower(0);
+    }
+   /* public void turnRight(double degrees){
         double dist = 12*Math.PI *(2*degrees/360);
     double leftFrontTargetDist = -dist;
     double leftBackTargetDist = -dist;
@@ -395,8 +729,8 @@ public class Red1 extends LinearOpMode {
 
         leftFront.setPower(-.01);
         leftBack.setPower(.01);
-        rightFront.setPower(-.01);
-        rightBack.setPower(.01);
+        rightFront.setPower(.01);
+        rightBack.setPower(-.01);
 
         leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -439,8 +773,8 @@ public class Red1 extends LinearOpMode {
 
         leftFront.setPower(.01);
         leftBack.setPower(-.01);
-        rightFront.setPower(.01);
-        rightBack.setPower(-.01);
+        rightFront.setPower(-.01);
+        rightBack.setPower(.01);
 
         leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -473,5 +807,5 @@ public class Red1 extends LinearOpMode {
         leftBack.setPower(0);
         rightFront.setPower(0);
         rightBack.setPower(0);
-    }
+    }*/
 }

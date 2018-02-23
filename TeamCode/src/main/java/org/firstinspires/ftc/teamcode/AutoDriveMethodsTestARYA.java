@@ -154,7 +154,7 @@ public class AutoDriveMethodsTestARYA extends LinearOpMode {
         brake();
 
     }
-    public void strafeDistRight(int leftFrontTargetDist, int leftBackTargetDist, int rightFrontTargetDist, int rightBackTargetDist) {
+    public void strafeDistRight(double leftFrontTargetDist, double leftBackTargetDist, double rightFrontTargetDist, double rightBackTargetDist) {
         initAngle = angles.firstAngle;
 
         targetDist[0] = leftFrontTargetDist;
@@ -194,17 +194,13 @@ public class AutoDriveMethodsTestARYA extends LinearOpMode {
         float deltaAngle=initAngle-angles.firstAngle;
         try{
             spinTurnUsingDOF(-deltaAngle, "left");
-            telemetry.addData("InitAngle", initAngle);
-            telemetry.addData("Delta angle", deltaAngle);
-            telemetry.addData("Current angle", angles.firstAngle);
-            telemetry.update();
         }catch(Exception e){
             e.printStackTrace();
         }
 
 
     }
-    public void strafeDistLeft(int leftFrontTargetDist, int leftBackTargetDist, int rightFrontTargetDist, int rightBackTargetDist){
+    public void strafeDistLeft(double leftFrontTargetDist, double leftBackTargetDist, double rightFrontTargetDist, double rightBackTargetDist){
         initAngle = angles.firstAngle;
 
         targetDist[0] = leftFrontTargetDist;
@@ -353,7 +349,7 @@ public class AutoDriveMethodsTestARYA extends LinearOpMode {
         }
 
     }
-    public void moveDistBack(int leftFrontTargetDist, int leftBackTargetDist, int rightFrontTargetDist, int rightBackTargetDist){
+    public void moveDistBack(double leftFrontTargetDist, double leftBackTargetDist, double rightFrontTargetDist, double rightBackTargetDist){
 
         targetDist[0] = leftFrontTargetDist;
         targetDist[1] = leftBackTargetDist;
@@ -397,7 +393,7 @@ public class AutoDriveMethodsTestARYA extends LinearOpMode {
         }
 
     }
-    public void moveDistForward(int leftFrontTargetDist, int leftBackTargetDist, int rightFrontTargetDist, int rightBackTargetDist){
+    public void moveDistForward(double leftFrontTargetDist, double leftBackTargetDist, double rightFrontTargetDist, double rightBackTargetDist){
 
         targetDist[0] = leftFrontTargetDist;
         targetDist[1] = leftBackTargetDist;

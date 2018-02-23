@@ -175,30 +175,16 @@ public class TeleopRelicRecov extends OpMode
         upDownBack.setPower(gamepad2.left_stick_y);
 
 
-            if (gamepad2.a) {
-                glyphRightBack.setPosition(.68);
-                glyphLeftBack.setPosition(.795);
-                //.68 and .815
-            }
-            if (gamepad2.b) {
-                glyphLeftBack.setPosition(.925);
-                glyphRightBack.setPosition(1);
-            }
-
-
-
-        /*boolean rbPressed = gamepad1.right_bumper;
-        if(rbPressed && !rbLastPass)
-        {
-            slowTurn = !slowTurn;
-            if(slowTurn){
-                turnPercent = 0.5;
-            }
-            else {
-                turnPercent = 1.0;
-            }
+        if (gamepad2.a) {
+            glyphRightBack.setPosition(.68);
+            glyphLeftBack.setPosition(.795);
+            //.68 and .815
         }
-        rbLastPass = rbPressed;*/
+        if (gamepad2.b) {
+            glyphLeftBack.setPosition(.925);
+            glyphRightBack.setPosition(1);
+        }
+
 
 
 

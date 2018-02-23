@@ -70,7 +70,9 @@ public class CryptoboxOpMode extends OpMode
         telemetry.addData("Column Left ",  cryptoboxDetector.getCryptoBoxLeftPosition());
         telemetry.addData("Column Center ",  cryptoboxDetector.getCryptoBoxCenterPosition());
         telemetry.addData("Column Right ",  cryptoboxDetector.getCryptoBoxRightPosition());
-
+        telemetry.addData("0: ", cryptoboxDetector.getDistancePos1(0));
+        telemetry.addData("1: ", cryptoboxDetector.getDistancePos1(1));
+        telemetry.addData("2: ", cryptoboxDetector.getDistancePos1(2));
 
     }
 

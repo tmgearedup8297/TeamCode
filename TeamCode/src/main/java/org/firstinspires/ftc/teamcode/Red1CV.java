@@ -55,7 +55,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
-
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Autonomous(name="Red1CV", group="Linear Opmode")
@@ -65,7 +66,7 @@ public class Red1CV extends LinearOpMode {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
 
-    private int pos;
+    private int pos=1;
 
     public static final String TAG = "Vuforia VuMark Sample";
     OpenGLMatrix lastLocation = null;
@@ -74,10 +75,56 @@ public class Red1CV extends LinearOpMode {
     private CryptoboxDetector cryptoboxDetector = null;
 
 
+
+    private Servo glyphLeftDown = null;
+    private Servo glyphRightDown = null;
+    private Servo glyphLeftUp = null;
+    private Servo glyphRightUp= null;
+    private Servo shoulderRight = null;
+    private Servo shoulderLeft = null;
+    private Servo elbowRight = null;
+    private Servo elbowLeft = null;
+    private Servo autoGlyphLeft = null;
+    private Servo autoGlyphRight = null;
+    private Servo activator = null;
     private DcMotor leftFront = null;
     private DcMotor rightFront = null;
     private DcMotor leftBack = null;
     private DcMotor rightBack = null;
+    private DcMotor lift = null;
+
+    static final double LEFT_SHOULDER_IN = 0.12;
+    static final double LEFT_SHOULDER_OUT = 0.57;
+    static final double RIGHT_SHOULDER_IN = 0.175;
+    static final double RIGHT_SHOULDER_OUT = 0.65;
+    static final double LEFT_ELBOW_OUT = 0.3;
+    static final double LEFT_ELBOW_IN = 0.84;
+    static final double RIGHT_ELBOW_OUT = 0.4;
+    static final double RIGHT_ELBOW_IN = 0.94;
+    static final double LEFT_AUTOGLYPH_IN = 0.0;
+    static final double LEFT_AUTOGLYPH_OUT = 1.0;
+    static final double RIGHT_AUTOGLYPH_IN = 0.0;
+    static final double RIGHT_AUTOGLYPH_OUT = 1.0;
+    static final double ACTIVATOR_IN = 0.0;
+    static final double ACTIVATOR_OUT = 0.65;
+
+    static final double LEFT_GRABBER_UP_CLOSE = 0.3;
+    static final double LEFT_GRABBER_DOWN_CLOSE = 0.25; //good
+    static final double RIGHT_GRABBER_UP_OPEN = 0.45;
+    static final double RIGHT_GRABBER_DOWN_OPEN = 0.45;
+
+    static final double LEFT_GRABBER_UP_OPEN = 0.75;    //good
+    static final double LEFT_GRABBER_DOWN_OPEN = 0.5;
+    static final double RIGHT_GRABBER_UP_CLOSE = 0.75;  //good
+    static final double RIGHT_GRABBER_DOWN_CLOSE = 0.7;
+
+
+
+    private boolean activatorOpen = false;
+
+
+    private ColorSensor jewelSensorRight;
+    private ColorSensor jewelSensorLeft;
 
     private final int TICKS_PER_INCH=36;
 
@@ -88,46 +135,11 @@ public class Red1CV extends LinearOpMode {
 
     final int[] targetvals = {490,478,511};
 
-    private ColorSensor jewelSensor;
-    private double spos = 0.0;
-    private double epos = 0.9;
-    private Servo shoulder, elbow;
-    private Servo glyphRightBack = null;
-    private Servo glyphLeftBack = null;
-    private Servo actuatorBack = null;
 
-    //BNO055IMU imu;
 
-    // State used for updating telemetry
-    //Orientation angles;
-    //Acceleration gravity;
-    //private float initAngle;
 
     @Override
     public void runOpMode() {
-
-        /*BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
-        parameters.loggingEnabled = true;
-        parameters.loggingTag = "IMU";
-        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
-
-        // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
-        // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
-        // and named "imu".
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-        imu.initialize(parameters);
-
-        // Set up our telemetry dashboard
-        //composeTelemetry();
-
-
-        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-
-        initAngle = angles.firstAngle;
-        float deltaAngle = 0;*/
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         VuforiaLocalizer.Parameters vuforiaParameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
@@ -143,93 +155,90 @@ public class Red1CV extends LinearOpMode {
         relicTemplate.setName("relicVuMarkTemplate"); // can help in debugging; otherwise not necessary
 
         cryptoboxDetector = new CryptoboxDetector();
-        cryptoboxDetector.init(hardwareMap.appContext, CameraViewDisplay.getInstance(), 1);
-        cryptoboxDetector.rotateMat = false;
-
-        // Initialize the hardware variables. Note that the strings used here as parameters
-        // to 'get' must correspond to the names assigned during the robot configuration
-        // step (using the FTC Robot Controller app on the phone).
-        shoulder = hardwareMap.servo.get("shoulder");
-        elbow = hardwareMap.servo.get("elbow");
-        jewelSensor = hardwareMap.colorSensor.get("jewelSensor");
-        leftFront = hardwareMap.get(DcMotor.class, "leftFront");
+        //cryptoboxDetector.init(hardwareMap.appContext, CameraViewDisplay.getInstance(), 1);
+        //cryptoboxDetector.rotateMat = false;
+        leftFront  = hardwareMap.get(DcMotor.class, "leftFront");
         rightFront = hardwareMap.get(DcMotor.class, "rightFront");
-        leftBack = hardwareMap.get(DcMotor.class, "leftBack");
+        leftBack  = hardwareMap.get(DcMotor.class, "leftBack");
         rightBack = hardwareMap.get(DcMotor.class, "rightBack");
+        lift = hardwareMap.get(DcMotor.class, "lift");
 
-        leftFront.setDirection(DcMotor.Direction.REVERSE);
-        leftBack.setDirection(DcMotor.Direction.REVERSE);
-        rightFront.setDirection(DcMotor.Direction.FORWARD);
-        rightBack.setDirection(DcMotor.Direction.FORWARD);
+        leftFront.setDirection(DcMotor.Direction.FORWARD);
+        leftBack.setDirection(DcMotor.Direction.FORWARD);
+        lift.setDirection(DcMotor.Direction.FORWARD);
+        rightFront.setDirection(DcMotor.Direction.REVERSE);
+        rightBack.setDirection(DcMotor.Direction.REVERSE);
 
+        glyphLeftDown = hardwareMap.servo.get("glyphLeftDown");
+        glyphRightDown = hardwareMap.servo.get("glyphRightDown");
+        glyphLeftUp = hardwareMap.servo.get("glyphLeftUp");
+        glyphRightUp = hardwareMap.servo.get("glyphRightUp");
 
-        // Send telemetry message to signify robot waiting;
-        telemetry.addData("Status", "Resetting Encoders");    //
-        telemetry.update();
+        shoulderLeft = hardwareMap.servo.get("shoulderLeft");
+        shoulderRight = hardwareMap.servo.get("shoulderRight");
+        elbowLeft = hardwareMap.servo.get("elbowLeft");
+        elbowRight = hardwareMap.servo.get("elbowRight");
+        jewelSensorLeft = hardwareMap.colorSensor.get("jewelSensorLeft");
+        jewelSensorRight = hardwareMap.colorSensor.get("jewelSensorRight");
+        autoGlyphLeft = hardwareMap.servo.get("autoGlyphLeft");
+        autoGlyphRight = hardwareMap.servo.get("autoGlyphRight");
 
-        actuatorBack = hardwareMap.get(Servo.class, "actuatorBack");
-        glyphLeftBack = hardwareMap.servo.get("glyphLeftBack");
-        glyphRightBack = hardwareMap.servo.get("glyphRightBack");
-        glyphLeftBack.setDirection(Servo.Direction.REVERSE);
-        glyphRightBack.setDirection(Servo.Direction.FORWARD);
-
-
-        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        elbow.setPosition(.9);
         telemetry.addData("Status", "Initialized");
+
+
+        elbowLeft.setDirection((Servo.Direction.REVERSE));
+        shoulderLeft.setDirection(Servo.Direction.REVERSE);
+
+
+
+        activator = hardwareMap.get(Servo.class, "activator");
+
+        autoGlyphLeft = hardwareMap.get(Servo.class, "autoGlyphLeft");
+        autoGlyphRight = hardwareMap.get(Servo.class, "autoGlyphRight");
+        autoGlyphLeft.setDirection(Servo.Direction.REVERSE);
+        autoGlyphRight.setPosition(RIGHT_AUTOGLYPH_OUT);
+        telemetry.addData("Status", "Initialized");
+
         telemetry.update();
-        //shoulder.setPosition(spos);
-        // elbow.setPosition(epos);
+
 
         waitForStart();
 
         relicTrackables.activate();
-        // Wait for the game to start (driver presses PLAY)
 
         runtime.reset();
-        //glyphRightBack.setPosition(.7);
-        //glyphLeftBack.setPosition(.815);
-
-        /*shoulder.setPosition(.42);
-        sleep(1000);
-
-        elbow.setPosition(.37);
-        sleep(1000);
 
 
 
-        sleep(1500);
-       //// telemetry.addData("Blue val:", jewelSensor.blue());
-        //telemetry.addData("Red val:", jewelSensor.red());
-        //telemetry.update();
-        if(jewelSensor.red()==0 && jewelSensor.blue()==0) {
+
+        if(jewelSensorRight.red()==0 && jewelSensorRight.blue()==0) {
             telemetry.addData("Can't Read", "");
-            elbow.setPosition(.9);
+
+            elbowRight.setPosition(RIGHT_ELBOW_IN);
             sleep(1000);
         }
-        else if(jewelSensor.red()<jewelSensor.blue()){
-            shoulder.setPosition(.6);
+        else if(jewelSensorRight.red()<jewelSensorRight.blue()){
+            shoulderRight.setPosition(RIGHT_SHOULDER_OUT+.2);
 
             sleep(1000);
-           // telemetry.addData("Shoulder: ", shoulder.getPosition());
-
+            telemetry.addData("Shoulder: ", shoulderRight.getPosition());
+            shoulderRight.setPosition(RIGHT_SHOULDER_OUT);
+            sleep(1000);
             telemetry.update();
-            elbow.setPosition(.9);
+            elbowRight.setPosition(RIGHT_ELBOW_IN);
             sleep(1000);
             //}
         }
         else{
-            shoulder.setPosition(.25);
+            shoulderRight.setPosition(RIGHT_SHOULDER_OUT-.2);
             sleep(1000);
-            elbow.setPosition(.9);
+            shoulderRight.setPosition(RIGHT_SHOULDER_OUT);
+            sleep(1000);
+            elbowRight.setPosition(RIGHT_ELBOW_IN);
             sleep(1000);
 
         }
-        shoulder.setPosition(0);*/
+        shoulderRight.setPosition(RIGHT_SHOULDER_IN);
 
         sleep(1000);
         RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
@@ -251,21 +260,51 @@ public class Red1CV extends LinearOpMode {
 
 
 
-        moveDistBack(30, 30, 30, 30);
+
+        moveDistBack(26, 26, 26, 26);
         brake();
         sleep(500);
+
+        strafeDistRight(16,16,16,16);
+
+        cryptoboxDetector.init(hardwareMap.appContext, CameraViewDisplay.getInstance(), 0);
+        cryptoboxDetector.rotateMat=false;
         cryptoboxDetector.enable();
-        strafeDistRight(12,12,12,12);
-        brake();
-        sleep(2000);
-        //while(!cryptoboxDetector.isCryptoBoxDetected())
-            //strafeDistRight(1,1,1,1);
-        //brake();
-        //sleep(250);
-        int[] colvals = cryptoboxDetector.getCryptoBoxPositions();
-        cryptoboxDetector.disable();
-        telemetry.addData("Column values: ", colvals);
+
+        List<Double> distances = new ArrayList<Double>();
+        runtime.reset();
+        while (opModeIsActive() && runtime.seconds() < 3) { //set how long to get values
+            if (cryptoboxDetector.getDistancePos1(pos) > -11 && cryptoboxDetector.getDistancePos1(pos) < 11) {
+                distances.add(cryptoboxDetector.getDistancePos1(pos));
+            }
+        }
+        double sum = 0;
+        for (double distance : distances) {
+            sum += distance;
+        }
+        double distanceToMove = sum / distances.size();
+        telemetry.addData("Dist to Move: ", distanceToMove);
         telemetry.update();
+        sleep(5000);
+        
+        if(pos==0){
+            moveDistForward(-distanceToMove, -distanceToMove, -distanceToMove, -distanceToMove);
+        }
+        else if(pos==1){
+            if(distanceToMove<0){
+                moveDistForward(-distanceToMove, -distanceToMove, -distanceToMove, -distanceToMove);
+            }else{
+                moveDistBack(distanceToMove, distanceToMove, distanceToMove, distanceToMove);
+            }
+        }
+        else if(pos==2){
+            moveDistBack(distanceToMove, distanceToMove, distanceToMove, distanceToMove);
+        }
+
+        sleep(20000);/*
+        //cryptoboxDetector.getDistancePos1()
+        strafeDistLeft(15,15,15,15);
+
 
         //}*/
 
@@ -274,39 +313,8 @@ public class Red1CV extends LinearOpMode {
 
     }
 
-    /*public void spinTurnUsingDOF(float degrees, String direction) throws InterruptedException {
-        Orientation initialOrientation = imu.getAngularOrientation();
-        float angle_0 = initialOrientation.firstAngle;
+    public void strafeDistRight(double leftFrontTargetDist, double leftBackTargetDist, double rightFrontTargetDist, double rightBackTargetDist) {
 
-        if (direction.equalsIgnoreCase("right")) {
-            degrees=angle_0+degrees;
-            while ((imu.getAngularOrientation().firstAngle < degrees) && opModeIsActive()) {
-
-                leftBack.setPower(.1);
-                leftFront.setPower(.1);
-                rightFront.setPower(-.1);
-                rightBack.setPower(-.1);
-
-            }
-            brake();
-            //telemetry.addData("DOF gyro value WHILE RIGHT", realOrientation);
-            telemetry.update();
-        } else if (direction.equalsIgnoreCase("left")) {
-
-            while ((imu.getAngularOrientation().firstAngle > degrees) && opModeIsActive()) {
-                leftBack.setPower(-0.1);
-                leftFront.setPower(-0.1);
-                rightFront.setPower(0.1);
-                rightBack.setPower(0.1);
-            }
-            brake();
-            telemetry.update();
-        }
-        brake();
-
-    }*/
-    public void strafeDistRight(int leftFrontTargetDist, int leftBackTargetDist, int rightFrontTargetDist, int rightBackTargetDist) {
-        //initAngle = angles.firstAngle;
 
         targetDist[0] = leftFrontTargetDist;
         targetDist[1] = leftBackTargetDist;
@@ -324,10 +332,15 @@ public class Red1CV extends LinearOpMode {
         targetClicks[3] = (int) (targetDist[3] * TICKS_PER_INCH);
 
         //THIS IS GOOD CODDDDDDDDDeeee
-        leftFront.setPower(.14);
+        /*leftFront.setPower(.14);
         leftBack.setPower(-.1);
         rightFront.setPower(.1);
-        rightBack.setPower(-.14);
+        rightBack.setPower(-.14);*/
+
+        leftFront.setPower(.13);
+        leftBack.setPower(-.1);
+        rightFront.setPower(-.13);
+        rightBack.setPower(.1);
 
         leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -336,27 +349,17 @@ public class Red1CV extends LinearOpMode {
 
 
         while (opModeIsActive() && leftFront.getCurrentPosition() < zeroPos[0] + targetClicks[0] &&
-                rightBack.getCurrentPosition() > zeroPos[3] - targetClicks[3]) {
+                rightBack.getCurrentPosition() < zeroPos[3] + targetClicks[3]) {
 
             telemetry.update();
         }
         brake();
 
-        /*float deltaAngle=initAngle-angles.firstAngle;
-        try{
-            spinTurnUsingDOF(-deltaAngle, "left");
-            telemetry.addData("InitAngle", initAngle);
-            telemetry.addData("Delta angle", deltaAngle);
-            telemetry.addData("Current angle", angles.firstAngle);
-            telemetry.update();
-        }catch(Exception e){
-            e.printStackTrace();
-        }*/
 
 
     }
-    public void strafeDistLeft(int leftFrontTargetDist, int leftBackTargetDist, int rightFrontTargetDist, int rightBackTargetDist){
-        //initAngle = angles.firstAngle;
+    public void strafeDistLeft(double leftFrontTargetDist, double leftBackTargetDist, double rightFrontTargetDist, double rightBackTargetDist){
+
 
         targetDist[0] = leftFrontTargetDist;
         targetDist[1] = leftBackTargetDist;
@@ -374,12 +377,15 @@ public class Red1CV extends LinearOpMode {
         targetClicks[3]= (int)(targetDist[3] * TICKS_PER_INCH);;
 
         //THIS IS GOOD CODEEEEEEEEEEEEEEEE
-        leftFront.setPower(-.14);
+        /*leftFront.setPower(-.14);
         leftBack.setPower(.1);
         rightFront.setPower(-.14);
-        rightBack.setPower(.12);
+        rightBack.setPower(.12);*/
 
-
+        leftFront.setPower(-.13);
+        leftBack.setPower(.1);
+        rightFront.setPower(.13);
+        rightBack.setPower(-.1);
 
         leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -387,26 +393,17 @@ public class Red1CV extends LinearOpMode {
         rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         while (opModeIsActive() && leftFront.getCurrentPosition() > zeroPos[0] - targetClicks[0] &&
-                rightBack.getCurrentPosition() < zeroPos[3] + targetClicks[3]) {
+                rightBack.getCurrentPosition() > zeroPos[3] - targetClicks[3]) {
 
             telemetry.update();
         }
 
-       /*float deltaAngle=initAngle-angles.firstAngle;
-        try{
-            spinTurnUsingDOF(deltaAngle, "right");
-            telemetry.addData("InitAngle", initAngle);
-            telemetry.addData("Delta angle", deltaAngle);
-            telemetry.addData("Current angle", angles.firstAngle);
-            telemetry.update();
-        }catch(Exception e){
-            e.printStackTrace();
-        }*/
+
     }
     public void turnRight(double degrees){
-        double dist = 12*Math.PI *(2*degrees/360);
-        double leftFrontTargetDist = -dist;
-        double leftBackTargetDist = -dist;
+        double dist = 12.5*Math.PI *(degrees/360);
+        double leftFrontTargetDist = dist;
+        double leftBackTargetDist = dist;
         double rightFrontTargetDist = dist;
         double rightBackTargetDist = dist;
 
@@ -438,8 +435,8 @@ public class Red1CV extends LinearOpMode {
 
 
 
-        while(opModeIsActive() && leftFront.getCurrentPosition()<zeroPos[0]-targetClicks[0] &&
-                leftBack.getCurrentPosition()<zeroPos[1]-targetClicks[1] &&
+        while(opModeIsActive() && leftFront.getCurrentPosition()>zeroPos[0]-targetClicks[0] &&
+                leftBack.getCurrentPosition()>zeroPos[1]-targetClicks[1] &&
                 rightFront.getCurrentPosition()<zeroPos[2]+targetClicks[2] &&
                 rightBack.getCurrentPosition()<zeroPos[3]+targetClicks[3]){
 
@@ -453,11 +450,11 @@ public class Red1CV extends LinearOpMode {
 
     }
     public void turnLeft(double degrees){
-        double dist = 12*Math.PI *(2*degrees/360);
+        double dist = 12.5*Math.PI *(degrees/360);
         double leftFrontTargetDist = dist;
         double leftBackTargetDist = dist;
-        double rightFrontTargetDist = -dist;
-        double rightBackTargetDist = -dist;
+        double rightFrontTargetDist = dist;
+        double rightBackTargetDist = dist;
 
         targetDist[0] = leftFrontTargetDist;
         targetDist[1] = leftBackTargetDist;
@@ -487,10 +484,7 @@ public class Red1CV extends LinearOpMode {
 
 
 
-        while(opModeIsActive() && leftFront.getCurrentPosition()<zeroPos[0]+targetClicks[0] &&
-                leftBack.getCurrentPosition()<zeroPos[1]+targetClicks[1] &&
-                rightFront.getCurrentPosition()<zeroPos[2]-targetClicks[2] &&
-                rightBack.getCurrentPosition()<zeroPos[3]-targetClicks[3]){
+        while(opModeIsActive() && leftFront.getCurrentPosition()<zeroPos[0]+targetClicks[0]){
 
             telemetry.addData("Left front pos: ", leftFront.getCurrentPosition());
             telemetry.addData("Left back pos: ", leftBack.getCurrentPosition());
@@ -501,7 +495,7 @@ public class Red1CV extends LinearOpMode {
         }
 
     }
-    public void moveDistBack(int leftFrontTargetDist, int leftBackTargetDist, int rightFrontTargetDist, int rightBackTargetDist){
+    public void moveDistBack(double leftFrontTargetDist, double leftBackTargetDist, double rightFrontTargetDist, double rightBackTargetDist){
 
         targetDist[0] = leftFrontTargetDist;
         targetDist[1] = leftBackTargetDist;
@@ -545,7 +539,7 @@ public class Red1CV extends LinearOpMode {
         }
 
     }
-    public void moveDistForward(int leftFrontTargetDist, int leftBackTargetDist, int rightFrontTargetDist, int rightBackTargetDist){
+    public void moveDistForward(double leftFrontTargetDist, double leftBackTargetDist, double rightFrontTargetDist, double rightBackTargetDist){
 
         targetDist[0] = leftFrontTargetDist;
         targetDist[1] = leftBackTargetDist;
