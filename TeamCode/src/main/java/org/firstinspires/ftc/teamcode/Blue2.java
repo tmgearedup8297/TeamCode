@@ -221,7 +221,7 @@ public class Blue2 extends LinearOpMode {
         moveDistBack(24.5, 24.5, 24.5, 24.5);
         brake();
         sleep(500);
-        strafeDistLeft(20,20,20,120);
+        strafeDistLeft(24,24,24,24);
         brake();
         sleep(500);
         turnRight(50);

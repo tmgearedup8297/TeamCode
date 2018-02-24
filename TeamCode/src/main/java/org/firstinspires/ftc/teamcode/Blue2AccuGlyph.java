@@ -259,38 +259,39 @@ public class Blue2AccuGlyph extends LinearOpMode {
         telemetry.update();
 
 
-        moveDistBack(24.5, 24.5, 24.5, 24.5);
+        moveDistBack(22, 22, 22, 22);
         brake();
         sleep(500);
-        turnRight(90);
+        turnRight(170);
         brake();
         sleep(500);
         if(pos==0){
-            moveDistBack(19,19,19,19);
+            moveDistBack(6,6,6,6);
         }
         else if(pos==1){
-            moveDistBack(26,26,26,26);
+            moveDistBack(15,15,15,15);
         }
         else{
-            moveDistBack(31,31,31,31);
+            moveDistBack(20,20,20,20);
         }
         brake();
-        sleep(500);
+        sleep(500);//goood so far
         turnLeft(50);
-        autoGlyphLeft.setPosition(LEFT_AUTOGLYPH_IN);
-        sleep(1000);
-        moveDistForward(4,4,4,4);
         brake();
         sleep(500);
+        autoGlyphLeft.setPosition(LEFT_AUTOGLYPH_IN);
+        sleep(1000);
         turnRight(50);
         brake();
         sleep(500);
-        moveDistBack(6,6,6,6);
+        moveDistForward(4,4,4,4);
         brake();
         sleep(500);
+
         strafeDistRight(6,6,6,6);
         brake();
         sleep(500);
+
         strafeDistLeft(3,3,3,3);
         brake();
         //}
