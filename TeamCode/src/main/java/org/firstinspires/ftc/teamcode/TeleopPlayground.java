@@ -90,13 +90,13 @@ public class TeleopPlayground extends OpMode
     static final double ACTIVATOR_IN = 0.2;
     static final double ACTIVATOR_OUT = 0.65;
 
-    static final double LEFT_GRABBER_UP_CLOSE = 0.25;
+    static final double LEFT_GRABBER_UP_CLOSE = 0.5;
     static final double LEFT_GRABBER_DOWN_CLOSE = 0.3; //good
     static final double RIGHT_GRABBER_UP_OPEN = 0.45;
     static final double RIGHT_GRABBER_DOWN_OPEN = 0.45;
 
-    static final double LEFT_GRABBER_UP_OPEN = 0.5;    //good
-    static final double LEFT_GRABBER_DOWN_OPEN = 0.75;
+    static final double LEFT_GRABBER_UP_OPEN = 0.75;    //good
+    static final double LEFT_GRABBER_DOWN_OPEN = 0.675;
     static final double RIGHT_GRABBER_UP_CLOSE = 0.75;  //good
     static final double RIGHT_GRABBER_DOWN_CLOSE = 0.7;
 
@@ -112,7 +112,7 @@ public class TeleopPlayground extends OpMode
     private boolean rbLastPass = false;
     private boolean lbLastPass = false;
     private boolean GRABBER_OPEN=true;
-    private boolean activatorOpen = false;
+    private boolean activatorOpen = true;
 
     private boolean shoulder = false;
     private boolean elbow = false;
@@ -159,7 +159,7 @@ public class TeleopPlayground extends OpMode
 
 
         activator = hardwareMap.get(Servo.class, "activator");
-        activator.setPosition(ACTIVATOR_IN);
+        activator.setPosition(ACTIVATOR_OUT);
 
         autoGlyphLeft = hardwareMap.get(Servo.class, "autoGlyphLeft");
         autoGlyphRight = hardwareMap.get(Servo.class, "autoGlyphRight");
@@ -224,11 +224,18 @@ public class TeleopPlayground extends OpMode
         }
         rbLastPass = rbPressed;
 
+        /*FAIL SAFE ACTIVATOR CODE
+        if(gamepad2.left_bumper){
+            activator.setPosition(ACTIVATOR_OUT);
+        }
+        else {
+            activator.setPosition(ACTIVATOR_IN);
+        }*/
         boolean lbPressed = gamepad2.left_bumper;
         if(lbPressed && !lbLastPass)
         {
             activatorOpen = !activatorOpen;
-            if(activatorOpen){
+            if(!activatorOpen){
                 activator.setPosition(ACTIVATOR_IN);
 
                 telemetry.addData("Closing", "");

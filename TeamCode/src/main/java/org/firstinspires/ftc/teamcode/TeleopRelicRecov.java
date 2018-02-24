@@ -44,7 +44,7 @@ import static android.os.SystemClock.sleep;
 import static com.qualcomm.robotcore.util.Range.scale;
 
 
-@TeleOp(name="TeleopRelicRecov", group="Iterative Opmode")
+@TeleOp(name="TeleopRelicRecovOld", group="Iterative Opmode")
 //@Disabled
 public class TeleopRelicRecov extends OpMode
 {

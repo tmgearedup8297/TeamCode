@@ -50,7 +50,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
+import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
@@ -99,7 +101,7 @@ public class Red1CV extends LinearOpMode {
     static final double RIGHT_SHOULDER_OUT = 0.65;
     static final double LEFT_ELBOW_OUT = 0.3;
     static final double LEFT_ELBOW_IN = 0.84;
-    static final double RIGHT_ELBOW_OUT = 0.4;
+    static final double RIGHT_ELBOW_OUT = 0.42;
     static final double RIGHT_ELBOW_IN = 0.94;
     static final double LEFT_AUTOGLYPH_IN = 0.0;
     static final double LEFT_AUTOGLYPH_OUT = 1.0;
@@ -135,11 +137,32 @@ public class Red1CV extends LinearOpMode {
 
     final int[] targetvals = {490,478,511};
 
-
-
+    BNO055IMU imu;
+    Orientation angles;
+    Acceleration gravity;
+    private float initAngle;
 
     @Override
     public void runOpMode() {
+
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+        parameters.loggingEnabled = true;
+        parameters.loggingTag = "IMU";
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
+
+        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+        initAngle = angles.firstAngle;
+        float deltaAngle = 0;
+        waitForStart();
+
+        imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         VuforiaLocalizer.Parameters vuforiaParameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
@@ -195,11 +218,14 @@ public class Red1CV extends LinearOpMode {
 
         autoGlyphLeft = hardwareMap.get(Servo.class, "autoGlyphLeft");
         autoGlyphRight = hardwareMap.get(Servo.class, "autoGlyphRight");
+
         autoGlyphLeft.setDirection(Servo.Direction.REVERSE);
-        autoGlyphRight.setPosition(RIGHT_AUTOGLYPH_OUT);
+
+
         telemetry.addData("Status", "Initialized");
 
         telemetry.update();
+        activator.setPosition(ACTIVATOR_OUT);
 
 
         waitForStart();
@@ -207,8 +233,20 @@ public class Red1CV extends LinearOpMode {
         relicTrackables.activate();
 
         runtime.reset();
+        shoulderRight.setPosition(RIGHT_SHOULDER_OUT);
+        sleep(1000);
+        elbowRight.setPosition(RIGHT_ELBOW_OUT);
+        sleep(2000);
 
 
+
+
+
+
+
+        telemetry.addData("Blue val:", jewelSensorRight.blue());
+        telemetry.addData("Red val:", jewelSensorRight.red());
+        telemetry.update();
 
 
         if(jewelSensorRight.red()==0 && jewelSensorRight.blue()==0) {
@@ -255,18 +293,37 @@ public class Red1CV extends LinearOpMode {
         telemetry.addData("Pos", pos);
         telemetry.addData("VuMark", vuMark);
         telemetry.update();
-        sleep(5000);
+        sleep(1000);
         telemetry.update();
 
 
 
 
-        moveDistBack(26, 26, 26, 26);
+        moveDistBack(28, 28, 28, 28);
+        brake();
+        sleep(500);
+
+
+        if(angles.firstAngle<0){
+            turnLeft(-angles.firstAngle);
+        }
+        else{
+            turnRight(angles.firstAngle);
+        }
         brake();
         sleep(500);
 
         strafeDistRight(16,16,16,16);
-
+        brake();
+        sleep(500);
+        telemetry.addData("Cur angle: ", angles.firstAngle);
+        telemetry.update();
+        if(angles.firstAngle<0){
+            turnRight(-angles.firstAngle);
+        }
+        else if(angles.firstAngle>0){
+            turnLeft(angles.firstAngle);
+        }
         cryptoboxDetector.init(hardwareMap.appContext, CameraViewDisplay.getInstance(), 0);
         cryptoboxDetector.rotateMat=false;
         cryptoboxDetector.enable();
@@ -278,6 +335,7 @@ public class Red1CV extends LinearOpMode {
                 distances.add(cryptoboxDetector.getDistancePos1(pos));
             }
         }
+        cryptoboxDetector.disable();
         double sum = 0;
         for (double distance : distances) {
             sum += distance;
@@ -285,23 +343,47 @@ public class Red1CV extends LinearOpMode {
         double distanceToMove = sum / distances.size();
         telemetry.addData("Dist to Move: ", distanceToMove);
         telemetry.update();
-        sleep(5000);
-        
+
         if(pos==0){
-            moveDistForward(-distanceToMove, -distanceToMove, -distanceToMove, -distanceToMove);
+            moveDistBack(distanceToMove, distanceToMove, distanceToMove, distanceToMove);
+            brake();
+            sleep(1000);
         }
         else if(pos==1){
             if(distanceToMove<0){
                 moveDistForward(-distanceToMove, -distanceToMove, -distanceToMove, -distanceToMove);
+                brake();
+                sleep(1000);
             }else{
                 moveDistBack(distanceToMove, distanceToMove, distanceToMove, distanceToMove);
+                brake();
+                sleep(1000);
             }
         }
         else if(pos==2){
-            moveDistBack(distanceToMove, distanceToMove, distanceToMove, distanceToMove);
+            moveDistForward(-distanceToMove, -distanceToMove, -distanceToMove, -distanceToMove);
+            brake();
+            sleep(1000);
         }
 
-        sleep(20000);/*
+        strafeDistLeft(25,25,25,25);
+        brake();
+        sleep(500);
+        turnRight(45);
+        brake();
+        sleep(500);
+        autoGlyphLeft.setPosition(RIGHT_AUTOGLYPH_IN);
+        sleep(500);
+        moveDistForward(4,4,4,4);
+        brake();
+        sleep(500);
+        turnLeft(45);
+        strafeDistLeft(4,4,4,4);
+        brake();
+        sleep(500);
+        strafeDistRight(2,2,2,2);
+        brake();
+        /*
         //cryptoboxDetector.getDistancePos1()
         strafeDistLeft(15,15,15,15);
 
@@ -337,10 +419,10 @@ public class Red1CV extends LinearOpMode {
         rightFront.setPower(.1);
         rightBack.setPower(-.14);*/
 
-        leftFront.setPower(.13);
-        leftBack.setPower(-.1);
-        rightFront.setPower(-.13);
-        rightBack.setPower(.1);
+        leftFront.setPower(.14);
+        leftBack.setPower(-.12);
+        rightFront.setPower(-.14);
+        rightBack.setPower(.12);
 
         leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -354,8 +436,6 @@ public class Red1CV extends LinearOpMode {
             telemetry.update();
         }
         brake();
-
-
 
     }
     public void strafeDistLeft(double leftFrontTargetDist, double leftBackTargetDist, double rightFrontTargetDist, double rightBackTargetDist){
@@ -383,9 +463,9 @@ public class Red1CV extends LinearOpMode {
         rightBack.setPower(.12);*/
 
         leftFront.setPower(-.13);
-        leftBack.setPower(.1);
+        leftBack.setPower(.13);
         rightFront.setPower(.13);
-        rightBack.setPower(-.1);
+        rightBack.setPower(-.13);
 
         leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -512,10 +592,10 @@ public class Red1CV extends LinearOpMode {
         targetClicks[2] = (int)(targetDist[2] * TICKS_PER_INCH);;
         targetClicks[3]= (int)(targetDist[3] * TICKS_PER_INCH);;
 
-        leftFront.setPower(-.1);
-        leftBack.setPower(-.1);
-        rightFront.setPower(-.1);
-        rightBack.setPower(-.1);
+        leftFront.setPower(-.11);
+        leftBack.setPower(-.11);
+        rightFront.setPower(-.12);
+        rightBack.setPower(-.12);
 
         leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

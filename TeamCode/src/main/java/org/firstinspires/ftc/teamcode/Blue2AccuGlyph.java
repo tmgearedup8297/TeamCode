@@ -36,6 +36,13 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
+import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
+
 
 /**
  * This file contains an minimal example of a Linear "OpMode". An OpMode is a 'program' that runs in either
@@ -50,13 +57,18 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Red2", group="Linear Opmode")
+@Autonomous(name="Blue2AccuGlyph", group="Linear Opmode")
 //@Disabled
-public class Red2 extends LinearOpMode {
+public class Blue2AccuGlyph extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
 
+    private int pos=1;
+
+    public static final String TAG = "Vuforia VuMark Sample";
+    OpenGLMatrix lastLocation = null;
+    VuforiaLocalizer vuforia;
 
 
     private Servo glyphLeftDown = null;
@@ -80,9 +92,9 @@ public class Red2 extends LinearOpMode {
     static final double LEFT_SHOULDER_OUT = 0.57;
     static final double RIGHT_SHOULDER_IN = 0.175;
     static final double RIGHT_SHOULDER_OUT = 0.65;
-    static final double LEFT_ELBOW_OUT = 0.35;
+    static final double LEFT_ELBOW_OUT = 0.3;
     static final double LEFT_ELBOW_IN = 0.84;
-    static final double RIGHT_ELBOW_OUT = 0.45;
+    static final double RIGHT_ELBOW_OUT = 0.25;
     static final double RIGHT_ELBOW_IN = 0.94;
     static final double LEFT_AUTOGLYPH_IN = 0.0;
     static final double LEFT_AUTOGLYPH_OUT = 1.0;
@@ -158,8 +170,22 @@ public class Red2 extends LinearOpMode {
         autoGlyphRight = hardwareMap.get(Servo.class, "autoGlyphRight");
         autoGlyphLeft.setDirection(Servo.Direction.REVERSE);
 
-        autoGlyphRight.setPosition(RIGHT_AUTOGLYPH_OUT);
+        autoGlyphLeft.setPosition(RIGHT_AUTOGLYPH_OUT);
         telemetry.addData("Status", "Initialized");
+
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        VuforiaLocalizer.Parameters vuforiaParameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
+
+        vuforiaParameters.vuforiaLicenseKey = "AVUcFCn/////AAAAGRAznpbgTUrbnvSn5Odx3WFSWKyWk+CaQKGEJCcm033tEoqUiLMTlyHFwX01tkB5QfFVbnJAp8kTS442QovsVniqOrTAxcbKJHNzbYEVtYx/4ZDyIS7Vsb+uyE2VSNs8pKEPmsZAmW9/XJid02yP7/2K6W1nJ6NpwFKdY3qLs/7qX+M4CPeCkKdnllkgjsq99xvIOncxGorzdjNIAYfIEwHds0BhKKcR3GyyflHAOx0zvTAEvu8g0g2kSTDPxemDY5vug2O0vE61mW/AL5YIIlJeWf3dfpPJg7SjP8RxS44vMoW8bpEkfJXD2KhZpigDGP+SV1JHLz2d3DrpP+TBFSQG00+F93Dd7gofT8n7rpyk";
+
+        vuforiaParameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
+        this.vuforia = ClassFactory.createVuforiaLocalizer(vuforiaParameters);
+
+
+        VuforiaTrackables relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
+        VuforiaTrackable relicTemplate = relicTrackables.get(0);
+        relicTemplate.setName("relicVuMarkTemplate"); // can help in debugging; otherwise not necessary
+        relicTrackables.activate();
 
         waitForStart();
 
@@ -170,9 +196,9 @@ public class Red2 extends LinearOpMode {
         // glyphRightBack.setPosition(.7);
         //glyphLeftBack.setPosition(.815);
 
-        shoulderRight.setPosition(RIGHT_SHOULDER_OUT);
+        shoulderLeft.setPosition(LEFT_SHOULDER_OUT);
         sleep(1000);
-        elbowRight.setPosition(RIGHT_ELBOW_OUT);
+        elbowLeft.setPosition(LEFT_ELBOW_OUT);
         sleep(2000);
 
 
@@ -181,51 +207,77 @@ public class Red2 extends LinearOpMode {
 
 
 
-        telemetry.addData("Blue val:", jewelSensorRight.blue());
-        telemetry.addData("Red val:", jewelSensorRight.red());
+        telemetry.addData("Blue val:", jewelSensorLeft.blue());
+        telemetry.addData("Red val:", jewelSensorLeft.red());
         telemetry.update();
 
 
-        if(jewelSensorRight.red()==0 && jewelSensorRight.blue()==0) {
+        if(jewelSensorLeft.red()==0 && jewelSensorLeft.blue()==0) {
             telemetry.addData("Can't Read", "");
 
-            elbowRight.setPosition(RIGHT_ELBOW_IN);
+            elbowLeft.setPosition(LEFT_ELBOW_IN);
             sleep(1000);
         }
-        else if(jewelSensorRight.red()<jewelSensorRight.blue()){
-            shoulderRight.setPosition(RIGHT_SHOULDER_OUT+.2);
+        else if(jewelSensorLeft.red()>jewelSensorLeft.blue()){
+            shoulderLeft.setPosition(LEFT_SHOULDER_OUT+.2);
 
             sleep(1000);
-            telemetry.addData("Shoulder: ", shoulderRight.getPosition());
-            shoulderRight.setPosition(RIGHT_SHOULDER_OUT);
+            telemetry.addData("Shoulder: ", shoulderLeft.getPosition());
+            shoulderLeft.setPosition(LEFT_SHOULDER_OUT);
             sleep(1000);
             telemetry.update();
-            elbowRight.setPosition(RIGHT_ELBOW_IN);
+            elbowLeft.setPosition(LEFT_ELBOW_IN);
             sleep(1000);
             //}
         }
         else{
-            shoulderRight.setPosition(RIGHT_SHOULDER_OUT-.2);
+            shoulderLeft.setPosition(LEFT_SHOULDER_OUT-.2);
             sleep(1000);
-            //shoulderRight.setPosition(RIGHT_SHOULDER_OUT);
+            elbowLeft.setPosition(LEFT_ELBOW_IN);
+            sleep(1000);
+            //shoulderLeft.setPosition(LEFT_SHOULDER_OUT);
             //sleep(1000);
-            elbowRight.setPosition(RIGHT_ELBOW_IN);
-            sleep(1000);
+
 
         }
-        shoulderRight.setPosition(RIGHT_SHOULDER_IN);
+        shoulderLeft.setPosition(LEFT_SHOULDER_IN);
 
 
-        moveDistBack(26, 26, 26, 26);
+        RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
+        String poString = vuMark.toString();
+
+        if(poString.equals("LEFT")){
+            pos=0;
+        }else if(poString.equals("CENTER")){
+            pos=1;
+        }else if(poString.equals("RIGHT")) {
+            pos=2;
+        }
+
+        telemetry.addData("Pos", pos);
+        telemetry.addData("VuMark", vuMark);
+        telemetry.update();
+
+
+        moveDistBack(24.5, 24.5, 24.5, 24.5);
         brake();
         sleep(500);
-        strafeDistRight(14,14,14,14);
+        turnRight(90);
+        brake();
+        sleep(500);
+        if(pos==0){
+            moveDistBack(19,19,19,19);
+        }
+        else if(pos==1){
+            moveDistBack(26,26,26,26);
+        }
+        else{
+            moveDistBack(31,31,31,31);
+        }
         brake();
         sleep(500);
         turnLeft(50);
-        brake();
-        sleep(1000);
-        autoGlyphRight.setPosition(RIGHT_AUTOGLYPH_IN);
+        autoGlyphLeft.setPosition(LEFT_AUTOGLYPH_IN);
         sleep(1000);
         moveDistForward(4,4,4,4);
         brake();
@@ -233,13 +285,14 @@ public class Red2 extends LinearOpMode {
         turnRight(50);
         brake();
         sleep(500);
-
-        strafeDistLeft(10,10,10,10);
+        moveDistBack(6,6,6,6);
         brake();
         sleep(500);
-        moveDistBack(10,10,10,10);
+        strafeDistRight(6,6,6,6);
         brake();
-        moveDistForward(3, 3, 3, 3);
+        sleep(500);
+        strafeDistLeft(3,3,3,3);
+        brake();
         //}
 
 
@@ -288,9 +341,6 @@ public class Red2 extends LinearOpMode {
             telemetry.update();
         }
         brake();
-
-
-
     }
     public void strafeDistLeft(double leftFrontTargetDist, double leftBackTargetDist, double rightFrontTargetDist, double rightBackTargetDist){
 
@@ -316,9 +366,9 @@ public class Red2 extends LinearOpMode {
         rightFront.setPower(-.14);
         rightBack.setPower(.12);*/
 
-        leftFront.setPower(-.13);
+        leftFront.setPower(-.1);
         leftBack.setPower(.1);
-        rightFront.setPower(.13);
+        rightFront.setPower(.1);
         rightBack.setPower(-.1);
 
         leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -527,5 +577,289 @@ public class Red2 extends LinearOpMode {
         rightFront.setPower(0);
         rightBack.setPower(0);
     }
+   /* public void turnRight(double degrees){
+        double dist = 12*Math.PI *(2*degrees/360);
+    double leftFrontTargetDist = -dist;
+    double leftBackTargetDist = -dist;
+    double rightFrontTargetDist = dist;
+    double rightBackTargetDist = dist;
 
+    targetDist[0] = leftFrontTargetDist;
+    targetDist[1] = leftBackTargetDist;
+    targetDist[2] = rightFrontTargetDist;
+    targetDist[3] = rightBackTargetDist;
+
+    zeroPos[0] = leftFront.getCurrentPosition();
+    zeroPos[1] = leftBack.getCurrentPosition();
+    zeroPos[2] = rightFront.getCurrentPosition();
+    zeroPos[3] = rightBack.getCurrentPosition();
+
+    targetClicks[0] = (int)(targetDist[0] * TICKS_PER_INCH);
+    targetClicks[1] = (int)((int)(targetDist[1] * TICKS_PER_INCH));
+    targetClicks[2] = (int)((int)(targetDist[2] * TICKS_PER_INCH));
+    targetClicks[3]= (int)((int)(targetDist[3] * TICKS_PER_INCH));
+
+        leftFront.setPower(-.1);
+        leftBack.setPower(-.1);
+        rightFront.setPower(.1);
+        rightBack.setPower(.1);
+
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
+
+
+        while(opModeIsActive() && leftFront.getCurrentPosition()<zeroPos[0]-targetClicks[0] &&
+            leftBack.getCurrentPosition()<zeroPos[1]-targetClicks[1] &&
+            rightFront.getCurrentPosition()<zeroPos[2]+targetClicks[2] &&
+            rightBack.getCurrentPosition()<zeroPos[3]+targetClicks[3]){
+
+        telemetry.addData("Left front pos: ", leftFront.getCurrentPosition());
+        telemetry.addData("Left back pos: ", leftBack.getCurrentPosition());
+        telemetry.addData("Right front pos: ", leftFront.getCurrentPosition());
+        telemetry.addData("Right back pos: ", leftFront.getCurrentPosition());
+        telemetry.update();
+
+    }
+
+}
+    public void turnLeft(double degrees){
+        double dist = 12*Math.PI *(2*degrees/360);
+        double leftFrontTargetDist = dist;
+        double leftBackTargetDist = dist;
+        double rightFrontTargetDist = -dist;
+        double rightBackTargetDist = -dist;
+
+        targetDist[0] = leftFrontTargetDist;
+        targetDist[1] = leftBackTargetDist;
+        targetDist[2] = rightFrontTargetDist;
+        targetDist[3] = rightBackTargetDist;
+
+        zeroPos[0] = leftFront.getCurrentPosition();
+        zeroPos[1] = leftBack.getCurrentPosition();
+        zeroPos[2] = rightFront.getCurrentPosition();
+        zeroPos[3] = rightBack.getCurrentPosition();
+
+        targetClicks[0] = (int)(targetDist[0] * TICKS_PER_INCH);
+        targetClicks[1] = (int)((int)(targetDist[1] * TICKS_PER_INCH));
+        targetClicks[2] = (int)((int)(targetDist[2] * TICKS_PER_INCH));
+        targetClicks[3]= (int)((int)(targetDist[3] * TICKS_PER_INCH));
+
+        leftFront.setPower(.1);
+        leftBack.setPower(.1);
+        rightFront.setPower(-.1);
+        rightBack.setPower(-.1);
+
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
+
+
+        while(opModeIsActive() && leftFront.getCurrentPosition()<zeroPos[0]+targetClicks[0] &&
+                leftBack.getCurrentPosition()<zeroPos[1]+targetClicks[1] &&
+                rightFront.getCurrentPosition()<zeroPos[2]-targetClicks[2] &&
+                rightBack.getCurrentPosition()<zeroPos[3]-targetClicks[3]){
+
+            telemetry.addData("Left front pos: ", leftFront.getCurrentPosition());
+            telemetry.addData("Left back pos: ", leftBack.getCurrentPosition());
+            telemetry.addData("Right front pos: ", leftFront.getCurrentPosition());
+            telemetry.addData("Right back pos: ", leftFront.getCurrentPosition());
+            telemetry.update();
+
+        }
+
+    }
+    public void moveDistBack(int leftFrontTargetDist, int leftBackTargetDist, int rightFrontTargetDist, int rightBackTargetDist){
+
+        targetDist[0] = leftFrontTargetDist;
+        targetDist[1] = leftBackTargetDist;
+        targetDist[2] = rightFrontTargetDist;
+        targetDist[3] = rightBackTargetDist;
+
+        zeroPos[0] = leftFront.getCurrentPosition();
+        zeroPos[1] = leftBack.getCurrentPosition();
+        zeroPos[2] = rightFront.getCurrentPosition();
+        zeroPos[3] = rightBack.getCurrentPosition();
+
+        targetClicks[0] = (int)(targetDist[0] * TICKS_PER_INCH);
+        targetClicks[1] = (int)(targetDist[1] * TICKS_PER_INCH);;
+        targetClicks[2] = (int)(targetDist[2] * TICKS_PER_INCH);;
+        targetClicks[3]= (int)(targetDist[3] * TICKS_PER_INCH);;
+
+        leftFront.setPower(-.1);
+        leftBack.setPower(-.1);
+        rightFront.setPower(-.1);
+        rightBack.setPower(-.1);
+
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
+
+
+        while(opModeIsActive() && leftFront.getCurrentPosition()>zeroPos[0]-targetClicks[0] &&
+                leftBack.getCurrentPosition()>zeroPos[1]-targetClicks[1] &&
+                rightFront.getCurrentPosition()>zeroPos[2]-targetClicks[2] &&
+                rightBack.getCurrentPosition()>zeroPos[3]-targetClicks[3]){
+
+            telemetry.addData("Left front pos: ", leftFront.getCurrentPosition());
+            telemetry.addData("Left back pos: ", leftBack.getCurrentPosition());
+            telemetry.addData("Right front pos: ", leftFront.getCurrentPosition());
+            telemetry.addData("Right back pos: ", leftFront.getCurrentPosition());
+            telemetry.update();
+
+        }
+
+    }
+    public void moveDistForward(int leftFrontTargetDist, int leftBackTargetDist, int rightFrontTargetDist, int rightBackTargetDist){
+
+        targetDist[0] = leftFrontTargetDist;
+        targetDist[1] = leftBackTargetDist;
+        targetDist[2] = rightFrontTargetDist;
+        targetDist[3] = rightBackTargetDist;
+
+        zeroPos[0] = leftFront.getCurrentPosition();
+        zeroPos[1] = leftBack.getCurrentPosition();
+        zeroPos[2] = rightFront.getCurrentPosition();
+        zeroPos[3] = rightBack.getCurrentPosition();
+
+        targetClicks[0] = (int)(targetDist[0] * TICKS_PER_INCH);
+        targetClicks[1] = (int)(targetDist[1] * TICKS_PER_INCH);;
+        targetClicks[2] = (int)(targetDist[2] * TICKS_PER_INCH);;
+        targetClicks[3]= (int)(targetDist[3] * TICKS_PER_INCH);;
+
+        leftFront.setPower(.1);
+        leftBack.setPower(.1);
+        rightFront.setPower(.1);
+        rightBack.setPower(.1);
+
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
+
+
+        while(opModeIsActive() && leftFront.getCurrentPosition()<zeroPos[0]+targetClicks[0] &&
+                leftBack.getCurrentPosition()<zeroPos[1]+targetClicks[1] &&
+                rightFront.getCurrentPosition()<zeroPos[2]+targetClicks[2] &&
+                rightBack.getCurrentPosition()<zeroPos[3]+targetClicks[3]){
+
+            telemetry.addData("Left front pos: ", leftFront.getCurrentPosition());
+            telemetry.addData("Left back pos: ", leftBack.getCurrentPosition());
+            telemetry.addData("Right front pos: ", leftFront.getCurrentPosition());
+            telemetry.addData("Right back pos: ", leftFront.getCurrentPosition());
+            telemetry.update();
+
+        }
+
+    }
+
+    public void strafeDistRight(int leftFrontTargetDist, int leftBackTargetDist, int rightFrontTargetDist, int rightBackTargetDist){
+
+        targetDist[0] = leftFrontTargetDist;
+        targetDist[1] = leftBackTargetDist;
+        targetDist[2] = rightFrontTargetDist;
+        targetDist[3] = rightBackTargetDist;
+
+        zeroPos[0] = leftFront.getCurrentPosition();
+        zeroPos[1] = leftBack.getCurrentPosition();
+        zeroPos[2] = rightFront.getCurrentPosition();
+        zeroPos[3] = rightBack.getCurrentPosition();
+
+        targetClicks[0] = (int)(targetDist[0] * TICKS_PER_INCH);
+        targetClicks[1] = (int)(targetDist[1] * TICKS_PER_INCH);;
+        targetClicks[2] = (int)(targetDist[2] * TICKS_PER_INCH);;
+        targetClicks[3]= (int)(targetDist[3] * TICKS_PER_INCH);;
+
+        leftFront.setPower(-.01);
+        leftBack.setPower(.01);
+        rightFront.setPower(.01);
+        rightBack.setPower(-.01);
+
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
+
+
+        while(opModeIsActive() && leftFront.getCurrentPosition()<zeroPos[0]-targetClicks[0] &&
+                leftBack.getCurrentPosition()<zeroPos[1]+targetClicks[1] &&
+                rightFront.getCurrentPosition()<zeroPos[2]-targetClicks[2] &&
+                rightBack.getCurrentPosition()<zeroPos[3]+targetClicks[3]){
+
+            telemetry.addData("Left front pos: ", leftFront.getCurrentPosition());
+            telemetry.addData("Left back pos: ", leftBack.getCurrentPosition());
+            telemetry.addData("Right front pos: ", leftFront.getCurrentPosition());
+            telemetry.addData("Right back pos: ", leftFront.getCurrentPosition());
+            telemetry.update();
+
+        }
+
+    }
+    public void strafeDistLeft(int leftFrontTargetDist, int leftBackTargetDist, int rightFrontTargetDist, int rightBackTargetDist){
+
+        targetDist[0] = leftFrontTargetDist;
+        targetDist[1] = leftBackTargetDist;
+        targetDist[2] = rightFrontTargetDist;
+        targetDist[3] = rightBackTargetDist;
+
+        zeroPos[0] = leftFront.getCurrentPosition();
+        zeroPos[1] = leftBack.getCurrentPosition();
+        zeroPos[2] = rightFront.getCurrentPosition();
+        zeroPos[3] = rightBack.getCurrentPosition();
+
+        targetClicks[0] = (int)(targetDist[0] * TICKS_PER_INCH);
+        targetClicks[1] = (int)(targetDist[1] * TICKS_PER_INCH);;
+        targetClicks[2] = (int)(targetDist[2] * TICKS_PER_INCH);;
+        targetClicks[3]= (int)(targetDist[3] * TICKS_PER_INCH);;
+
+        leftFront.setPower(.01);
+        leftBack.setPower(-.01);
+        rightFront.setPower(-.01);
+        rightBack.setPower(.01);
+
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
+
+
+        while(opModeIsActive() && leftFront.getCurrentPosition()<zeroPos[0]+targetClicks[0] &&
+                leftBack.getCurrentPosition()<zeroPos[1]-targetClicks[1] &&
+                rightFront.getCurrentPosition()<zeroPos[2]+targetClicks[2] &&
+                rightBack.getCurrentPosition()<zeroPos[3]-targetClicks[3]){
+
+            telemetry.addData("Left front pos: ", leftFront.getCurrentPosition());
+            telemetry.addData("Left back pos: ", leftBack.getCurrentPosition());
+            telemetry.addData("Right front pos: ", leftFront.getCurrentPosition());
+            telemetry.addData("Right back pos: ", leftFront.getCurrentPosition());
+            telemetry.update();
+
+        }
+
+    }
+    public void brake(){
+        leftFront.setPower(0.01);
+        leftBack.setPower(-0.01);
+        rightFront.setPower(0.01);
+        rightBack.setPower(-0.01);
+        leftFront.setPower(0);
+        leftBack.setPower(0);
+        rightFront.setPower(0);
+        rightBack.setPower(0);
+    }*/
 }

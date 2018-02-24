@@ -207,10 +207,11 @@ public class Red1 extends LinearOpMode {
         else{
             shoulderRight.setPosition(RIGHT_SHOULDER_OUT-.2);
             sleep(1000);
-            shoulderRight.setPosition(RIGHT_SHOULDER_OUT);
-            sleep(1000);
             elbowRight.setPosition(RIGHT_ELBOW_IN);
             sleep(1000);
+            //shoulderRight.setPosition(RIGHT_SHOULDER_OUT);
+            //sleep(1000);
+
 
         }
         shoulderRight.setPosition(RIGHT_SHOULDER_IN);
