@@ -90,15 +90,15 @@ public class TeleopPlayground extends OpMode
     static final double ACTIVATOR_IN = 0.2;
     static final double ACTIVATOR_OUT = 0.65;
 
-    static final double LEFT_GRABBER_UP_CLOSE = 0.5;
-    static final double LEFT_GRABBER_DOWN_CLOSE = 0.3; //good
-    static final double RIGHT_GRABBER_UP_OPEN = 0.45;
-    static final double RIGHT_GRABBER_DOWN_OPEN = 0.45;
+    static final double LEFT_GRABBER_UP_CLOSE = 0.25;
+    static final double LEFT_GRABBER_DOWN_CLOSE = 0.25; //good
+    static final double RIGHT_GRABBER_UP_OPEN = 0.35;
+    static final double RIGHT_GRABBER_DOWN_OPEN = 0.5;
 
-    static final double LEFT_GRABBER_UP_OPEN = 0.75;    //good
+    static final double LEFT_GRABBER_UP_OPEN = 0.65;    //good
     static final double LEFT_GRABBER_DOWN_OPEN = 0.675;
-    static final double RIGHT_GRABBER_UP_CLOSE = 0.75;  //good
-    static final double RIGHT_GRABBER_DOWN_CLOSE = 0.7;
+    static final double RIGHT_GRABBER_UP_CLOSE = 0.65;  //good
+    static final double RIGHT_GRABBER_DOWN_CLOSE = 0.9;
 
 
 
@@ -328,10 +328,10 @@ public class TeleopPlayground extends OpMode
 
         if(in<0){// if in is negative
             in*=100;
-            if(in>=-2){
+            if(in>=-9){
                 in = (float)((in*0.0315)/100);
             }
-            else if(in<-2 && in>=-39.537){
+            else if(in<-9 && in>=-39.537){
                 in = (float)((0.021*(Math.pow(in-2, 2))+0.063)/-100);
             }
             else{
@@ -341,10 +341,10 @@ public class TeleopPlayground extends OpMode
         }
         else{//if in is positive
             in*=100;
-            if(in<=2){
+            if(in<=9){
                 in = (float)((in*0.0315)/100);
             }
-            else if(in>2 && in<=39.537){
+            else if(in>9 && in<=39.537){
                 in = (float)((0.021*(Math.pow(in-2, 2))+0.063)/1000);
             }
             else{

@@ -216,7 +216,6 @@ public class Red1 extends LinearOpMode {
         }
         shoulderRight.setPosition(RIGHT_SHOULDER_IN);
 
-
         moveDistBack(30, 30, 30, 30);
         brake();
         sleep(500);
