@@ -116,7 +116,9 @@ public class AutoDriveMethodsTestPlayground extends LinearOpMode {
 
         runtime.reset();
 
+        straighBack();
 
+/*GYRO CORRECTION CRAP IDK IF IT WORKS
         while(opModeIsActive()){
             float currentAngle=angles.firstAngle;
             if(angles.firstAngle>2){
@@ -136,7 +138,7 @@ public class AutoDriveMethodsTestPlayground extends LinearOpMode {
                 }
             }
         }
-
+*/
 
         //}
 
@@ -144,6 +146,16 @@ public class AutoDriveMethodsTestPlayground extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
 
     }
+
+    public void straighBack() {
+        leftBack.setPower(-.03);
+        rightBack.setPower(-.03);
+        rightFront.setPower(-.03);
+        leftFront.setPower(-.03);
+        sleep(500);
+        brake();
+    }
+
 
     public int formatDOFValue(int headingDof) {
         return -headingDof;

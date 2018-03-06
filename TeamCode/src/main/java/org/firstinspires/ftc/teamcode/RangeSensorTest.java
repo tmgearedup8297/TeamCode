@@ -51,12 +51,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 //@Disabled   // comment out or remove this line to enable this opmode
 public class RangeSensorTest extends LinearOpMode {
 
+    ModernRoboticsI2cRangeSensor rangeSensor1;
     ModernRoboticsI2cRangeSensor rangeSensor;
-
     @Override public void runOpMode() {
 
         // get a reference to our compass
-        rangeSensor = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "sensor_range");
+        rangeSensor = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "frontRange");
+        rangeSensor1 = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "rightRange");
 
         // wait for the start button to be pressed
 
@@ -66,8 +67,16 @@ public class RangeSensorTest extends LinearOpMode {
             telemetry.addData("raw optical", rangeSensor.rawOptical());
             telemetry.addData("cm optical", "%.2f cm", rangeSensor.cmOptical());
             telemetry.addData("cm", "%.2f cm", rangeSensor.getDistance(DistanceUnit.CM));
+
+            telemetry.addData("raw ultrasonic1111", rangeSensor1.rawUltrasonic());
+            telemetry.addData("raw optical11111", rangeSensor1.rawOptical());
+            telemetry.addData("cm optical11111", "%.2f cm", rangeSensor1.cmOptical());
+            telemetry.addData("cm1111", "%.2f cm", rangeSensor1.getDistance(DistanceUnit.CM));
+
             telemetry.update();
         }
+
+        waitForStart();
         telemetry.addData("STARTED","");
         telemetry.update();
     }

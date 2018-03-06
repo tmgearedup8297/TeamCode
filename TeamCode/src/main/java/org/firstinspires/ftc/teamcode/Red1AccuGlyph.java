@@ -29,15 +29,18 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
@@ -87,6 +90,8 @@ public class Red1AccuGlyph extends LinearOpMode {
     private DcMotor leftBack = null;
     private DcMotor rightBack = null;
     private DcMotor lift = null;
+    private ModernRoboticsI2cRangeSensor rangeSensor1;
+    private ModernRoboticsI2cRangeSensor rangeSensor;
 
     static final double LEFT_SHOULDER_IN = 0.12;
     static final double LEFT_SHOULDER_OUT = 0.57;
@@ -94,7 +99,8 @@ public class Red1AccuGlyph extends LinearOpMode {
     static final double RIGHT_SHOULDER_OUT = 0.65;
     static final double LEFT_ELBOW_OUT = 0.3;
     static final double LEFT_ELBOW_IN = 0.84;
-    static final double RIGHT_ELBOW_OUT = 0.45;
+    static final double RIGHT_ELBOW_OUT = 0.44;
+    static final double RIGHT_ELBOW_MID = 0.6;
     static final double RIGHT_ELBOW_IN = 0.94;
     static final double LEFT_AUTOGLYPH_IN = 0.0;
     static final double LEFT_AUTOGLYPH_OUT = 1.0;
@@ -115,6 +121,8 @@ public class Red1AccuGlyph extends LinearOpMode {
 
     private ColorSensor jewelSensorRight;
     private ColorSensor jewelSensorLeft;
+    private DigitalChannel rightLim;
+    private DigitalChannel leftLim;
 
     private final int TICKS_PER_INCH=36;
 
@@ -156,6 +164,7 @@ public class Red1AccuGlyph extends LinearOpMode {
         autoGlyphLeft = hardwareMap.servo.get("autoGlyphLeft");
         autoGlyphRight = hardwareMap.servo.get("autoGlyphRight");
 
+
         telemetry.addData("Status", "Initialized");
 
 
@@ -169,6 +178,9 @@ public class Red1AccuGlyph extends LinearOpMode {
         autoGlyphLeft = hardwareMap.get(Servo.class, "autoGlyphLeft");
         autoGlyphRight = hardwareMap.get(Servo.class, "autoGlyphRight");
         autoGlyphLeft.setDirection(Servo.Direction.REVERSE);
+
+        leftLim = hardwareMap.get(DigitalChannel.class, "leftLim");
+        rightLim = hardwareMap.get(DigitalChannel.class, "rightLim");
 
         autoGlyphRight.setPosition(RIGHT_AUTOGLYPH_OUT);
         telemetry.addData("Status", "Initialized");
@@ -187,14 +199,42 @@ public class Red1AccuGlyph extends LinearOpMode {
         relicTemplate.setName("relicVuMarkTemplate"); // can help in debugging; otherwise not necessary
         relicTrackables.activate();
 
-        waitForStart();
+        telemetry.addData("activated vuforia","");
+        telemetry.update();
+        rangeSensor = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "frontRange");
+        rangeSensor1 = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "rightRange");
 
+        while (!isStarted()) {
+            telemetry.addData("raw ultrasonic1111", rangeSensor1.rawUltrasonic());
+            telemetry.addData("raw optical11111", rangeSensor1.rawOptical());
+            telemetry.addData("cm optical11111", "%.2f cm", rangeSensor1.cmOptical());
+            telemetry.addData("cm1111", "%.2f cm", rangeSensor1.getDistance(DistanceUnit.CM));
+
+            telemetry.update();
+        }
 
         // Wait for the game to start (driver presses PLAY)
 
         runtime.reset();
         // glyphRightBack.setPosition(.7);
         //glyphLeftBack.setPosition(.815);
+        telemetry.addData("started","");
+        telemetry.update();
+        RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
+        String poString = vuMark.toString();
+
+        if(poString.equals("RIGHT")){
+            pos=0;
+        }else if(poString.equals("CENTER")){
+            pos=1;
+        }else if(poString.equals("LEFT")) {
+            pos=2;
+        }
+        telemetry.addData("passed vumark","");
+        telemetry.update();
+        telemetry.addData("Pos", pos);
+        telemetry.addData("VuMark", vuMark);
+        telemetry.update();
 
         shoulderRight.setPosition(RIGHT_SHOULDER_OUT);
         sleep(1000);
@@ -215,10 +255,10 @@ public class Red1AccuGlyph extends LinearOpMode {
         if(jewelSensorRight.red()==0 && jewelSensorRight.blue()==0) {
             telemetry.addData("Can't Read", "");
 
-            elbowRight.setPosition(RIGHT_ELBOW_IN);
+            elbowRight.setPosition(RIGHT_ELBOW_MID);
             sleep(1000);
         }
-        else if(jewelSensorRight.red()<jewelSensorRight.blue()){
+        else if(jewelSensorRight.red()>jewelSensorRight.blue()){
             shoulderRight.setPosition(RIGHT_SHOULDER_OUT+.2);
 
             sleep(1000);
@@ -226,51 +266,68 @@ public class Red1AccuGlyph extends LinearOpMode {
             shoulderRight.setPosition(RIGHT_SHOULDER_OUT);
             sleep(1000);
             telemetry.update();
-            elbowRight.setPosition(RIGHT_ELBOW_IN);
+            elbowRight.setPosition(RIGHT_ELBOW_MID);
             sleep(1000);
             //}
         }
         else{
             shoulderRight.setPosition(RIGHT_SHOULDER_OUT-.2);
             sleep(1000);
-            elbowRight.setPosition(RIGHT_ELBOW_IN);
+            telemetry.addData("Shoulder: ", shoulderRight.getPosition());
+            //shoulderRight.setPosition(RIGHT_SHOULDER_OUT);
+            shoulderRight = hardwareMap.servo.get("shoulderRight");
+            elbowRight.setPosition(RIGHT_ELBOW_MID);
             sleep(1000);
             //shoulderRight.setPosition(RIGHT_SHOULDER_OUT);
             //sleep(1000);
 
 
         }
-        shoulderRight.setPosition(RIGHT_SHOULDER_IN);
 
 
-        RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
-        String poString = vuMark.toString();
 
-        if(poString.equals("LEFT")){
-            pos=0;
-        }else if(poString.equals("CENTER")){
-            pos=1;
-        }else if(poString.equals("RIGHT")) {
-            pos=2;
-        }
-
-        telemetry.addData("Pos", pos);
-        telemetry.addData("VuMark", vuMark);
-        telemetry.update();
-
-        if(pos==0)
-            moveDistBack(27, 27, 27, 27);
-        else if(pos==1)
-            moveDistBack(32,32,32,32);
-        else
-            moveDistBack(39,39,39,39);
+        moveDistBack(19,19,19,19);
         brake();
         sleep(500);
+        straightBack(1.9,1.9,1.9,1.9);
+        brake();
+        sleep(250);
+        shoulderRight.setPosition(RIGHT_SHOULDER_OUT);
+        shoulderRight = hardwareMap.servo.get("shoulderRight");
+
+        leftFront.setPower(-.07);
+        leftBack.setPower(-.07);
+        rightFront.setPower(-.07);
+        rightBack.setPower(-.07);
+        while(!rightLim.getState()){
+            telemetry.addData("unpressed","");
+            telemetry.update();
+        }
+        brake();
+        sleep(250);
+        elbowRight.setPosition(RIGHT_ELBOW_IN);
+        sleep(100);
+        shoulderRight.setPosition(RIGHT_SHOULDER_IN);
+        sleep(250);
+        if(pos==0)
+            moveDistBack(2.4, 2.4, 2.4, 2.4);
+        else if(pos==1)
+            moveDistBack(7.5,7.5,7.5,7.5);
+        else
+            moveDistBack(16.5,16.5,16.5,16.5);
+        brake();
+        sleep(500);
+        strafeDistLeft(3.25, 3.25, 3.25, 3.25);
+        brake();
         turnRight(45);
         brake();
         sleep(1000);
+        strafeDistLeft(1.9,1.9,1.9,1.9);
+        brake();
+        sleep(250);
         autoGlyphRight.setPosition(RIGHT_AUTOGLYPH_IN);
         sleep(1000);
+        strafeDistRight(2.5, 2.5, 2.5, 2.5);
         moveDistForward(4,4,4,4);
         brake();
         sleep(500);
@@ -278,14 +335,14 @@ public class Red1AccuGlyph extends LinearOpMode {
         brake();
         sleep(500);
 
-        strafeDistLeft(14,14,14,14);
+        strafeDistLeft(10,10,10,10);
         brake();
         sleep(500);
         strafeDistRight(4,4,4,4);
         brake();
         sleep(500);
         if(pos==0)
-            moveDistBack(2,2,2,2);
+            moveDistBack(5,5,5,5);
         else if(pos==2)
             moveDistForward(2,2,2,2);
         brake();
@@ -295,7 +352,49 @@ public class Red1AccuGlyph extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
 
     }
+    public void straightBack(double leftFrontTargetDist, double leftBackTargetDist, double rightFrontTargetDist, double rightBackTargetDist) {
 
+        targetDist[0] = leftFrontTargetDist;
+        targetDist[1] = leftBackTargetDist;
+        targetDist[2] = rightFrontTargetDist;
+        targetDist[3] = rightBackTargetDist;
+
+        zeroPos[0] = leftFront.getCurrentPosition();
+        zeroPos[1] = leftBack.getCurrentPosition();
+        zeroPos[2] = rightFront.getCurrentPosition();
+        zeroPos[3] = rightBack.getCurrentPosition();
+
+        targetClicks[0] = (int)(targetDist[0] * TICKS_PER_INCH);
+        targetClicks[1] = (int)(targetDist[1] * TICKS_PER_INCH);;
+        targetClicks[2] = (int)(targetDist[2] * TICKS_PER_INCH);;
+        targetClicks[3]= (int)(targetDist[3] * TICKS_PER_INCH);;
+
+        leftFront.setPower(.1);
+        leftBack.setPower(.1);
+        rightFront.setPower(.1);
+        rightBack.setPower(.1);
+
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
+
+
+        while(opModeIsActive() && leftFront.getCurrentPosition()<zeroPos[0]+targetClicks[0] &&
+                leftBack.getCurrentPosition()<zeroPos[1]+targetClicks[1] &&
+                rightFront.getCurrentPosition()<zeroPos[2]+targetClicks[2] &&
+                rightBack.getCurrentPosition()<zeroPos[3]+targetClicks[3]){
+
+            telemetry.addData("Left front pos: ", leftFront.getCurrentPosition());
+            telemetry.addData("Left back pos: ", leftBack.getCurrentPosition());
+            telemetry.addData("Right front pos: ", leftFront.getCurrentPosition());
+            telemetry.addData("Right back pos: ", leftFront.getCurrentPosition());
+            telemetry.update();
+
+        }
+    }
     public void strafeDistRight(double leftFrontTargetDist, double leftBackTargetDist, double rightFrontTargetDist, double rightBackTargetDist) {
 
 
@@ -494,8 +593,8 @@ public class Red1AccuGlyph extends LinearOpMode {
 
         leftFront.setPower(-.1);
         leftBack.setPower(-.1);
-        rightFront.setPower(-.12);
-        rightBack.setPower(-.12);
+        rightFront.setPower(-.11);
+        rightBack.setPower(-.11);
 
         leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -564,6 +663,7 @@ public class Red1AccuGlyph extends LinearOpMode {
 
     }
     public void brake(){
+
         leftFront.setPower(0.01);
         leftBack.setPower(-0.01);
         rightFront.setPower(0.01);
