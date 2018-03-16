@@ -1,5 +1,5 @@
 
-package org.firstinspires.ftc.testing;
+package org.firstinspires.ftc.teamcode;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -13,7 +13,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import java.io.IOException;
 
 
-@TeleOp(name="DogeCV Glyph Detector", group="DogeCV")
+@TeleOp(name="DogeCV Glyph Detector Test", group="DogeCV")
 
 public class GlyphOpMode extends OpMode
 {
@@ -31,7 +31,7 @@ public class GlyphOpMode extends OpMode
 
 
         glyphDetector = new GlyphDetector();
-        glyphDetector.init(hardwareMap.appContext, CameraViewDisplay.getInstance());
+        glyphDetector.init(hardwareMap.appContext, CameraViewDisplay.getInstance(), 1);
         glyphDetector.minScore = 1;
         glyphDetector.downScaleFactor = 0.3;
         glyphDetector.speed = GlyphDetector.GlyphDetectionSpeed.SLOW;

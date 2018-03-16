@@ -45,7 +45,7 @@ import static com.qualcomm.robotcore.util.Range.scale;
 
 
 @TeleOp(name="TeleopRelicRecovOld", group="Iterative Opmode")
-//@Disabled
+@Disabled
 public class TeleopRelicRecov extends OpMode
 {
     // Declare OpMode members.

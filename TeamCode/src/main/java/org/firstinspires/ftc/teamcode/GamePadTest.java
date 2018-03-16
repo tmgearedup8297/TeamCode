@@ -51,7 +51,7 @@ import com.qualcomm.robotcore.util.Range;
  */
 
 @TeleOp(name="Gamepad max val", group="Iterative Opmode")
-//@Disabled
+@Disabled
 public class GamePadTest extends OpMode
 {
     // Declare OpMode members.

@@ -261,7 +261,7 @@ public abstract class ShooterTWOBeacons extends AutonomousVelVort {
 
                 moveStraight(0.20, 2.5, false); //move back so so pusher is aligned
 
-                activateBeacon(redServo);
+                activateBeacoon(redServo);
 
             } else if (REDfrontColor.blue() == REDfrontColor.red()) {
                 telemetry.addData("NOT READING ANYTHING", "");

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.disnodeteam.dogecv.CameraViewDisplay;
 import com.disnodeteam.dogecv.detectors.CryptoboxDetectorInchOutput;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -15,7 +16,7 @@ import java.util.List;
  */
 
 @Autonomous(name="DogeCV Red Cryptobox Detector Playground reddit", group="DogeCV")
-
+@Disabled
 public class RedditCryptoboxMethodTest extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();

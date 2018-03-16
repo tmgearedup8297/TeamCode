@@ -33,6 +33,7 @@ import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import java.util.Arrays;
@@ -47,15 +48,14 @@ public class TeleopPlayground extends OpMode
 {
     private ElapsedTime runtime = new ElapsedTime();
 
-    private Servo glyphLeftDown = null;
+    //private Servo glyphLeftDown = null;
     private Servo glyphRightDown = null;
-    private Servo glyphLeftUp = null;
-    private Servo glyphRightUp= null;
+
     private Servo shoulderRight = null;
     private Servo shoulderLeft = null;
     private Servo elbowRight = null;
     private Servo elbowLeft = null;
-    private Servo autoGlyphLeft = null;
+    private Servo autoGlyphLeft = null;//
     private Servo autoGlyphRight = null;
     private Servo activator = null;
     private DcMotor leftFront = null;
@@ -63,7 +63,15 @@ public class TeleopPlayground extends OpMode
     private DcMotor leftBack = null;
     private DcMotor rightBack = null;
     private DcMotor lift = null;
+    private DcMotor extender = null;
+    private Servo relicGrabber=null;
+    private Servo relicExtender=null;
 
+    private static final double startPosGrabber = 0.0;
+    private static final double endPosGrabber = 0.04;
+    private static final double startPosExtender = 0.0;
+    private static final double endPosExtender = 0.0714;
+    private static final double initPosExtender = 0.107;
 
     private float x1, x2, y1, y2;
 
@@ -87,36 +95,45 @@ public class TeleopPlayground extends OpMode
     static final double LEFT_AUTOGLYPH_OUT = 1.0;
     static final double RIGHT_AUTOGLYPH_IN = 0.0;
     static final double RIGHT_AUTOGLYPH_OUT = 1.0;
-    static final double ACTIVATOR_IN = 0.2;
-    static final double ACTIVATOR_OUT = 0.65;
-
-    static final double LEFT_GRABBER_UP_CLOSE = 0.25;
-    static final double LEFT_GRABBER_DOWN_CLOSE = 0.25; //good
-    static final double RIGHT_GRABBER_UP_OPEN = 0.35;
-    static final double RIGHT_GRABBER_DOWN_OPEN = 0.5;
-
-    static final double LEFT_GRABBER_UP_OPEN = 0.65;    //good
-    static final double LEFT_GRABBER_DOWN_OPEN = 0.675;
-    static final double RIGHT_GRABBER_UP_CLOSE = 0.65;  //good
-    static final double RIGHT_GRABBER_DOWN_CLOSE = 0.9;
+    static final double ACTIVATOR_IN = 0.3;
+    static final double ACTIVATOR_OUT = 0.7;
 
 
+    static final double LEFT_GRABBER_DOWN_CLOSE = 0.32; //good
+
+    static final double RIGHT_GRABBER_DOWN_OPEN = 0.9;
 
 
+    static final double LEFT_GRABBER_DOWN_OPEN = 0.04;
+
+    static final double RIGHT_GRABBER_DOWN_CLOSE = 0.61;
 
 
+    private DigitalChannel liftLim;
     private ColorSensor jewelSensorRight;
     private ColorSensor jewelSensorLeft;
 
     //TEMPLATE FOR TOGGLE
     private boolean rbLastPass = false;
     private boolean lbLastPass = false;
+    private boolean dpadUpLastPass = false;
+    private boolean relicClawOpen = false;
+    private boolean dpadDownLastPass = false;
+    private boolean relicClawUp = false;
     private boolean GRABBER_OPEN=true;
     private boolean activatorOpen = true;
+
+    private int curcol = 1;
+    private boolean unpressed = true;
+    private int[] fill = {0,0,0};
+    private double addGlyph = 0.0;
+    private boolean inMethod = false;
 
     private boolean shoulder = false;
     private boolean elbow = false;
     private boolean autoglyph = false;
+
+    private double tempTargetTime = -1.0;
     /*
      * Code to run ONCE when the driver hits INIT
      */
@@ -129,17 +146,26 @@ public class TeleopPlayground extends OpMode
         leftBack  = hardwareMap.get(DcMotor.class, "leftBack");
         rightBack = hardwareMap.get(DcMotor.class, "rightBack");
         lift = hardwareMap.get(DcMotor.class, "lift");
+        extender = hardwareMap.get(DcMotor.class, "extender");
+        telemetry.addData("Status", "Initialized");
+        relicExtender = hardwareMap.servo.get("relicExtender");
+        relicGrabber = hardwareMap.servo.get("relicGrabber");
+        runtime.reset();
+
+        relicGrabber.setPosition(startPosGrabber);
+        relicExtender.setPosition(initPosExtender);
 
         leftFront.setDirection(DcMotor.Direction.FORWARD);
         leftBack.setDirection(DcMotor.Direction.FORWARD);
         lift.setDirection(DcMotor.Direction.FORWARD);
+        extender.setDirection(DcMotor.Direction.FORWARD);
         rightFront.setDirection(DcMotor.Direction.REVERSE);
         rightBack.setDirection(DcMotor.Direction.REVERSE);
 
-        glyphLeftDown = hardwareMap.servo.get("glyphLeftDown");
+
+        // = hardwareMap.servo.get("glyphLeftDown");
         glyphRightDown = hardwareMap.servo.get("glyphRightDown");
-        glyphLeftUp = hardwareMap.servo.get("glyphLeftUp");
-        glyphRightUp = hardwareMap.servo.get("glyphRightUp");
+
 
         shoulderLeft = hardwareMap.servo.get("shoulderLeft");
         shoulderRight = hardwareMap.servo.get("shoulderRight");
@@ -149,6 +175,8 @@ public class TeleopPlayground extends OpMode
         jewelSensorRight = hardwareMap.colorSensor.get("jewelSensorRight");
         autoGlyphLeft = hardwareMap.servo.get("autoGlyphLeft");
         autoGlyphRight = hardwareMap.servo.get("autoGlyphRight");
+
+        liftLim = hardwareMap.get(DigitalChannel.class, "liftLim");
 
         telemetry.addData("Status", "Initialized");
 
@@ -165,8 +193,7 @@ public class TeleopPlayground extends OpMode
         autoGlyphRight = hardwareMap.get(Servo.class, "autoGlyphRight");
         autoGlyphLeft.setDirection(Servo.Direction.REVERSE);
 
-        //glyphLeftUp.setDirection(Servo.Direction.REVERSE);
-        //glyphLeftDown.setDirection(Servo.Direction.REVERSE);
+
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
     }
@@ -191,6 +218,7 @@ public class TeleopPlayground extends OpMode
         elbowRight.setPosition(RIGHT_ELBOW_IN);
         shoulderLeft.setPosition(LEFT_SHOULDER_IN);
         shoulderRight.setPosition(RIGHT_SHOULDER_IN);
+        glyphRightDown.setPosition(RIGHT_GRABBER_DOWN_CLOSE);
     }
 
     /*
@@ -198,31 +226,27 @@ public class TeleopPlayground extends OpMode
      */
     @Override
     public void loop() {
+            boolean rbPressed = gamepad2.right_bumper;
+            if (rbPressed && !rbLastPass) {
+                GRABBER_OPEN = !GRABBER_OPEN;
+                if (!GRABBER_OPEN) {
 
-        boolean rbPressed = gamepad2.right_bumper;
-        if(rbPressed && !rbLastPass)
-        {
-            GRABBER_OPEN = !GRABBER_OPEN;
-            if(!GRABBER_OPEN){
-                glyphRightUp.setPosition(RIGHT_GRABBER_UP_CLOSE);
-                glyphRightDown.setPosition(RIGHT_GRABBER_DOWN_CLOSE);
-                glyphLeftUp.setPosition(LEFT_GRABBER_UP_CLOSE);
-                glyphLeftDown.setPosition(LEFT_GRABBER_DOWN_CLOSE);
+                    glyphRightDown.setPosition(RIGHT_GRABBER_DOWN_CLOSE);
 
-                telemetry.addData("Closing", "");
-                //telemetry.update();
+                    //.setPosition(LEFT_GRABBER_DOWN_CLOSE);
+
+                    telemetry.addData("Closing", "");
+                    //telemetry.update();
+                } else {
+
+                    glyphRightDown.setPosition(RIGHT_GRABBER_DOWN_OPEN);
+                    //glyphLeftDown.setPosition(LEFT_GRABBER_DOWN_OPEN);
+
+                    telemetry.addData("Opening", "");
+                    //telemetry.update();
+                }
             }
-            else {
-                glyphRightUp.setPosition(RIGHT_GRABBER_UP_OPEN);
-                glyphRightDown.setPosition(RIGHT_GRABBER_DOWN_OPEN);
-                glyphLeftUp.setPosition(LEFT_GRABBER_UP_OPEN);
-                glyphLeftDown.setPosition(LEFT_GRABBER_DOWN_OPEN);
-
-                telemetry.addData("Opening", "");
-                //telemetry.update();
-            }
-        }
-        rbLastPass = rbPressed;
+            rbLastPass = rbPressed;
 
         /*FAIL SAFE ACTIVATOR CODE
         if(gamepad2.left_bumper){
@@ -231,74 +255,113 @@ public class TeleopPlayground extends OpMode
         else {
             activator.setPosition(ACTIVATOR_IN);
         }*/
+        /*
+        boolean dPadUpPressed = gamepad2.dpad_up;
+        if (dPadUpPressed && !dpadUpLastPass){
+            relicClawOpen = !relicClawOpen;
+            if (!relicClawOpen) {
+
+                relicGrabber.setPosition(endPosGrabber);
+
+                //.setPosition(LEFT_GRABBER_DOWN_CLOSE);
+
+                telemetry.addData("End pos grabber", "");
+                //telemetry.update();
+            } else {
+
+                relicGrabber.setPosition(startPosGrabber);
+                //glyphLeftDown.setPosition(LEFT_GRABBER_DOWN_OPEN);
+
+                telemetry.addData("Start pos grabber", "");
+                //telemetry.update();
+            }
+        }
+        boolean dPadDownPressed = gamepad2.dpad_down;
+        if (dPadDownPressed && !dpadDownLastPass){
+            relicClawUp = !relicClawUp;
+            if (!relicClawUp) {
+
+                relicExtender.setPosition(endPosExtender);
+                sleep(500);
+                //.setPosition(LEFT_GRABBER_DOWN_CLOSE);
+
+                telemetry.addData("End pos extender", "");
+                //telemetry.update();
+            } else {
+
+                relicExtender.setPosition(startPosExtender);
+                //glyphLeftDown.setPosition(LEFT_GRABBER_DOWN_OPEN);
+
+                telemetry.addData("Start pos extender", "");
+                //telemetry.update();
+            }
+        }
+        */
+        if(!(runtime.seconds()<tempTargetTime)) {
+            if (gamepad2.dpad_up) {
+                relicGrabber.setPosition(startPosGrabber);
+                telemetry.addData("start pos grabber", "");
+                tempTargetTime = runtime.seconds() + .15;
+            }
+            if (gamepad2.dpad_down) {
+                relicGrabber.setPosition(endPosGrabber);
+                telemetry.addData("end pos grabber", "");
+                tempTargetTime = runtime.seconds() + .15;
+            }
+            if (gamepad2.dpad_left) {
+                relicExtender.setPosition(startPosExtender);
+                telemetry.addData("start pos extender", "");
+                tempTargetTime = runtime.seconds() + .15;
+            }
+            if (gamepad2.dpad_right) {
+                relicExtender.setPosition(endPosExtender);
+                telemetry.addData("end pos extender", "");
+                tempTargetTime = runtime.seconds() + .15;
+            }
+        }
+        rbLastPass = rbPressed;
+        telemetry.addData("LeftYRaw", gamepad1.left_stick_y);
+        telemetry.addData("motorFeedback", extender.getCurrentPosition());
+        telemetry.addData("grabberservoFeedback", relicGrabber.getPosition());
+        telemetry.addData("extenderservoFeedback", relicExtender.getPosition());
+
         boolean lbPressed = gamepad2.left_bumper;
-        if(lbPressed && !lbLastPass)
-        {
-            activatorOpen = !activatorOpen;
-            if(!activatorOpen){
-                activator.setPosition(ACTIVATOR_IN);
+            if (lbPressed && !lbLastPass) {
+                activatorOpen = !activatorOpen;
+                if (!activatorOpen) {
+                    activator.setPosition(ACTIVATOR_IN);
 
-                telemetry.addData("Closing", "");
-                //telemetry.update();
+                    telemetry.addData("Closing", "");
+                    //telemetry.update();
+                } else {
+                    activator.setPosition(ACTIVATOR_OUT);
+
+                    telemetry.addData("Opening", "");
+                    //telemetry.update();
+                }
             }
-            else {
-                activator.setPosition(ACTIVATOR_OUT);
-
-                telemetry.addData("Opening", "");
-                //telemetry.update();
-            }
-        }
-        lbLastPass = lbPressed;
+            lbLastPass = lbPressed;
 
 
-        telemetry.update();
-
-
-        float leftY= getWheelPower(gamepad1.left_stick_y);
-        float leftX= getWheelPower(gamepad1.left_stick_x);
-        float rightX= getWheelPower(gamepad1.right_stick_x);
-
-        leftFront.setPower((leftY-leftX-rightX));
-        leftBack.setPower(leftY+leftX-rightX);
-        rightFront.setPower((leftY+leftX+rightX));
-        rightBack.setPower((leftY-leftX+rightX));
-
-        lift.setPower(-gamepad2.left_stick_y);
-        //Cryptobox update code
-        /*if(gamepad2.x)
-            curcol=0;
-        else if(gamepad2.a)
-            curcol=1;
-        else if(gamepad2.b)
-            curcol=2;
-
-        if(gamepad2.dpad_up&&unpressed) {
-            fill[curcol]++;
-            addGlyph = runtime.seconds()+0.15;
-            unpressed=false;
-        }
-        else if(gamepad2.dpad_down&&unpressed) {
-            fill[curcol]--;
-            addGlyph = runtime.seconds()+0.15;
-            unpressed=false;
-        }
-        if(!gamepad2.dpad_down&&!gamepad2.dpad_up)
-            unpressed=true;
-
-        telemetry.addData("Current column: ", curcol);
-        telemetry.addData("Fill: ", Arrays.toString(fill));*/
-
-
-        //MESSING AROUND W/ AUTOSCORE
-        /*double targetDistance=21;
-        if(rangeSensor.getDistance(DistanceUnit.CM)>targetDistance){
-            telemetry.addData("distance to move", rangeSensor.getDistance(DistanceUnit.CM));
             telemetry.update();
-        }
-        else {
-            telemetry.addData("Finished", rangeSensor.getDistance(DistanceUnit.CM));
-            telemetry.update();
-        }*/
+
+
+            float leftY = getWheelPower(gamepad1.left_stick_y);
+            float leftX = getWheelPower(gamepad1.left_stick_x);
+            float rightX = getWheelPower(gamepad1.right_stick_x);
+
+            leftFront.setPower((leftY - leftX - rightX));
+            leftBack.setPower(leftY + leftX - rightX);
+            rightFront.setPower((leftY + leftX + rightX));
+            rightBack.setPower((leftY - leftX + rightX));
+
+            lift.setPower(-gamepad2.left_stick_y);
+            extender.setPower(gamepad2.right_stick_y);
+            //Cryptobox update code
+
+
+
+
 
 
     }

@@ -51,7 +51,7 @@ import com.qualcomm.robotcore.util.Range;
  */
 
 @TeleOp(name="Intake test", group="Iterative Opmode")
-//Disabled
+@Disabled
 public class IntakeTest extends OpMode
 {
     // Declare OpMode members.

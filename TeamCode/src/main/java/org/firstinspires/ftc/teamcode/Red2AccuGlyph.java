@@ -76,8 +76,7 @@ public class Red2AccuGlyph extends LinearOpMode {
 
     private Servo glyphLeftDown = null;
     private Servo glyphRightDown = null;
-    private Servo glyphLeftUp = null;
-    private Servo glyphRightUp= null;
+
     private Servo shoulderRight = null;
     private Servo shoulderLeft = null;
     private Servo elbowRight = null;
@@ -109,14 +108,14 @@ public class Red2AccuGlyph extends LinearOpMode {
     static final double ACTIVATOR_IN = 0.0;
     static final double ACTIVATOR_OUT = 0.65;
 
-    static final double LEFT_GRABBER_UP_CLOSE = 0.3;
+
     static final double LEFT_GRABBER_DOWN_CLOSE = 0.25; //good
-    static final double RIGHT_GRABBER_UP_OPEN = 0.45;
+
     static final double RIGHT_GRABBER_DOWN_OPEN = 0.45;
 
-    static final double LEFT_GRABBER_UP_OPEN = 0.75;    //good
+
     static final double LEFT_GRABBER_DOWN_OPEN = 0.5;
-    static final double RIGHT_GRABBER_UP_CLOSE = 0.75;  //good
+
     static final double RIGHT_GRABBER_DOWN_CLOSE = 0.7;
 
     private ColorSensor jewelSensorRight;
@@ -152,8 +151,6 @@ public class Red2AccuGlyph extends LinearOpMode {
 
         glyphLeftDown = hardwareMap.servo.get("glyphLeftDown");
         glyphRightDown = hardwareMap.servo.get("glyphRightDown");
-        glyphLeftUp = hardwareMap.servo.get("glyphLeftUp");
-        glyphRightUp = hardwareMap.servo.get("glyphRightUp");
 
         shoulderLeft = hardwareMap.servo.get("shoulderLeft");
         shoulderRight = hardwareMap.servo.get("shoulderRight");
@@ -272,7 +269,7 @@ public class Red2AccuGlyph extends LinearOpMode {
             shoulderRight.setPosition(RIGHT_SHOULDER_OUT-.2);
             sleep(1000);
             telemetry.addData("Shoulder: ", shoulderRight.getPosition());
-            shoulderRight.setPosition(RIGHT_SHOULDER_OUT);
+            //shoulderRight.setPosition(RIGHT_SHOULDER_OUT);
             elbowRight.setPosition(RIGHT_ELBOW_IN);
             //shoulderRight.setPosition(RIGHT_SHOULDER_OUT);
             //sleep(1000);

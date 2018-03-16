@@ -60,7 +60,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Red2AccuGlyph", group="Linear Opmode")
+@Autonomous(name="Blue2AccuGlyphWLimitSwitch", group="Linear Opmode")
 //@Disabled
 public class Blue2AccuGlyphWLimitSwitch extends LinearOpMode {
 
@@ -74,10 +74,8 @@ public class Blue2AccuGlyphWLimitSwitch extends LinearOpMode {
     VuforiaLocalizer vuforia;
 
 
-    private Servo glyphLeftDown = null;
+    //private Servo glyphLeftDown = null;
     private Servo glyphRightDown = null;
-    private Servo glyphLeftUp = null;
-    private Servo glyphRightUp= null;
     private Servo shoulderRight = null;
     private Servo shoulderLeft = null;
     private Servo elbowRight = null;
@@ -99,7 +97,7 @@ public class Blue2AccuGlyphWLimitSwitch extends LinearOpMode {
     //static final double RIGHT_SHOULDER_IN = 0.175;
     //static final double RIGHT_SHOULDER_OUT = 0.732;
     static final double LEFT_ELBOW_OUT = 0.3;
-    static final double LEFT_ELBOW_MID = 0.4;
+    static final double LEFT_ELBOW_MID = 0.39;
     static final double LEFT_ELBOW_IN = 0.84;
     //static final double RIGHT_ELBOW_OUT = 0.26;
     //static final double RIGHT_ELBOW_IN = 0.94;
@@ -151,10 +149,8 @@ public class Blue2AccuGlyphWLimitSwitch extends LinearOpMode {
         rightFront.setDirection(DcMotor.Direction.REVERSE);
         rightBack.setDirection(DcMotor.Direction.REVERSE);
 
-        glyphLeftDown = hardwareMap.servo.get("glyphLeftDown");
+        //glyphLeftDown = hardwareMap.servo.get("glyphLeftDown");
         glyphRightDown = hardwareMap.servo.get("glyphRightDown");
-        glyphLeftUp = hardwareMap.servo.get("glyphLeftUp");
-        glyphRightUp = hardwareMap.servo.get("glyphRightUp");
 
         shoulderLeft = hardwareMap.servo.get("shoulderLeft");
         shoulderRight = hardwareMap.servo.get("shoulderRight");
@@ -183,7 +179,7 @@ public class Blue2AccuGlyphWLimitSwitch extends LinearOpMode {
         leftLim = hardwareMap.get(DigitalChannel.class, "leftLim");
         rightLim = hardwareMap.get(DigitalChannel.class, "rightLim");
 
-        autoGlyphRight.setPosition(RIGHT_AUTOGLYPH_OUT);
+        autoGlyphLeft.setPosition(LEFT_AUTOGLYPH_OUT);
         telemetry.addData("Status", "Initialized");
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -237,9 +233,9 @@ public class Blue2AccuGlyphWLimitSwitch extends LinearOpMode {
         telemetry.addData("VuMark", vuMark);
         telemetry.update();
 
-        shoulderRight.setPosition(RIGHT_SHOULDER_OUT);
+        shoulderLeft.setPosition(LEFT_SHOULDER_OUT_JEWEL);
         sleep(1000);
-        elbowRight.setPosition(RIGHT_ELBOW_OUT);
+        elbowLeft.setPosition(LEFT_ELBOW_OUT);
         sleep(2000);
 
 
@@ -248,102 +244,102 @@ public class Blue2AccuGlyphWLimitSwitch extends LinearOpMode {
 
 
 
-        telemetry.addData("Blue val:", jewelSensorRight.blue());
-        telemetry.addData("Red val:", jewelSensorRight.red());
+        telemetry.addData("Blue val:", jewelSensorLeft.blue());
+        telemetry.addData("Red val:", jewelSensorLeft.red());
         telemetry.update();
 
 
-        if(jewelSensorRight.red()==0 && jewelSensorRight.blue()==0) {
+        if(jewelSensorLeft.red()==0 && jewelSensorLeft.blue()==0) {
             telemetry.addData("Can't Read", "");
 
-            elbowRight.setPosition(RIGHT_ELBOW_IN);
+            elbowLeft.setPosition(LEFT_ELBOW_IN);
         }
-        else if(jewelSensorRight.red()>jewelSensorRight.blue()){
-            shoulderRight.setPosition(RIGHT_SHOULDER_OUT+.2);
+        else if(jewelSensorLeft.red()<jewelSensorLeft.blue()){
+            shoulderLeft.setPosition(LEFT_SHOULDER_OUT+.2);
 
             sleep(1000);
-            telemetry.addData("Shoulder: ", shoulderRight.getPosition());
-            shoulderRight.setPosition(RIGHT_SHOULDER_OUT);
+            telemetry.addData("Shoulder: ", shoulderLeft.getPosition());
+            shoulderLeft.setPosition(LEFT_SHOULDER_OUT+.04);
             sleep(1000);
             telemetry.update();
-            elbowRight.setPosition(RIGHT_ELBOW_IN);
+            elbowLeft.setPosition(LEFT_ELBOW_IN);
             //}
         }
         else{
-            shoulderRight.setPosition(RIGHT_SHOULDER_OUT-.2);
+            shoulderLeft.setPosition(LEFT_SHOULDER_OUT-.2);
             sleep(1000);
-            telemetry.addData("Shoulder: ", shoulderRight.getPosition());
-            shoulderRight.setPosition(RIGHT_SHOULDER_OUT);
-            elbowRight.setPosition(RIGHT_ELBOW_IN);
-            //shoulderRight.setPosition(RIGHT_SHOULDER_OUT);
+            telemetry.addData("Shoulder: ", shoulderLeft.getPosition());
+            //shoulderLeft.setPosition(LEFT_SHOULDER_OUT);
+            elbowLeft.setPosition(LEFT_ELBOW_IN-.1);
+            //shoulderLeft.setPosition(Left_SHOULDER_OUT);
             //sleep(1000);
 
 
         }
-        //shoulderRight.setPosition(RIGHT_SHOULDER_IN);
+        //shoulderLeft.setPosition(Left_SHOULDER_IN);
         sleep(250);
 
-        moveDistBack(22.25,22.25,22.25,22.25);
+        moveDistBack(21.25,21.25,21.25,21.25);
         brake();
         sleep(500);
-        turnLeft(150);
+        turnRight(145);
         brake();
         sleep(500);
-        strafeDistRight(4,4,4,4);
+        strafeDistLeft(10,10,10,10);
         brake();
         sleep(500);
-        strafeDistLeft(2,2,2,2);
+        strafeDistRight(1.4,1.4,1.4,1.4);
         brake();
         sleep(500);
-        moveDistForward(4,4,4,4);
-        shoulderRight.setPosition(RIGHT_SHOULDER_OUT);
-        elbowRight.setPosition(RIGHT_ELBOW_MID);
-        shoulderRight = hardwareMap.servo.get("shoulderRight");
+        moveDistForward(5.33,5.33,5.33,5.33);
+        shoulderLeft.setPosition(LEFT_SHOULDER_OUT);
+        elbowLeft.setPosition(LEFT_ELBOW_MID);
+        shoulderLeft = hardwareMap.servo.get("shoulderLeft");
 
         leftFront.setPower(-.07);
         leftBack.setPower(-.07);
-        rightFront.setPower(-.07);
-        rightBack.setPower(-.07);
-        while(!rightLim.getState()){
+        rightFront.setPower(-.073);
+        rightBack.setPower(-.073);
+        while(!leftLim.getState()){
             telemetry.addData("unpressed","");
             telemetry.update();
         }
         brake();
         sleep(250);
-        elbowRight.setPosition(RIGHT_ELBOW_IN);
+        elbowLeft.setPosition(LEFT_ELBOW_IN);
         sleep(100);
-        shoulderRight.setPosition(RIGHT_SHOULDER_IN);
+        shoulderLeft.setPosition(LEFT_SHOULDER_IN);
         sleep(250);
-        if(pos==0)
-            moveDistBack(2.5, 2.5, 2.5, 2.5);
+        if(pos==2)
+            moveDistBack(1, 1, 1, 1);
         else if(pos==1)
-            moveDistBack(8,8,8,8);
+            moveDistBack(6.3,6.3,6.3,6.3);
         else
-            moveDistBack(17,17,17,17);
+            moveDistBack(12,12,12,12);
         brake();
         sleep(500);
-        strafeDistLeft(5, 5, 5, 5);
+        strafeDistRight(3.5, 3.5, 3.5, 3.5);
         brake();
-        turnRight(53);
+        turnLeft(49);
         brake();
         sleep(1000);
-        strafeDistLeft(2,2,2,2);
+        strafeDistRight(2.66,2.66,2.66,2.66);
         brake();
         sleep(250);
-        autoGlyphRight.setPosition(RIGHT_AUTOGLYPH_IN);
+        autoGlyphLeft.setPosition(LEFT_AUTOGLYPH_IN);
         sleep(1000);
-        strafeDistRight(3, 3, 3, 3);
+        strafeDistLeft(4, 4, 4, 4);
         moveDistForward(3,3,3,3);
         brake();
         sleep(500);
-        turnLeft(53);
+        turnRight(53);
         brake();
         sleep(500);
 
-        strafeDistLeft(10,10,10,10);
+        strafeDistRight(13.33,13.33,13.33,13.33);
         brake();
         sleep(500);
-        strafeDistRight(4,4,4,4);
+        strafeDistLeft(5.33,5.33,5.33,5.33);
         brake();
         sleep(500);
         if(pos==0)
@@ -598,8 +594,8 @@ public class Blue2AccuGlyphWLimitSwitch extends LinearOpMode {
 
         leftFront.setPower(-.1);
         leftBack.setPower(-.1);
-        rightFront.setPower(-.11);
-        rightBack.setPower(-.11);
+        rightFront.setPower(-.115);
+        rightBack.setPower(-.115);
 
         leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -642,8 +638,8 @@ public class Blue2AccuGlyphWLimitSwitch extends LinearOpMode {
 
         leftFront.setPower(.1);
         leftBack.setPower(.1);
-        rightFront.setPower(.1);
-        rightBack.setPower(.1);
+        rightFront.setPower(.115);
+        rightBack.setPower(.115);
 
         leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

@@ -74,10 +74,9 @@ public class Red1AccuGlyph extends LinearOpMode {
     VuforiaLocalizer vuforia;
 
 
-    private Servo glyphLeftDown = null;
+    //private Servo glyphLeftDown = null;
     private Servo glyphRightDown = null;
-    private Servo glyphLeftUp = null;
-    private Servo glyphRightUp= null;
+
     private Servo shoulderRight = null;
     private Servo shoulderLeft = null;
     private Servo elbowRight = null;
@@ -100,7 +99,7 @@ public class Red1AccuGlyph extends LinearOpMode {
     static final double LEFT_ELBOW_OUT = 0.3;
     static final double LEFT_ELBOW_IN = 0.84;
     static final double RIGHT_ELBOW_OUT = 0.44;
-    static final double RIGHT_ELBOW_MID = 0.6;
+    static final double RIGHT_ELBOW_MID = 0.66;
     static final double RIGHT_ELBOW_IN = 0.94;
     static final double LEFT_AUTOGLYPH_IN = 0.0;
     static final double LEFT_AUTOGLYPH_OUT = 1.0;
@@ -150,10 +149,9 @@ public class Red1AccuGlyph extends LinearOpMode {
         rightFront.setDirection(DcMotor.Direction.REVERSE);
         rightBack.setDirection(DcMotor.Direction.REVERSE);
 
-        glyphLeftDown = hardwareMap.servo.get("glyphLeftDown");
+        //glyphLeftDown = hardwareMap.servo.get("glyphLeftDown");
         glyphRightDown = hardwareMap.servo.get("glyphRightDown");
-        glyphLeftUp = hardwareMap.servo.get("glyphLeftUp");
-        glyphRightUp = hardwareMap.servo.get("glyphRightUp");
+
 
         shoulderLeft = hardwareMap.servo.get("shoulderLeft");
         shoulderRight = hardwareMap.servo.get("shoulderRight");
@@ -263,10 +261,10 @@ public class Red1AccuGlyph extends LinearOpMode {
 
             sleep(1000);
             telemetry.addData("Shoulder: ", shoulderRight.getPosition());
-            shoulderRight.setPosition(RIGHT_SHOULDER_OUT);
+            //shoulderRight.setPosition(RIGHT_SHOULDER_OUT);
             sleep(1000);
             telemetry.update();
-            elbowRight.setPosition(RIGHT_ELBOW_MID);
+            //elbowRight.setPosition(RIGHT_ELBOW_MID);
             sleep(1000);
             //}
         }
@@ -277,6 +275,7 @@ public class Red1AccuGlyph extends LinearOpMode {
             //shoulderRight.setPosition(RIGHT_SHOULDER_OUT);
             shoulderRight = hardwareMap.servo.get("shoulderRight");
             elbowRight.setPosition(RIGHT_ELBOW_MID);
+            shoulderRight.setPosition(RIGHT_SHOULDER_OUT);
             sleep(1000);
             //shoulderRight.setPosition(RIGHT_SHOULDER_OUT);
             //sleep(1000);
@@ -289,6 +288,7 @@ public class Red1AccuGlyph extends LinearOpMode {
         moveDistBack(19,19,19,19);
         brake();
         sleep(500);
+
         straightBack(1.9,1.9,1.9,1.9);
         brake();
         sleep(250);
@@ -309,25 +309,24 @@ public class Red1AccuGlyph extends LinearOpMode {
         sleep(100);
         shoulderRight.setPosition(RIGHT_SHOULDER_IN);
         sleep(250);
-        if(pos==0)
-            moveDistBack(2.4, 2.4, 2.4, 2.4);
+        if(pos==2)
+            moveDistBack(2, 2, 2, 2);
         else if(pos==1)
-            moveDistBack(7.5,7.5,7.5,7.5);
+            moveDistBack(7.25,7.25,7.25,7.25);
         else
-            moveDistBack(16.5,16.5,16.5,16.5);
+            moveDistBack(14,14,14,14);
         brake();
-        sleep(500);
-        strafeDistLeft(3.25, 3.25, 3.25, 3.25);
+        strafeDistLeft(4.25, 4.25, 4.25, 4.25);
         brake();
         turnRight(45);
         brake();
         sleep(1000);
-        strafeDistLeft(1.9,1.9,1.9,1.9);
+        strafeDistLeft(2.5,2.5,2.5,2.5);
         brake();
         sleep(250);
         autoGlyphRight.setPosition(RIGHT_AUTOGLYPH_IN);
         sleep(1000);
-        strafeDistRight(2.5, 2.5, 2.5, 2.5);
+        strafeDistRight(3.3, 3.3, 3.3, 3.3);
         moveDistForward(4,4,4,4);
         brake();
         sleep(500);
@@ -335,10 +334,10 @@ public class Red1AccuGlyph extends LinearOpMode {
         brake();
         sleep(500);
 
-        strafeDistLeft(10,10,10,10);
+        strafeDistLeft(13.3,13.3,13.3,13.3);
         brake();
         sleep(500);
-        strafeDistRight(4,4,4,4);
+        strafeDistRight(5.3,5.3,5.3,5.3);
         brake();
         sleep(500);
         if(pos==0)
@@ -371,8 +370,8 @@ public class Red1AccuGlyph extends LinearOpMode {
 
         leftFront.setPower(.1);
         leftBack.setPower(.1);
-        rightFront.setPower(.1);
-        rightBack.setPower(.1);
+        rightFront.setPower(.115);
+        rightBack.setPower(.115);
 
         leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -593,8 +592,8 @@ public class Red1AccuGlyph extends LinearOpMode {
 
         leftFront.setPower(-.1);
         leftBack.setPower(-.1);
-        rightFront.setPower(-.11);
-        rightBack.setPower(-.11);
+        rightFront.setPower(-.115);
+        rightBack.setPower(-.115);
 
         leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -637,8 +636,8 @@ public class Red1AccuGlyph extends LinearOpMode {
 
         leftFront.setPower(.1);
         leftBack.setPower(.1);
-        rightFront.setPower(.1);
-        rightBack.setPower(.1);
+        rightFront.setPower(.115);
+        rightBack.setPower(.115);
 
         leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

@@ -71,10 +71,9 @@ public class Blue2AccuGlyph extends LinearOpMode {
     VuforiaLocalizer vuforia;
 
 
-    private Servo glyphLeftDown = null;
+    //private Servo glyphLeftDown = null;
     private Servo glyphRightDown = null;
-    private Servo glyphLeftUp = null;
-    private Servo glyphRightUp= null;
+
     private Servo shoulderRight = null;
     private Servo shoulderLeft = null;
     private Servo elbowRight = null;
@@ -103,14 +102,14 @@ public class Blue2AccuGlyph extends LinearOpMode {
     static final double ACTIVATOR_IN = 0.0;
     static final double ACTIVATOR_OUT = 0.65;
 
-    static final double LEFT_GRABBER_UP_CLOSE = 0.3;
+
     static final double LEFT_GRABBER_DOWN_CLOSE = 0.25; //good
-    static final double RIGHT_GRABBER_UP_OPEN = 0.45;
+
     static final double RIGHT_GRABBER_DOWN_OPEN = 0.45;
 
-    static final double LEFT_GRABBER_UP_OPEN = 0.75;    //good
+
     static final double LEFT_GRABBER_DOWN_OPEN = 0.5;
-    static final double RIGHT_GRABBER_UP_CLOSE = 0.75;  //good
+
     static final double RIGHT_GRABBER_DOWN_CLOSE = 0.7;
 
     private ColorSensor jewelSensorRight;
@@ -142,10 +141,8 @@ public class Blue2AccuGlyph extends LinearOpMode {
         rightFront.setDirection(DcMotor.Direction.REVERSE);
         rightBack.setDirection(DcMotor.Direction.REVERSE);
 
-        glyphLeftDown = hardwareMap.servo.get("glyphLeftDown");
+        //glyphLeftDown = hardwareMap.servo.get("glyphLeftDown");
         glyphRightDown = hardwareMap.servo.get("glyphRightDown");
-        glyphLeftUp = hardwareMap.servo.get("glyphLeftUp");
-        glyphRightUp = hardwareMap.servo.get("glyphRightUp");
 
         shoulderLeft = hardwareMap.servo.get("shoulderLeft");
         shoulderRight = hardwareMap.servo.get("shoulderRight");

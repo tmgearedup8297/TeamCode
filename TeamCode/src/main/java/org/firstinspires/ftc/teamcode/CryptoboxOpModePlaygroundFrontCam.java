@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.disnodeteam.dogecv.CameraViewDisplay;
 import com.disnodeteam.dogecv.detectors.CryptoboxDetector;
-import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -20,7 +19,7 @@ public class CryptoboxOpModePlaygroundFrontCam extends OpMode
 
 
      private CryptoboxDetector cryptoboxDetector = null;
-    private ModernRoboticsI2cRangeSensor rangeSensor;
+
     /*
      * Code to run ONCE when the driver hits INIT
      */
@@ -32,10 +31,9 @@ public class CryptoboxOpModePlaygroundFrontCam extends OpMode
         cryptoboxDetector = new CryptoboxDetector();
         cryptoboxDetector.init(hardwareMap.appContext, CameraViewDisplay.getInstance(), 1);
         cryptoboxDetector.rotateMat = false;
-        cryptoboxDetector.setDetectionMode("blue");
+        cryptoboxDetector.setDetectionMode("red");
 
         cryptoboxDetector.enable();
-        rangeSensor = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "sensor_range");
 
 
 
@@ -80,9 +78,6 @@ public class CryptoboxOpModePlaygroundFrontCam extends OpMode
         telemetry.addData("Right dist new method", cryptoboxDetector.getDistancePos1(2));
         telemetry.addData("Left dist new method", cryptoboxDetector.getDistancePos1(0));
 
-
-        telemetry.addData("raw ultrasonic", rangeSensor.rawUltrasonic());
-        telemetry.addData("cm", "%.2f cm", rangeSensor.getDistance(DistanceUnit.CM));
         telemetry.update();
 
 

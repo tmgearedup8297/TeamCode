@@ -62,7 +62,7 @@ import java.util.List;
 
 
 @Autonomous(name="Red1CV", group="Linear Opmode")
-
+@Disabled
 public class Red1CV extends LinearOpMode {
 
     // Declare OpMode members.

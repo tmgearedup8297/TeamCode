@@ -46,7 +46,7 @@ import static com.qualcomm.robotcore.util.Range.scale;
 
 
 @TeleOp(name="ServoTest", group="Iterative Opmode")
-//@Disabled
+@Disabled
 public class ServoTest extends OpMode
 {
     // Declare OpMode members.
