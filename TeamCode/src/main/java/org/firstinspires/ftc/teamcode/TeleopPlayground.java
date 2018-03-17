@@ -68,10 +68,10 @@ public class TeleopPlayground extends OpMode
     private Servo relicExtender=null;
 
     private static final double startPosGrabber = 0.0;
-    private static final double endPosGrabber = 0.04;
-    private static final double startPosExtender = 0.0;
-    private static final double endPosExtender = 0.0714;
-    private static final double initPosExtender = 0.107;
+    private static final double endPosGrabber = 0.048;
+    private static final double startPosExtender = 0.12;
+    private static final double endPosExtender = 0.033;
+    private static final double initPosExtender = 0.0;
 
     private float x1, x2, y1, y2;
 
@@ -101,7 +101,7 @@ public class TeleopPlayground extends OpMode
 
     static final double LEFT_GRABBER_DOWN_CLOSE = 0.32; //good
 
-    static final double RIGHT_GRABBER_DOWN_OPEN = 0.9;
+    static final double RIGHT_GRABBER_DOWN_OPEN = 0.935;
 
 
     static final double LEFT_GRABBER_DOWN_OPEN = 0.04;
@@ -122,6 +122,8 @@ public class TeleopPlayground extends OpMode
     private boolean relicClawUp = false;
     private boolean GRABBER_OPEN=true;
     private boolean activatorOpen = true;
+
+    private double extenderpos = -1.0;
 
     private int curcol = 1;
     private boolean unpressed = true;
@@ -152,8 +154,7 @@ public class TeleopPlayground extends OpMode
         relicGrabber = hardwareMap.servo.get("relicGrabber");
         runtime.reset();
 
-        relicGrabber.setPosition(startPosGrabber);
-        relicExtender.setPosition(initPosExtender);
+
 
         leftFront.setDirection(DcMotor.Direction.FORWARD);
         leftBack.setDirection(DcMotor.Direction.FORWARD);
@@ -187,7 +188,7 @@ public class TeleopPlayground extends OpMode
 
 
         activator = hardwareMap.get(Servo.class, "activator");
-        activator.setPosition(ACTIVATOR_OUT);
+
 
         autoGlyphLeft = hardwareMap.get(Servo.class, "autoGlyphLeft");
         autoGlyphRight = hardwareMap.get(Servo.class, "autoGlyphRight");
@@ -219,6 +220,7 @@ public class TeleopPlayground extends OpMode
         shoulderLeft.setPosition(LEFT_SHOULDER_IN);
         shoulderRight.setPosition(RIGHT_SHOULDER_IN);
         glyphRightDown.setPosition(RIGHT_GRABBER_DOWN_CLOSE);
+        activator.setPosition(ACTIVATOR_OUT);
     }
 
     /*
@@ -255,7 +257,7 @@ public class TeleopPlayground extends OpMode
         else {
             activator.setPosition(ACTIVATOR_IN);
         }*/
-        /*
+
         boolean dPadUpPressed = gamepad2.dpad_up;
         if (dPadUpPressed && !dpadUpLastPass){
             relicClawOpen = !relicClawOpen;
@@ -276,13 +278,20 @@ public class TeleopPlayground extends OpMode
                 //telemetry.update();
             }
         }
+        if(extenderpos<0&&gamepad2.dpad_right||gamepad2.dpad_left)
+            extenderpos = relicExtender.getPosition();
+        if(gamepad2.dpad_right)
+            relicExtender.setPosition(extenderpos+0.0005);
+        if(gamepad2.dpad_left)
+            relicExtender.setPosition(extenderpos-0.0005);
+        /*
         boolean dPadDownPressed = gamepad2.dpad_down;
         if (dPadDownPressed && !dpadDownLastPass){
             relicClawUp = !relicClawUp;
             if (!relicClawUp) {
 
                 relicExtender.setPosition(endPosExtender);
-                sleep(500);
+
                 //.setPosition(LEFT_GRABBER_DOWN_CLOSE);
 
                 telemetry.addData("End pos extender", "");
@@ -296,29 +305,29 @@ public class TeleopPlayground extends OpMode
                 //telemetry.update();
             }
         }
-        */
-        if(!(runtime.seconds()<tempTargetTime)) {
-            if (gamepad2.dpad_up) {
-                relicGrabber.setPosition(startPosGrabber);
-                telemetry.addData("start pos grabber", "");
-                tempTargetTime = runtime.seconds() + .15;
-            }
-            if (gamepad2.dpad_down) {
-                relicGrabber.setPosition(endPosGrabber);
-                telemetry.addData("end pos grabber", "");
-                tempTargetTime = runtime.seconds() + .15;
-            }
-            if (gamepad2.dpad_left) {
-                relicExtender.setPosition(startPosExtender);
-                telemetry.addData("start pos extender", "");
-                tempTargetTime = runtime.seconds() + .15;
-            }
-            if (gamepad2.dpad_right) {
-                relicExtender.setPosition(endPosExtender);
-                telemetry.addData("end pos extender", "");
-                tempTargetTime = runtime.seconds() + .15;
-            }
+
+
+        if (gamepad2.dpad_up) {
+            relicGrabber.setPosition(startPosGrabber);
+            telemetry.addData("start pos grabber", "");
+            //tempTargetTime = runtime.seconds() + .15;
         }
+        if (gamepad2.dpad_down) {
+            relicGrabber.setPosition(endPosGrabber);
+            telemetry.addData("end pos grabber", "");
+            //tempTargetTime = runtime.seconds() + .15;
+        }
+        if (gamepad2.dpad_left) {
+            relicExtender.setPosition(startPosExtender);
+            telemetry.addData("start pos extender", "");
+            //tempTargetTime = runtime.seconds() + .15;
+        }
+        if (gamepad2.dpad_right) {
+            relicExtender.setPosition(endPosExtender);
+            telemetry.addData("end pos extender", "");
+            //tempTargetTime = runtime.seconds() + .15;
+        }*/
+
         rbLastPass = rbPressed;
         telemetry.addData("LeftYRaw", gamepad1.left_stick_y);
         telemetry.addData("motorFeedback", extender.getCurrentPosition());

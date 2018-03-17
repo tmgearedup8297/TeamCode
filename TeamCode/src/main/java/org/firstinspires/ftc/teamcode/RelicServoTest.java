@@ -60,6 +60,8 @@ public class RelicServoTest extends OpMode
     private Servo relicGrabber=null;
     private Servo relicExtender=null;
     private double temptime=0;
+    private double grabberPos=0;
+    private double extenderPos=0;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -103,16 +105,26 @@ public class RelicServoTest extends OpMode
     @Override
     public void loop() {
 
-        if(temptime>runtime.seconds()){
-            relicExtender.setPosition(0);
-            relicGrabber.setPosition(0);
 
-        }
-        else{
-            relicExtender.setPosition(.2);
-            relicGrabber.setPosition(.2);
-            temptime = runtime.seconds()+.5;
-        }
+       if(gamepad1.a){
+           extenderPos+=.0005;
+
+       }
+       if(gamepad1.x){
+           extenderPos-=.0005;
+       }
+       if(gamepad1.b){
+            grabberPos+=.0005;
+       }
+       if(gamepad1.y){
+            grabberPos-=.0005;
+       }
+
+        relicGrabber.setPosition(grabberPos);
+        relicExtender.setPosition(extenderPos);
+        telemetry.addData("Grabber pos: ",grabberPos);
+        telemetry.addData("Extender pos: ",extenderPos);
+        telemetry.update();
     }
 
     /*

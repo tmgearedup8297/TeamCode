@@ -98,7 +98,7 @@ public class Red1AccuGlyph extends LinearOpMode {
     static final double RIGHT_SHOULDER_OUT = 0.65;
     static final double LEFT_ELBOW_OUT = 0.3;
     static final double LEFT_ELBOW_IN = 0.84;
-    static final double RIGHT_ELBOW_OUT = 0.44;
+    static final double RIGHT_ELBOW_OUT = 0.389;
     static final double RIGHT_ELBOW_MID = 0.66;
     static final double RIGHT_ELBOW_IN = 0.94;
     static final double LEFT_AUTOGLYPH_IN = 0.0;
@@ -261,7 +261,9 @@ public class Red1AccuGlyph extends LinearOpMode {
 
             sleep(1000);
             telemetry.addData("Shoulder: ", shoulderRight.getPosition());
-            //shoulderRight.setPosition(RIGHT_SHOULDER_OUT);
+            elbowRight.setPosition(RIGHT_ELBOW_MID);
+            sleep(250);
+            shoulderRight.setPosition(RIGHT_SHOULDER_OUT);
             sleep(1000);
             telemetry.update();
             //elbowRight.setPosition(RIGHT_ELBOW_MID);
@@ -299,7 +301,8 @@ public class Red1AccuGlyph extends LinearOpMode {
         leftBack.setPower(-.07);
         rightFront.setPower(-.07);
         rightBack.setPower(-.07);
-        while(!rightLim.getState()){
+        double start = runtime.seconds();
+        while(!rightLim.getState()&&(runtime.seconds()<start+1.1)){
             telemetry.addData("unpressed","");
             telemetry.update();
         }
@@ -310,18 +313,18 @@ public class Red1AccuGlyph extends LinearOpMode {
         shoulderRight.setPosition(RIGHT_SHOULDER_IN);
         sleep(250);
         if(pos==2)
-            moveDistBack(2, 2, 2, 2);
+            moveDistBack(2.5, 2.5, 2.5, 2.5);
         else if(pos==1)
-            moveDistBack(7.25,7.25,7.25,7.25);
+            moveDistBack(7.75,7.75,7.75,7.75);
         else
-            moveDistBack(14,14,14,14);
+            moveDistBack(14.75,14.75,14.75,14.75);
         brake();
-        strafeDistLeft(4.25, 4.25, 4.25, 4.25);
+        strafeDistLeft(5, 5, 5, 5);
         brake();
         turnRight(45);
         brake();
         sleep(1000);
-        strafeDistLeft(2.5,2.5,2.5,2.5);
+        strafeDistLeft(3.75,3.75,3.75,3.75);
         brake();
         sleep(250);
         autoGlyphRight.setPosition(RIGHT_AUTOGLYPH_IN);
@@ -340,9 +343,9 @@ public class Red1AccuGlyph extends LinearOpMode {
         strafeDistRight(5.3,5.3,5.3,5.3);
         brake();
         sleep(500);
-        if(pos==0)
+        if(pos==2)
             moveDistBack(5,5,5,5);
-        else if(pos==2)
+        else if(pos==0)
             moveDistForward(2,2,2,2);
         brake();
         //}
