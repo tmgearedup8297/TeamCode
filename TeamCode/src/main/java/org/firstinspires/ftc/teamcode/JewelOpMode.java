@@ -1,5 +1,5 @@
 
-package org.firstinspires.ftc.teamcode.testing;
+package org.firstinspires.ftc.teamcode;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -15,7 +15,7 @@ import java.io.IOException;
 
 
 @Autonomous(name="DogeCV Jewel Detector", group="DogeCV")
-@Disabled
+//@Disabled
 public class JewelOpMode extends OpMode
 {
     // Declare OpMode members.

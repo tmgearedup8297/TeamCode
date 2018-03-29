@@ -212,6 +212,7 @@ public class Blue1AccuGlyphWLimitSwitch extends LinearOpMode {
             pos=2;
         }
 
+
         telemetry.addData("Pos", pos);
         telemetry.addData("VuMark", vuMark);
         telemetry.update();
@@ -280,7 +281,8 @@ public class Blue1AccuGlyphWLimitSwitch extends LinearOpMode {
         leftBack.setPower(-.07);
         rightFront.setPower(-.07);
         rightBack.setPower(-.07);
-        while(!leftLim.getState()){
+        double second = runtime.seconds();
+        while(!leftLim.getState()&&(runtime.seconds()<second+1)){
             telemetry.addData("unpressed","");
             telemetry.update();
         }

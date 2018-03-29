@@ -256,12 +256,13 @@ public class Blue2AccuGlyph extends LinearOpMode {
         telemetry.update();
 
 
-        moveDistBack(22, 22, 22, 22);
+        moveDistBack(24.5, 24.5, 24.5, 24.5);
         brake();
         sleep(500);
         turnRight(170);
         brake();
         sleep(500);
+        moveDistForward(5, 5, 5, 5);
         if(pos==0){
             moveDistBack(6,6,6,6);
         }

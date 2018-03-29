@@ -271,6 +271,8 @@ public class Blue2AccuGlyphWLimitSwitch extends LinearOpMode {
             telemetry.addData("Shoulder: ", shoulderLeft.getPosition());
             //shoulderLeft.setPosition(LEFT_SHOULDER_OUT);
             elbowLeft.setPosition(LEFT_ELBOW_IN-.1);
+            sleep(250);
+            shoulderLeft.setPosition(LEFT_SHOULDER_OUT);
             //shoulderLeft.setPosition(Left_SHOULDER_OUT);
             //sleep(1000);
 
@@ -279,19 +281,19 @@ public class Blue2AccuGlyphWLimitSwitch extends LinearOpMode {
         //shoulderLeft.setPosition(Left_SHOULDER_IN);
         sleep(250);
 
-        moveDistBack(21.25,21.25,21.25,21.25);
+        moveDistBack(24.25,24.25,24.25,24.25);
         brake();
         sleep(500);
-        turnRight(145);
+        turnRight(155);
         brake();
         sleep(500);
-        strafeDistLeft(10,10,10,10);
+        strafeDistLeft(7,7,7,7);
         brake();
         sleep(500);
-        strafeDistRight(1.4,1.4,1.4,1.4);
+        strafeDistRight(2,2,2,2);
         brake();
         sleep(500);
-        moveDistForward(5.33,5.33,5.33,5.33);
+        moveDistForward(7.53,7.5,7.5,7.5);
         shoulderLeft.setPosition(LEFT_SHOULDER_OUT);
         elbowLeft.setPosition(LEFT_ELBOW_MID);
         shoulderLeft = hardwareMap.servo.get("shoulderLeft");
@@ -300,7 +302,8 @@ public class Blue2AccuGlyphWLimitSwitch extends LinearOpMode {
         leftBack.setPower(-.07);
         rightFront.setPower(-.073);
         rightBack.setPower(-.073);
-        while(!leftLim.getState()){
+        double second = runtime.seconds();
+        while(!leftLim.getState()&&(runtime.seconds()<second+2.5)){
             telemetry.addData("unpressed","");
             telemetry.update();
         }

@@ -98,7 +98,7 @@ public class Red2AccuGlyph extends LinearOpMode {
     static final double LEFT_ELBOW_OUT = 0.3;
     static final double LEFT_ELBOW_IN = 0.84;
     static final double RIGHT_ELBOW_OUT = 0.41;
-    static final double RIGHT_ELBOW_MID = 0.71;
+    static final double RIGHT_ELBOW_MID = 0.67;
     static final double RIGHT_ELBOW_IN = 0.94;
     static final double LEFT_AUTOGLYPH_IN = 0.0;
     static final double LEFT_AUTOGLYPH_OUT = 1.0;
@@ -279,19 +279,19 @@ public class Red2AccuGlyph extends LinearOpMode {
         //shoulderRight.setPosition(RIGHT_SHOULDER_IN);
         sleep(250);
 
-        moveDistBack(22.25,22.25,22.25,22.25);
+        moveDistBack(25,25,25,25);
         brake();
         sleep(500);
         turnLeft(150);
         brake();
         sleep(500);
-        strafeDistRight(3.5,3.5,3.5,3.5);
+        strafeDistRight(5,5,5,5);
         brake();
         sleep(500);
-        strafeDistLeft(1.8,1.8,1.8,1.8);
+        strafeDistLeft(2.3,2.3,2.3,2.3);
         brake();
         sleep(500);
-        moveDistForward(4,4,4,4);
+        moveDistForward(5,5,5,5);
         shoulderRight.setPosition(RIGHT_SHOULDER_OUT);
         elbowRight.setPosition(RIGHT_ELBOW_MID);
         shoulderRight = hardwareMap.servo.get("shoulderRight");
@@ -300,7 +300,8 @@ public class Red2AccuGlyph extends LinearOpMode {
         leftBack.setPower(-.07);
         rightFront.setPower(-.07);
         rightBack.setPower(-.07);
-        while(!rightLim.getState()){
+        double start = runtime.seconds();
+        while(!rightLim.getState()&&(runtime.seconds()<start+2.5)){
             telemetry.addData("unpressed","");
             telemetry.update();
         }
@@ -310,7 +311,7 @@ public class Red2AccuGlyph extends LinearOpMode {
         sleep(100);
         shoulderRight.setPosition(RIGHT_SHOULDER_IN);
         sleep(250);
-        if(pos==0)
+        if(pos==2)
             moveDistBack(1.75, 1.75, 1.75, 1.75);
         else if(pos==1)
             moveDistBack(6.5,6.5,6.5,6.5);
@@ -318,7 +319,7 @@ public class Red2AccuGlyph extends LinearOpMode {
             moveDistBack(13.25,13.25,13.25,13.25);
         brake();
         sleep(500);
-        strafeDistLeft(4, 4, 4, 4);
+        strafeDistLeft(3, 3, 3, 3);
         brake();
         turnRight(53);
         brake();
@@ -346,9 +347,9 @@ public class Red2AccuGlyph extends LinearOpMode {
         strafeDistRight(5.3,5.3,5.3,5.3);
         brake();
         sleep(500);
-        if(pos==0)
+        if(pos==2)
             moveDistBack(5,5,5,5);
-        else if(pos==2)
+        else if(pos==0)
             moveDistForward(2,2,2,2);
         brake();
         //}

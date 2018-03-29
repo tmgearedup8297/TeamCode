@@ -42,7 +42,7 @@ import com.qualcomm.robotcore.hardware.ColorSensor; //
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 
-@TeleOp(name="TeleopWMethodTesting", group="Iterative Opmode")
+@TeleOp(name="TeleopWMethodOld", group="Iterative Opmode")
 //@Disabled
 public class TeleopWMethod extends OpMode
 {
@@ -230,20 +230,20 @@ public class TeleopWMethod extends OpMode
      */
     @Override
     public void loop() {
-        if(!inMethod) {
+        if (!inMethod) {
             inMethod = false;
             brake = false;
             extendFrontServo = true;
             drivingWithinCryptoboxPower = false;
             drivingWithinCryptobox = false;
             setStrafeUntilSwitchPower = false;
-            afterBrakeSection=setStrafeUntilSwitchPower;
+            afterBrakeSection = setStrafeUntilSwitchPower;
             strafeUntilSwitch = false;
             backUpFromCryptoboxPower = false;
             backUpFromCryptobox = false;
             retractFrontServo = false;
             strafeUntilAligned = false;
-            strafeUntilAlignedPower=false;
+            strafeUntilAlignedPower = false;
             boolean rbPressed = gamepad2.right_bumper;
             if (rbPressed && !rbLastPass) {
                 GRABBER_OPEN = !GRABBER_OPEN;
@@ -305,7 +305,7 @@ public class TeleopWMethod extends OpMode
 
             lift.setPower(-gamepad2.left_stick_y);
             //Cryptobox update code
-            if(gamepad2.x||gamepad2.a||gamepad2.b) {
+            if (gamepad2.x || gamepad2.a || gamepad2.b) {
                 if (gamepad2.x)
                     curcol = 0;
                 else if (gamepad2.a)
@@ -314,14 +314,15 @@ public class TeleopWMethod extends OpMode
                     curcol = 2;
                 inMethod = true;
             }
-            if(gamepad2.dpad_up)
-                    frontLimArm.setPosition(FRONTLIM_OUT);
-            if(gamepad2.dpad_down)
-                    frontLimArm.setPosition(FRONTLIM_IN);
-        }
-        else if(!gamepad2.left_bumper){
+            if (gamepad2.dpad_up)
+                frontLimArm.setPosition(FRONTLIM_OUT);
+            if (gamepad2.dpad_down)
+                frontLimArm.setPosition(FRONTLIM_IN);
+        } else if (!gamepad2.left_bumper) {
 
-            if(extendFrontServo){//extends front servo, allows code to move onto the next statement
+
+
+           /* if(extendFrontServo){//extends front servo, allows code to move onto the next statement
                 telemetry.addData("Extending arm","");
                 telemetry.update();
                 frontLimArm.setPosition(FRONTLIM_OUT);
@@ -474,11 +475,11 @@ public class TeleopWMethod extends OpMode
         }*/
 
 
+        }
+
     }
-
-
     @Override
-    public void stop() {
+    public void stop(){
     }
 
 

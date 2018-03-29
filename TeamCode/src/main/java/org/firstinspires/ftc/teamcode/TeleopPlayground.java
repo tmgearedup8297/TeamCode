@@ -67,6 +67,7 @@ public class TeleopPlayground extends OpMode
     private Servo relicGrabber=null;
     private Servo relicExtender=null;
 
+
     private static final double startPosGrabber = 0.0;
     private static final double endPosGrabber = 0.048;
     private static final double startPosExtender = 0.12;
@@ -108,8 +109,10 @@ public class TeleopPlayground extends OpMode
 
     static final double RIGHT_GRABBER_DOWN_CLOSE = 0.61;
 
+    private boolean firstRelic=true;
 
     private DigitalChannel liftLim;
+    private DigitalChannel frontLim;
     private ColorSensor jewelSensorRight;
     private ColorSensor jewelSensorLeft;
 
@@ -123,7 +126,8 @@ public class TeleopPlayground extends OpMode
     private boolean GRABBER_OPEN=true;
     private boolean activatorOpen = true;
 
-    private double extenderpos = -1.0;
+    private double extenderPos = 0;
+    private double grabberPos=0;
 
     private int curcol = 1;
     private boolean unpressed = true;
@@ -178,6 +182,7 @@ public class TeleopPlayground extends OpMode
         autoGlyphRight = hardwareMap.servo.get("autoGlyphRight");
 
         liftLim = hardwareMap.get(DigitalChannel.class, "liftLim");
+        frontLim = hardwareMap.get(DigitalChannel.class, "frontLim");
 
         telemetry.addData("Status", "Initialized");
 
@@ -221,6 +226,7 @@ public class TeleopPlayground extends OpMode
         shoulderRight.setPosition(RIGHT_SHOULDER_IN);
         glyphRightDown.setPosition(RIGHT_GRABBER_DOWN_CLOSE);
         activator.setPosition(ACTIVATOR_OUT);
+
     }
 
     /*
@@ -258,37 +264,42 @@ public class TeleopPlayground extends OpMode
             activator.setPosition(ACTIVATOR_IN);
         }*/
 
-        boolean dPadUpPressed = gamepad2.dpad_up;
-        if (dPadUpPressed && !dpadUpLastPass){
-            relicClawOpen = !relicClawOpen;
-            if (!relicClawOpen) {
-
-                relicGrabber.setPosition(endPosGrabber);
-
-                //.setPosition(LEFT_GRABBER_DOWN_CLOSE);
-
-                telemetry.addData("End pos grabber", "");
-                //telemetry.update();
-            } else {
-
-                relicGrabber.setPosition(startPosGrabber);
-                //glyphLeftDown.setPosition(LEFT_GRABBER_DOWN_OPEN);
-
-                telemetry.addData("Start pos grabber", "");
-                //telemetry.update();
-            }
+        if(firstRelic &&(gamepad2.a||gamepad2.b||gamepad2.x||gamepad2.y)){
+            relicExtender.setPosition(extenderPos);
+            relicGrabber.setPosition(grabberPos);
+            firstRelic=false;
+            telemetry.addData("First press", "");
+            telemetry.update();
         }
-        if(extenderpos<0&&gamepad2.dpad_right||gamepad2.dpad_left)
-            extenderpos = relicExtender.getPosition();
-        if(gamepad2.dpad_right)
-            relicExtender.setPosition(extenderpos+0.0005);
-        if(gamepad2.dpad_left)
-            relicExtender.setPosition(extenderpos-0.0005);
+        else{
+            telemetry.addData("Buttons have been pressed for relic", "");
+        }
+        if(gamepad2.a){
+            extenderPos+=.0005;
+            telemetry.addData("extender pos++", "");
+            telemetry.update();
+
+        }
+        else if(gamepad2.x && extenderPos>.0004){
+            extenderPos-=.0005;
+            telemetry.addData("extender pos--", "");
+            telemetry.update();
+        }
+        else if(gamepad2.b){
+            grabberPos+=.0005;
+            telemetry.addData("grabber pos++", "");
+            telemetry.update();
+        }
+        else if(gamepad2.y && grabberPos>.0004){
+            grabberPos-=.0005;
+            telemetry.addData("grabber pos--", "");
+            telemetry.update();
+        }
+        telemetry.addData("Extender pos: ", extenderPos);
+        telemetry.addData("Grabber pos: ", grabberPos);
         /*
         boolean dPadDownPressed = gamepad2.dpad_down;
-        if (dPadDownPressed && !dpadDownLastPass){
-            relicClawUp = !relicClawUp;
-            if (!relicClawUp) {
+        if (dPadDownrelicClawUp) {
 
                 relicExtender.setPosition(endPosExtender);
 

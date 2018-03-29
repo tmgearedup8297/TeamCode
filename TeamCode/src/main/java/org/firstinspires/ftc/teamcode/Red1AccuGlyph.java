@@ -29,6 +29,7 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.disnodeteam.dogecv.detectors.JewelDetector;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -313,11 +314,11 @@ public class Red1AccuGlyph extends LinearOpMode {
         shoulderRight.setPosition(RIGHT_SHOULDER_IN);
         sleep(250);
         if(pos==2)
-            moveDistBack(2.5, 2.5, 2.5, 2.5);
+            moveDistBack(.9, .9, .9, .9);
         else if(pos==1)
-            moveDistBack(7.75,7.75,7.75,7.75);
+            moveDistBack(6,6,6,6);
         else
-            moveDistBack(14.75,14.75,14.75,14.75);
+            moveDistBack(13,13,13,13);
         brake();
         strafeDistLeft(5, 5, 5, 5);
         brake();
@@ -329,14 +330,16 @@ public class Red1AccuGlyph extends LinearOpMode {
         sleep(250);
         autoGlyphRight.setPosition(RIGHT_AUTOGLYPH_IN);
         sleep(1000);
-        strafeDistRight(3.3, 3.3, 3.3, 3.3);
-        moveDistForward(4,4,4,4);
-        brake();
-        sleep(500);
         turnLeft(45);
+        brake();
+        //strafeDistRight(3.3, 3.3, 3.3, 3.3);
+        //moveDistForward(4,4,4,4);
         brake();
         sleep(500);
 
+        strafeDistRight(5,5,5,5);
+        brake();
+        sleep(500);
         strafeDistLeft(13.3,13.3,13.3,13.3);
         brake();
         sleep(500);
