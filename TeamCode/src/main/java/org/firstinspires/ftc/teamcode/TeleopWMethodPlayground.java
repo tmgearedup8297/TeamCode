@@ -37,6 +37,8 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import static java.lang.Thread.sleep;
+
 
 @TeleOp(name="TeleopWMethodPlayground", group="Iterative Opmode")
 //@Disabled
@@ -51,7 +53,7 @@ public class TeleopWMethodPlayground extends OpMode
     private Servo shoulderLeft = null;
     private Servo elbowRight = null;
     private Servo elbowLeft = null;
-    private Servo autoGlyphLeft = null;//
+    private Servo autoGlyphLeft = null;
     private Servo autoGlyphRight = null;
     private Servo activator = null;
     private Servo frontArm = null;
@@ -76,9 +78,7 @@ public class TeleopWMethodPlayground extends OpMode
     private final double SERVO_POS_OPEN = .4;
 
     static final double FRONT_SERVO_EXTENDED=.27;
-    static final double FRONT_SERVO_RETRACTED=.45;
-    static final double BACK_SERVO_EXTENDED=.75;
-    static final double BACK_SERVO_RETRACTED=.45;
+    static final double FRONT_SERVO_RETRACTED=1;
 
     static final double LEFT_SHOULDER_IN = 0.09;
     static final double LEFT_SHOULDER_OUT = 0.57;
@@ -144,11 +144,13 @@ public class TeleopWMethodPlayground extends OpMode
     private double tempTargetTime = -1.0;
 
     private boolean inMethod=false;
-    private boolean extendServo=true;
+    private boolean init=true;
+    private boolean extendServo=false;
     private boolean moveForward=false;
     private boolean strafeTillLim = false;
-    private double initialStrafeRCClicksLeft;
-    private double initialStrafeRCClicksRight;
+
+    private double initStrafeTime=-1.0;
+
     private double initialStrafeLCClicksLeft;
     private double initialStrafeLCClicksRight;
 
@@ -227,14 +229,9 @@ public class TeleopWMethodPlayground extends OpMode
         autoGlyphLeft.setDirection(Servo.Direction.REVERSE);
 
 
-        initialStrafeLCClicksLeft = leftFront.getCurrentPosition() - (9*36);
-        initialStrafeLCClicksRight = rightFront.getCurrentPosition() + (9*36);
 
-        initialStrafeRCClicksLeft = leftFront.getCurrentPosition() + (9*36);
-        initialStrafeRCClicksRight = rightFront.getCurrentPosition() - (9*36);
-
-        firstMoveClicksLeft= leftFront.getCurrentPosition() - (10*36);
-        firstMoveClicksRight= rightFront.getCurrentPosition() - (10*36);
+        firstMoveClicksLeft= 1;
+        firstMoveClicksRight=1;
 
 
     }
@@ -271,6 +268,7 @@ public class TeleopWMethodPlayground extends OpMode
     public void loop() {
         if(inMethod==false) {
 
+            frontArm.setPosition(FRONT_SERVO_RETRACTED);
 
             boolean rbPressed = gamepad2.right_bumper;
             if (rbPressed && !rbLastPass) {
@@ -356,55 +354,21 @@ public class TeleopWMethodPlayground extends OpMode
             lift.setPower(-gamepad2.left_stick_y);
             extender.setPower(gamepad2.right_stick_y);
 
-            if(gamepad1.a){
-                pos=1;
-            }
-            if(gamepad1.x){
-                pos=0;
-            }
-            if(gamepad1.b){
-                pos=2;
-            }
 
         }
         else{
             if(init){
                 if(pos==0) {
-                    leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                    leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                    rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                    rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    if(initStrafeTime<0)
+                        initStrafeTime=runtime.milliseconds()+475;
 
-                    leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-                    leftFront.setPower(-.1);
-                    leftBack.setPower(.1);
-                    rightFront.setPower(.1);
-                    rightBack.setPower(-.1);
+                    leftFront.setPower(.13);
+                    leftBack.setPower(-.1);
+                    rightFront.setPower(-.13);
+                    rightBack.setPower(.1);
 
 
-                    leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-
-                    if (leftFront.getCurrentPosition() > initialStrafeLCClicksLeft &&
-                            rightFront.getCurrentPosition() < initialStrafeLCClicksRight) {
-                        telemetry.addData("Left front pos: ", leftFront.getCurrentPosition());
-                        telemetry.addData("Left back pos: ", leftBack.getCurrentPosition());
-                        telemetry.addData("Right front pos: ", rightFront.getCurrentPosition());
-                        telemetry.addData("Right back pos: ", rightBack.getCurrentPosition());
-
-                        telemetry.addData("Left front left: ", firstMoveClicksLeft);
-                        telemetry.addData("Right front left: ", firstMoveClicksRight);
-
-                        telemetry.update();
-
-                    } else {
+                    if(runtime.milliseconds()>=initStrafeTime){
                         leftFront.setPower(0.01);
                         leftBack.setPower(-0.01);
                         rightFront.setPower(0.01);
@@ -414,45 +378,29 @@ public class TeleopWMethodPlayground extends OpMode
                         rightFront.setPower(0);
                         rightBack.setPower(0);
                         init = false;
-                        moveForward = true;
+                        extendServo=true;
                     }
+                    else{
+                        telemetry.addData("time left", initStrafeTime-runtime.milliseconds());
+                        //telemetry.update();
+                    }
+
                 }
-                if(pos==1) {
-                    leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                    leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                    rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                    rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                if(pos==1){
+                    init = false;
+                    extendServo=true;
+                }
+                if(pos==2) {
 
-                    leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    if(initStrafeTime<0)
+                        initStrafeTime=runtime.milliseconds()+1000;
 
                     leftFront.setPower(-.1);
                     leftBack.setPower(.1);
                     rightFront.setPower(.1);
                     rightBack.setPower(-.1);
 
-
-                    leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-
-                    if (leftFront.getCurrentPosition() > initialStrafeLCClicksLeft &&
-                            rightFront.getCurrentPosition() < initialStrafeLCClicksRight) {
-                        telemetry.addData("Left front pos: ", leftFront.getCurrentPosition());
-                        telemetry.addData("Left back pos: ", leftBack.getCurrentPosition());
-                        telemetry.addData("Right front pos: ", rightFront.getCurrentPosition());
-                        telemetry.addData("Right back pos: ", rightBack.getCurrentPosition());
-
-                        telemetry.addData("Left front left: ", firstMoveClicksLeft);
-                        telemetry.addData("Right front left: ", firstMoveClicksRight);
-
-                        telemetry.update();
-
-                    } else {
+                    if(runtime.milliseconds()>=initStrafeTime){
                         leftFront.setPower(0.01);
                         leftBack.setPower(-0.01);
                         rightFront.setPower(0.01);
@@ -462,8 +410,13 @@ public class TeleopWMethodPlayground extends OpMode
                         rightFront.setPower(0);
                         rightBack.setPower(0);
                         init = false;
-                        moveForward = true;
+                        extendServo=true;
+
                     }
+                    else{
+                        telemetry.addData("time left", initStrafeTime-runtime.milliseconds());
+                    }
+
                 }
             }
             if(extendServo){
@@ -471,8 +424,18 @@ public class TeleopWMethodPlayground extends OpMode
                 extendServo=false;
                 moveForward=true;
             }
-            else if(moveForward){
+            if(moveForward){
 
+                leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+
+                if(firstMoveClicksLeft>0){
+                    firstMoveClicksLeft= leftFront.getCurrentPosition() - (6.5*36);
+                    firstMoveClicksRight= rightFront.getCurrentPosition() - (6.5*36);
+                }
 
 
                 leftFront.setPower(-.1);
@@ -490,15 +453,8 @@ public class TeleopWMethodPlayground extends OpMode
 
                 if(leftFront.getCurrentPosition()>firstMoveClicksLeft &&
                         rightFront.getCurrentPosition()>firstMoveClicksRight){
-                    telemetry.addData("Left front pos: ", leftFront.getCurrentPosition());
-                    telemetry.addData("Left back pos: ", leftBack.getCurrentPosition());
-                    telemetry.addData("Right front pos: ", rightFront.getCurrentPosition());
-                    telemetry.addData("Right back pos: ", rightBack.getCurrentPosition());
-
-                    telemetry.addData("Left front left: ", firstMoveClicksLeft);
-                    telemetry.addData("Right front left: ", firstMoveClicksRight);
-
-                    telemetry.update();
+                    telemetry.addData("Current Pos",leftFront.getCurrentPosition());
+                    telemetry.addData("Total", firstMoveClicksLeft);
 
                 }
                 else{
@@ -517,10 +473,10 @@ public class TeleopWMethodPlayground extends OpMode
             }
             if(strafeTillLim){
                 if(frontLim.getState()==false){
-                    leftFront.setPower(-.1);
-                    leftBack.setPower(.1);
-                    rightFront.setPower(.1);
-                    rightBack.setPower(-.1);
+                    leftFront.setPower(.13);
+                    leftBack.setPower(-.1);
+                    rightFront.setPower(-.13);
+                    rightBack.setPower(.1);
                 }
                 else{
                     leftFront.setPower(-0.01);
@@ -533,18 +489,46 @@ public class TeleopWMethodPlayground extends OpMode
                     rightBack.setPower(0);
                     strafeTillLim=false;
                     inMethod=false;
+                    init=true;
                 }
             }
         }
 
+        if(gamepad1.x){
+            inMethod=true;
+            pos=0;
+            telemetry.addData("Pos",pos);
+        }
         if(gamepad1.a){
             inMethod=true;
+            pos=1;
+            telemetry.addData("Pos",pos);
         }
         if(gamepad1.b){
-            inMethod=false;
+            inMethod=true;
+            pos=2;
+            telemetry.addData("Pos",pos);
         }
-       // telemetry.addData("Method",inMethod);
-       // telemetry.update();
+        if(gamepad1.y){
+            inMethod=false;
+            init=true;
+            extendServo=false;
+            moveForward=false;
+            strafeTillLim = false;
+            firstMoveClicksLeft=1;
+            firstMoveClicksRight=1;
+            initStrafeTime=-1;
+
+
+        }
+
+        telemetry.addData("In Method", inMethod);
+        telemetry.addData("init", init);
+        telemetry.addData("extendServo", extendServo);
+        telemetry.addData("moveForward", moveForward);
+        telemetry.addData("strafeTillLim", strafeTillLim);
+
+        telemetry.update();
 
     }
 

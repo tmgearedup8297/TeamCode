@@ -1,5 +1,5 @@
 #Internal package file, do not edit.
-#Wed Jan 31 20:29:00 EST 2018
+#Sun Apr 22 14:16:46 EDT 2018
 20.base=C\:\\Users\\Goutham\\Desktop\\GouthamProjects\\FTC\\ftc_app-master\\TeamCode\\build\\intermediates\\res\\resources-debug.ap_
 143.base=C\:\\Users\\Goutham\\Desktop\\GouthamProjects\\FTC\\ftc_app-master\\TeamCode\\build\\intermediates\\assets\\debug
 439.set=ASSET
@@ -512,7 +512,7 @@
 157.file=C\:\\Users\\Goutham\\Desktop\\GouthamProjects\\FTC\\ftc_app-master\\TeamCode\\build\\intermediates\\res\\resources-debug.ap_\\res\\layout\\matrix_devices.xml
 328.file=C\:\\Users\\Goutham\\Desktop\\GouthamProjects\\FTC\\ftc_app-master\\TeamCode\\build\\intermediates\\assets\\debug\\java\\templates\\SensorDigitalTouch
 242.set=ANDROID_RESOURCE
-67.file=C\:\\Users\\Goutham\\Desktop\\GouthamProjects\\FTC\\ftc_app-master\\TeamCode\\build\\intermediates\\res\\resources-debug.ap_\\res\\xml\\squarebot.xml
+67.file=C\:\\Users\\Goutham\\Desktop\\GouthamProjects\\FTC\\ftc_app-master\\TeamCode\\build\\intermediates\\res\\resources-debug.ap_\\res\\layout\\servo_list.xml
 120.set=ASSET
 191.base=C\:\\Users\\Goutham\\Desktop\\GouthamProjects\\FTC\\ftc_app-master\\TeamCode\\build\\intermediates\\res\\resources-debug.ap_
 225.base=C\:\\Users\\Goutham\\Desktop\\GouthamProjects\\FTC\\ftc_app-master\\TeamCode\\build\\intermediates\\assets\\debug
@@ -634,7 +634,7 @@
 346.set=ASSET
 152.file=C\:\\Users\\Goutham\\Desktop\\GouthamProjects\\FTC\\ftc_app-master\\TeamCode\\build\\intermediates\\assets\\debug\\js\\util.js
 269.set=ASSET
-323.file=C\:\\Users\\Goutham\\Desktop\\GouthamProjects\\FTC\\ftc_app-master\\TeamCode\\build\\intermediates\\res\\resources-debug.ap_\\res\\layout\\activity_load.xml
+323.file=C\:\\Users\\Goutham\\Desktop\\GouthamProjects\\FTC\\ftc_app-master\\TeamCode\\build\\intermediates\\res\\resources-debug.ap_\\res\\xml\\pushbotsens.xml
 36.base=C\:\\Users\\Goutham\\Desktop\\GouthamProjects\\FTC\\ftc_app-master\\TeamCode\\build\\intermediates\\assets\\debug
 147.set=ASSET
 62.file=C\:\\Users\\Goutham\\Desktop\\GouthamProjects\\FTC\\ftc_app-master\\TeamCode\\build\\intermediates\\assets\\debug\\blocks\\samples\\default.blk
@@ -1199,7 +1199,7 @@ count=448
 336.set=ASSET
 151.file=C\:\\Users\\Goutham\\Desktop\\GouthamProjects\\FTC\\ftc_app-master\\TeamCode\\build\\intermediates\\assets\\debug\\java\\templates\\SensorMRCompass
 259.set=ANDROID_RESOURCE
-322.file=C\:\\Users\\Goutham\\Desktop\\GouthamProjects\\FTC\\ftc_app-master\\TeamCode\\build\\intermediates\\res\\resources-debug.ap_\\res\\xml\\pushbotsens.xml
+322.file=C\:\\Users\\Goutham\\Desktop\\GouthamProjects\\FTC\\ftc_app-master\\TeamCode\\build\\intermediates\\res\\resources-debug.ap_\\res\\layout\\activity_load.xml
 35.base=C\:\\Users\\Goutham\\Desktop\\GouthamProjects\\FTC\\ftc_app-master\\TeamCode\\build\\intermediates\\assets\\debug
 137.set=ASSET
 184.file=C\:\\Users\\Goutham\\Desktop\\GouthamProjects\\FTC\\ftc_app-master\\TeamCode\\build\\intermediates\\assets\\debug\\images\\ftcI2cDevice.png
@@ -1285,7 +1285,7 @@ count=448
 158.file=C\:\\Users\\Goutham\\Desktop\\GouthamProjects\\FTC\\ftc_app-master\\TeamCode\\build\\intermediates\\assets\\debug\\blocks\\angular_velocity.js
 329.file=C\:\\Users\\Goutham\\Desktop\\GouthamProjects\\FTC\\ftc_app-master\\TeamCode\\build\\intermediates\\assets\\debug\\java\\android.jar
 252.set=ASSET
-68.file=C\:\\Users\\Goutham\\Desktop\\GouthamProjects\\FTC\\ftc_app-master\\TeamCode\\build\\intermediates\\res\\resources-debug.ap_\\res\\layout\\servo_list.xml
+68.file=C\:\\Users\\Goutham\\Desktop\\GouthamProjects\\FTC\\ftc_app-master\\TeamCode\\build\\intermediates\\res\\resources-debug.ap_\\res\\xml\\squarebot.xml
 130.set=ASSET
 175.set=ASSET
 226.base=C\:\\Users\\Goutham\\Desktop\\GouthamProjects\\FTC\\ftc_app-master\\TeamCode\\build\\intermediates\\assets\\debug

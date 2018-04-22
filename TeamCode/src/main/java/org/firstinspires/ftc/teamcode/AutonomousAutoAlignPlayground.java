@@ -55,7 +55,7 @@ import com.qualcomm.robotcore.util.Range;
  */
 
 @Autonomous(name="AutonomousAutoAlignPlayground", group="Linear Opmode")
-//@Disabled
+@Disabled
 public class AutonomousAutoAlignPlayground extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();

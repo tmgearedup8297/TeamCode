@@ -24,6 +24,7 @@ import java.util.Locale;
 
 
 @Autonomous(name="Auto Drive methods test", group="Linear Opmode")
+@Disabled
 public class AutoDriveMethodsTestARYA extends LinearOpMode {
 
     // Declare OpMode members.
