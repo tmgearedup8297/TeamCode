@@ -63,14 +63,17 @@ public class OptBTeleop extends OpMode
     private float x1, x2, y1, y2;
 
     private boolean grabberUp = true;
-    private boolean clawClosed = true;
+    private boolean clawClosed = false;
 
     private double grabberunpressed = 0.0;
     private double clawunpressed = 0.0;
 
+    private double dpadunpressed = 0.0;
+
     private double GRABBERUP = 1.0;
     private double GRABBERDOWN = 0.29;
     private double GRABBERINIT = 0.0;
+    private double GRABBERCURRENT = GRABBERDOWN;
     private double CLAWCLOSE = 0.85;
     private double CLAWOPEN = 0.35;
     private double CLAWINIT = 0.35;
@@ -153,24 +156,36 @@ public class OptBTeleop extends OpMode
             if(gamepad2.a&&runtime.seconds()>grabberunpressed){
                 if(grabberUp){
                     relicGrabber.setPosition(GRABBERDOWN);
+                    GRABBERCURRENT = GRABBERDOWN;
                 }
                 else{
                     relicGrabber.setPosition(GRABBERUP);
+                    GRABBERCURRENT = GRABBERUP;
                 }
                 grabberunpressed = runtime.seconds()+0.4;
                 grabberUp = !grabberUp;
+            }
+            if((gamepad2.dpad_up||gamepad2.dpad_down)&&runtime.seconds()>dpadunpressed){
+                if(gamepad2.dpad_up&&GRABBERCURRENT<0.98)
+                    GRABBERCURRENT += 0.02;
+                else if(gamepad2.dpad_down&&GRABBERCURRENT>0.02)
+                    GRABBERCURRENT -= 0.02;
+                relicGrabber.setPosition(GRABBERCURRENT);
+                dpadunpressed = runtime.seconds()+0.1;
             }
             if(gamepad2.x&&runtime.seconds()>clawunpressed){
                 if(clawClosed){
                     relicClaw.setPosition(CLAWOPEN);
                 }
+
                 else{
                     relicClaw.setPosition(CLAWCLOSE);
                 }
                 clawunpressed = runtime.seconds()+0.4;
                 clawClosed = !clawClosed;
             }
-
+            if(gamepad2.y)
+                relicGrabber.setPosition(GRABBERINIT);
             if(gamepad2.right_bumper){
                 activator.setPosition(activatorOut);
             }

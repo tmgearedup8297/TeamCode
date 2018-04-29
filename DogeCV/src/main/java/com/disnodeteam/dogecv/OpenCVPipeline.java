@@ -122,6 +122,7 @@ public abstract class OpenCVPipeline implements CameraBridgeViewBase.CvCameraVie
     @Override
     public void onCameraViewStarted(int width, int height) {
         // override this if you wish
+
     }
 
     /**

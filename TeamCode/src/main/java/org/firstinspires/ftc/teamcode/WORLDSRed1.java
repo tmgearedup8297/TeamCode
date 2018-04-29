@@ -191,7 +191,7 @@ public class WORLDSRed1 extends LinearOpMode {
         rightFront.setPower(.07);
         rightBack.setPower(.07);
         double start = runtime.seconds();
-        while(!leftLim.getState()&&(runtime.seconds()<start+1.5)){
+        while(!leftLim.getState()&&(runtime.seconds()<start+2.2)){
             telemetry.addData("unpressed","");
             telemetry.update();
         }
@@ -202,9 +202,9 @@ public class WORLDSRed1 extends LinearOpMode {
         shoulderleft.setPosition(LEFT_SHOULDER_IN);
         sleep(250);
         if(pos==2)
-            moveDistForward(0, 0, 0,0);
+            moveDistForward(.75, 0, 0,0);
         else if(pos==1)
-            moveDistForward(6,6,6,6);
+            moveDistForward(7.2,7.2,7.2,7.2);
         else
             moveDistForward(12,12,12,12);
         brake();

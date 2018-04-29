@@ -56,7 +56,7 @@ public class WORLDSBlue1 extends LinearOpMode {
     static final double LEFT_SHOULDER_OUT_JEWEL = 0.55;
 
     static final double LEFT_ELBOW_OUT = .23;
-    static final double LEFT_ELBOW_MID = 0.57;
+    static final double LEFT_ELBOW_MID = 0.53;
     static final double LEFT_ELBOW_IN = 0.84;
 
     static final double LEFT_AUTOGLYPH_IN = 0.0;
@@ -115,13 +115,13 @@ public class WORLDSBlue1 extends LinearOpMode {
         sleep(1000);
         telemetry.addData("Jewel Order: ", jewelOrder);
         telemetry.update();
-        if (jewelOrder.equals("BLUE_RED")) {
+        if (jewelOrder.equals("RED_BLUE")) {
             shoulderleft.setPosition(LEFT_SHOULDER_OUT + .2);
             sleep(250);
-            elbowLeft.setPosition(LEFT_ELBOW_MID-.15);
+            elbowLeft.setPosition(LEFT_ELBOW_MID);
             sleep(250);
             shoulderleft.setPosition(LEFT_SHOULDER_OUT);
-        } else if(jewelOrder.equals("RED_BLUE")){
+        } else if(jewelOrder.equals("BLUE_RED")){
             shoulderleft.setPosition(LEFT_SHOULDER_OUT - .2);
             sleep(250);
             elbowLeft.setPosition(LEFT_ELBOW_MID);
@@ -202,12 +202,12 @@ public class WORLDSBlue1 extends LinearOpMode {
         sleep(100);
         shoulderleft.setPosition(LEFT_SHOULDER_IN);
         sleep(250);
-        if(pos==2)
-            moveDistBack(0, 0, 0,0);
+        if(pos==0)
+            moveDistBack(0.25, 0.25, 0.25,0.25);
         else if(pos==1)
-            moveDistBack(6,6,6,6);
+            moveDistBack(6.5,6.5,6.5,6.5);
         else
-            moveDistBack(10,10,10,10);
+            moveDistBack(13.75,13.75,13.75,13.75);
         brake();
         strafeDistRight(1, 1, 1, 1);
         brake();
@@ -219,7 +219,7 @@ public class WORLDSBlue1 extends LinearOpMode {
         sleep(250);
         autoGlyphLeft.setPosition(LEFT_SHOULDER_IN);
         sleep(1000);
-        turnLeft(60);
+        turnLeft(55);
         brake();
         //strafeDistRight(3.3, 3.3, 3.3, 3.3);
         //moveDistForward(4,4,4,4);
@@ -229,15 +229,15 @@ public class WORLDSBlue1 extends LinearOpMode {
         strafeDistLeft(5,5,5,5);
         brake();
         sleep(500);
-        strafeDistRight(10,10,10,10);
+        strafeDistRight(9,9,9,9);
         brake();
         sleep(500);
-        strafeDistLeft(5.3,5.3,5.3,5.3);
+        strafeDistLeft(7,7,7,7);
         brake();
         sleep(500);
-        if(pos==2)
+        if(pos==0)
             moveDistBack(5,5,5,5);
-        else if(pos==0)
+        else if(pos==2)
             moveDistForward(2,2,2,2);
         brake();
         //}

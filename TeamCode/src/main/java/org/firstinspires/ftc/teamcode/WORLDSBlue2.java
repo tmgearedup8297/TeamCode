@@ -219,10 +219,11 @@ public class WORLDSBlue2 extends LinearOpMode {
         strafeDistLeft(6.25,6.25,6.25,6.25);
         brake();
         sleep(500);
-        strafeDistRight(5,5,5,5);
+        strafeDistRight(4.3,4.3,4.3,4.3);
         brake();
         sleep(500);
-        moveDistForward(.5,.5,.5,.5);
+        moveDistForward(5.2,5.2,5.2,5.2);
+        brake();
         sleep(500);
         shoulderleft.setPosition(LEFT_SHOULDER_OUT);
         elbowLeft.setPosition(LEFT_ELBOW_MID);
@@ -233,7 +234,7 @@ public class WORLDSBlue2 extends LinearOpMode {
         rightFront.setPower(-.07);
         rightBack.setPower(-.07);
         double start = runtime.seconds();
-        while(!rightLim.getState()&&(runtime.seconds()<start+1)){
+        while(!rightLim.getState()&&(runtime.seconds()<start+1.7)){
             telemetry.addData("unpressed","");
             telemetry.update();
         }
@@ -244,19 +245,19 @@ public class WORLDSBlue2 extends LinearOpMode {
         shoulderleft.setPosition(LEFT_SHOULDER_IN);
         sleep(250);
         if(pos==0)
-            moveDistBack(2.75, 2.75, 2.75, 2.75);
+            moveDistBack(2.62, 2.62, 2.62, 2.62);
         else if(pos==1)
-            moveDistBack(7,7.5,7.5,7.5);
+            moveDistBack(9.25,9.25,9.25,9.25);
         else
-            moveDistBack(14.5,14.5,14.5,14.5);
+            moveDistBack(16,16,16,16);
         brake();
         sleep(500);
-        strafeDistRight(5, 5, 5, 5);
+        strafeDistRight(4.5, 4.5, 4.5, 4.5);
         brake();
-        turnRight(72);
+        turnRight(63);
         brake();
         sleep(1000);
-        strafeDistRight(8,8,8,8);
+        strafeDistRight(3.2,3.2,3.2,3.2);
         brake();
         sleep(250);
         autoGlyphLeft.setPosition(LEFT_AUTOGLYPH_IN);
