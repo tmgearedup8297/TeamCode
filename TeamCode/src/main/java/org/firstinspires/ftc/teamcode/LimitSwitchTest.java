@@ -55,7 +55,8 @@ public class LimitSwitchTest extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    private DigitalChannel frontLim;
+    private DigitalChannel leftLim;
+    private DigitalChannel rightLim;
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
@@ -64,8 +65,8 @@ public class LimitSwitchTest extends LinearOpMode {
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
-        frontLim =hardwareMap.get(DigitalChannel.class, "leftLim");
-
+        leftLim =hardwareMap.get(DigitalChannel.class, "leftLim");
+        rightLim = hardwareMap.get(DigitalChannel.class, "rightLim");
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
 
@@ -75,7 +76,9 @@ public class LimitSwitchTest extends LinearOpMode {
         runtime.reset();
 
         while(opModeIsActive()){
-            telemetry.addData("LimState",frontLim.getState());
+            telemetry.addData("LeftLimState",leftLim.getState());
+            telemetry.addData("RightLimState", rightLim.getState());
+
             telemetry.update();
 
         }

@@ -167,7 +167,7 @@ public class WORLDSRed1 extends LinearOpMode {
         telemetry.addData("VuMark", vuMark);
         telemetry.update();
         sleep(1000);
-        moveDistForward(19,19,19,19);
+        moveDistForward(21,21,21,21);
         brake();
         elbowLeft.setPosition(LEFT_ELBOW_MID);
         sleep(500);
@@ -176,8 +176,8 @@ public class WORLDSRed1 extends LinearOpMode {
         telemetry.update();
         leftFront.setPower(-.07);
         leftBack.setPower(-.07);
-        rightFront.setPower(-.07);
-        rightBack.setPower(-.07);
+        rightFront.setPower(-.085);
+        rightBack.setPower(-.085);
         sleep(650);
         brake();
         telemetry.addData("After straightForward","");
@@ -185,18 +185,18 @@ public class WORLDSRed1 extends LinearOpMode {
 
         leftFront.setPower(.07);
         leftBack.setPower(.07);
-        rightFront.setPower(.07);
-        rightBack.setPower(.07);
-        double start = runtime.seconds();
-        while(!leftLim.getState()&&(runtime.seconds()<start+2.2)){
+        rightFront.setPower(.085);
+        rightBack.setPower(.085);
+
+        while(!leftLim.getState()){
             telemetry.addData("unpressed","");
             telemetry.update();
         }
         brake();
         sleep(250);
-        //elbowLeft.setPosition(LEFT_ELBOW_IN);
+        elbowLeft.setPosition(LEFT_ELBOW_IN);
         sleep(100);
-        //shoulderleft.setPosition(LEFT_SHOULDER_IN);
+        shoulderleft.setPosition(LEFT_SHOULDER_IN);
         sleep(250);
         if(pos==2)
             moveDistForward(.75, 0, 0,0);
